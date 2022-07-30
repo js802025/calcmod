@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "calcmod",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "ChatCalc Mod",
+  "description": "Basic chat calculator with preset commands for minecraft related calculations such as storage and nether coords.",
   "authors": [
     "Me!"
   ],
@@ -19,11 +19,11 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "net.jsa2025.calcmod.calcmod"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "calcmod.mixins.json"
   ],
 
   "depends": {
