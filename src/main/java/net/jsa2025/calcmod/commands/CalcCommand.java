@@ -37,16 +37,16 @@ public class CalcCommand {
         .executes(ctx -> executeNetherCoord(ctx.getSource(), getCBlockPos(ctx, "pos")))))
         .then(ClientCommandManager.literal("overworld").then(ClientCommandManager.argument("pos", blockPos())
         .executes(ctx -> executeOverworldCoord(ctx.getSource(), getCBlockPos(ctx, "pos")))))
-        .then(ClientCommandManager.literal("sbtoitem").then(ClientCommandManager.argument("numberofsbs", IntegerArgumentType.integer())
-        .executes(ctx -> executeSbToItem(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "numberofsbs")))))
-        .then(ClientCommandManager.literal("itemtosb").then(ClientCommandManager.argument("numberofitems", IntegerArgumentType.integer())
-        .executes(ctx -> executeItemToSb(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "numberofitems")))))
-        .then(ClientCommandManager.literal("SecondstoHopperClock").then(ClientCommandManager.argument("seconds", IntegerArgumentType.integer())
-        .executes(ctx -> executeSecondsToHopperClock(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "seconds")))))
-        .then(ClientCommandManager.literal("SecondsToRepeater").then(ClientCommandManager.argument("seconds", IntegerArgumentType.integer())
-        .executes(ctx -> executeSecondsToRepeater(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "seconds")))))
-        .then(ClientCommandManager.literal("itemtostack").then(ClientCommandManager.argument("numberofitems", IntegerArgumentType.integer())
-        .executes(ctx -> executeItemToStack(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "numberofitems")))))
+        .then(ClientCommandManager.literal("sbtoitem").then(ClientCommandManager.argument("numberofsbs", StringArgumentType.greedyString())
+        .executes(ctx -> executeSbToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofsbs")))))
+        .then(ClientCommandManager.literal("itemtosb").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems")))))
+        .then(ClientCommandManager.literal("SecondstoHopperClock").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
+        .executes(ctx -> executeSecondsToHopperClock(ctx.getSource(), StringArgumentType.getString(ctx, "seconds")))))
+        .then(ClientCommandManager.literal("SecondsToRepeater").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
+        .executes(ctx -> executeSecondsToRepeater(ctx.getSource(), StringArgumentType.getString(ctx, "seconds")))))
+        .then(ClientCommandManager.literal("itemtostack").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems")))))
         .then(ClientCommandManager.literal("help")
         .executes(ctx -> executeHelp(ctx.getSource())))
 
@@ -58,7 +58,7 @@ public class CalcCommand {
     public static int executeBasicCalculation(FabricClientCommandSource source, String expression) {
         Expression e = new Expression(expression);
         String message = "Result: " + nf.format(e.calculate());
-        source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
+        sendMessage(source, message);
         return 1;
         
     }
@@ -69,8 +69,7 @@ public class CalcCommand {
         double sbsperhour = itemsperhour * 1.0 / 1728;
         String message = "Required Sorters at "+timesHopperSpeed+"xHopper Speed(9000/h): " + nf.format(sorters) + "\nSbs per hour: " +nf.format(sbsperhour);
         
-        source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
-
+        sendMessage(source, message);
         return 1;
     }
 
@@ -84,50 +83,52 @@ public class CalcCommand {
         return 1;
     }
 
-    public static int executeSbToItem(FabricClientCommandSource source, int numberofsbs) {
-        double items = numberofsbs * 1728;
+    public static int executeSbToItem(FabricClientCommandSource source, String numberofsbs) {
+        double sbs = new Expression(getParsedString(numberofsbs)).calculate();
+        double items = sbs * 1728;
         String message = "Items per SB: " + nf.format(items);
-        source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
-
+        sendMessage(source, message);
         return 1;
     }
 
-    public static int executeItemToSb(FabricClientCommandSource source, int numberofitems) {
-        double sbs = numberofitems / 1728;
+    public static int executeItemToSb(FabricClientCommandSource source, String numberofitems) {
+        double items = new Expression(getParsedString(numberofitems)).calculate();
+        double sbs = items / 1728;
         String message = "Sbs per Item: " + nf.format(sbs);
 
 
-       source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
+        sendMessage(source, message);
         return 1;
     }
 
-    public static int executeSecondsToHopperClock(FabricClientCommandSource source, int seconds) {
-        double hopperclock = Math.ceil(seconds *1.25);
+    public static int executeSecondsToHopperClock(FabricClientCommandSource source, String seconds) {
+        double secondsDouble = new Expression(getParsedString(seconds)).calculate();
+        double hopperclock = Math.ceil(secondsDouble *1.25);
         String message = "Hopper Clock: " + nf.format(hopperclock);
-        source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
+        sendMessage(source, message);
         return 1;
     }
 
-    public static int executeSecondsToRepeater(FabricClientCommandSource source, int seconds) {
-        int ticks = seconds * 10;
+    public static int executeSecondsToRepeater(FabricClientCommandSource source, String seconds) {
+        double secondsDouble = new Expression(getParsedString(seconds)).calculate();
+        double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {
             String message = "Repeaters Required: " + nf.format(repeaters) +"\nLast Repeater Tick: "+ nf.format(ticks % 4) ;
-            source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
-
+            sendMessage(source, message);
         } else {
             String message = "Repeaters Required: " + nf.format(Math.ceil(ticks/4));
-            source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
-
+            sendMessage(source, message);
         }
         return 1;
     }
     
-    public static int executeItemToStack(FabricClientCommandSource source, int items) {
+    public static int executeItemToStack(FabricClientCommandSource source, String numberofitems) {
+        double items = new Expression(getParsedString(numberofitems)).calculate();
         double stacks = Math.floor(items/64);
-        int leftover = items % 64;
+        double leftover = items % 64;
         String message = "Stacks Required: " + nf.format(stacks) + "\nLeftover Items: " + nf.format(leftover);
-        source.getPlayer().sendMessage(Text.literal(message).append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
+        sendMessage(source, message);        
         return 1;
     }
 
@@ -162,6 +163,14 @@ public class CalcCommand {
                 """;;
         source.getPlayer().sendMessage(Text.of(helpMessage));
         return 1;
+    }
+
+    private static String getParsedString(String in) {
+        return in.replaceAll("dub", "*3456").replaceAll("sb", "*1728").replaceAll("stack", "*64").replaceAll("min", "*60").replaceAll("hour", "*3600");
+    }
+
+    private static void sendMessage(FabricClientCommandSource source, String message) {
+        source.getPlayer().sendMessage(Text.literal(message+" ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
     }
 
 
