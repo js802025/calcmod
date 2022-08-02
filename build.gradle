@@ -29,7 +29,10 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
+	
+	
+	modImplementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
+	include 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
 
 	modImplementation 'dev.xpple:clientarguments:1.4.1'
 	include 'dev.xpple:clientarguments:1.4.1'
