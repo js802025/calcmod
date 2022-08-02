@@ -32,23 +32,31 @@ public class CalcCommand {
         .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("itemsperhour", IntegerArgumentType.integer())
         .executes(ctx -> executeStorageCalculation(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "itemsperhour"), 1))
         .then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
-        .executes(ctx -> executeStorageCalculation(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"))))))
+        .executes(ctx -> executeStorageCalculation(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "storage"))))
         .then(ClientCommandManager.literal("nether").then(ClientCommandManager.argument("pos", blockPos())
-        .executes(ctx -> executeNetherCoord(ctx.getSource(), getCBlockPos(ctx, "pos")))))
+        .executes(ctx -> executeNetherCoord(ctx.getSource(), getCBlockPos(ctx, "pos"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "nether"))))
         .then(ClientCommandManager.literal("overworld").then(ClientCommandManager.argument("pos", blockPos())
-        .executes(ctx -> executeOverworldCoord(ctx.getSource(), getCBlockPos(ctx, "pos")))))
+        .executes(ctx -> executeOverworldCoord(ctx.getSource(), getCBlockPos(ctx, "pos"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "overworld"))))
         .then(ClientCommandManager.literal("sbtoitem").then(ClientCommandManager.argument("numberofsbs", StringArgumentType.greedyString())
-        .executes(ctx -> executeSbToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofsbs")))))
+        .executes(ctx -> executeSbToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofsbs"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "sbtoitem"))))
         .then(ClientCommandManager.literal("itemtosb").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems")))))
+        .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "itemtosb"))))
         .then(ClientCommandManager.literal("SecondstoHopperClock").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
-        .executes(ctx -> executeSecondsToHopperClock(ctx.getSource(), StringArgumentType.getString(ctx, "seconds")))))
+        .executes(ctx -> executeSecondsToHopperClock(ctx.getSource(), StringArgumentType.getString(ctx, "seconds"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "seconds2hopperclock"))))
         .then(ClientCommandManager.literal("SecondsToRepeater").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
-        .executes(ctx -> executeSecondsToRepeater(ctx.getSource(), StringArgumentType.getString(ctx, "seconds")))))
+        .executes(ctx -> executeSecondsToRepeater(ctx.getSource(), StringArgumentType.getString(ctx, "seconds"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "seconds2repeater"))))
         .then(ClientCommandManager.literal("itemtostack").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems")))))
+        .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "itemtostack"))))
         .then(ClientCommandManager.literal("help")
-        .executes(ctx -> executeHelp(ctx.getSource())))
+        .executes(ctx -> executeHelp(ctx.getSource(), "")))
 
         );
 
@@ -132,8 +140,63 @@ public class CalcCommand {
         return 1;
     }
 
-    public static int executeHelp(FabricClientCommandSource source) {
-        var helpMessage = """
+    public static int executeHelp(FabricClientCommandSource source, String help) {
+        var helpMessage = "";
+        if (help == "storage") {
+            helpMessage = """
+                Storage:
+                Given rate in terms of items per hour and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
+                Usage: /calc storage <itemsperhour> <timesHopperSpeed>
+                    """;
+        } else if (help == "nether") {
+            helpMessage = """
+                Nether:
+                Given a block position returns the nether coordinates
+                Usage: /calc nether <x> <y> <z>
+                    """;
+        } else if (help == "overworld") {
+            helpMessage = """
+                Overworld:
+                Given a block position returns the overworld coordinates
+                Usage: /calc overworld <x> <y> <z>
+                    """;
+        } else if (help == "sbtoitem") {
+            helpMessage = """
+                Sb to Item:
+                Given a number of sbs(can be in expression form) returns the number of items
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                Usage: /calc sbtoitem <numberofsbs>
+                    """;
+        } else if (help == "itemtosb") {
+            helpMessage = """
+                Item to Sb:
+                Given a number of items(can be in expression form) returns the number of sbs
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                Usage: /calc itemtosb <numberofitems>
+                    """;
+        } else if (help == "seconds2hopperclock") {
+            helpMessage = """
+                Seconds to Hopper Clock:
+                Given a number of seconds(can be in expression form) returns the number of ticks in a hopper clock
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                Usage: /calc seconds2hopperclock <seconds>
+                    """;
+        } else if (help == "seconds2repeater") {
+            helpMessage = """
+                Seconds to Repeater:
+                Given a number of seconds(can be in expression form) returns the number of repeaters and the last tick of the last repeater
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                Usage: /calc seconds2repeater <seconds>
+                    """;
+        } else if (help == "itemtostack") {
+            helpMessage = """
+                Item to Stack:
+                Given a number of items(can be in expression form) returns the number of stacks and leftover items
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                Usage: /calc itemtostack <numberofitems>
+                    """;
+        } else {
+            helpMessage = """
             Calcmod 
 
             Basic(no arguments):
@@ -161,6 +224,8 @@ public class CalcCommand {
             SecondstoRepeaterClock
             Given number of seconds return needed repeater delay 
                 """;;
+        }
+
         source.getPlayer().sendMessage(Text.of(helpMessage));
         return 1;
     }
