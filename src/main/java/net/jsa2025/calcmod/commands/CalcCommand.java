@@ -29,10 +29,12 @@ public class CalcCommand {
     public static void register (CommandDispatcher<FabricClientCommandSource> dispacther, CommandRegistryAccess registry) {
         dispacther.register(ClientCommandManager.literal("calc")
         .then(ClientCommandManager.argument("expression", StringArgumentType.greedyString()).executes(ctx -> executeBasicCalculation(ctx.getSource(), StringArgumentType.getString(ctx, "expression"))))
-        .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("itemsperhour", IntegerArgumentType.integer())
-        .executes(ctx -> executeStorageCalculation(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "itemsperhour"), 1))
-        .then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
-        .executes(ctx -> executeStorageCalculation(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")))))
+        .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
+        .executes(ctx -> executeStorageCalculation(ctx.getSource(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1))
+        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .executes(ctx -> executeStorageCalculation(ctx.getSource(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")))))
+        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .executes(ctx -> executeStorageCalculation(ctx.getSource(), StringArgumentType.getString(ctx, "itemsperhour"), 1)))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "storage"))))
         .then(ClientCommandManager.literal("nether").then(ClientCommandManager.argument("pos", blockPos())
         .executes(ctx -> executeNetherCoord(ctx.getSource(), getCBlockPos(ctx, "pos"))))
@@ -55,6 +57,12 @@ public class CalcCommand {
         .then(ClientCommandManager.literal("itemtostack").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"))))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "itemtostack"))))
+        .then(ClientCommandManager.literal("stacktoitem").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .executes(ctx -> executeStackToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofstacks"))))
+        .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "stacktoitem"))))
+        .then(ClientCommandManager.literal("variables")
+        .executes(ctx -> executeVariables(ctx.getSource())))
+
         .then(ClientCommandManager.literal("help")
         .executes(ctx -> executeHelp(ctx.getSource(), "")))
 
@@ -71,10 +79,11 @@ public class CalcCommand {
         
     }
 
-    public static int executeStorageCalculation(FabricClientCommandSource source, int itemsperhour, int timesHopperSpeed) {
+    public static int executeStorageCalculation(FabricClientCommandSource source, String itemsperhour, int timesHopperSpeed) {
+        double rates = new Expression(getParsedString(itemsperhour)).calculate();
         double hopperSpeed = (9000*timesHopperSpeed);
-        double sorters = Math.ceil(itemsperhour/hopperSpeed);
-        double sbsperhour = itemsperhour * 1.0 / 1728;
+        double sorters = Math.ceil(rates/hopperSpeed);
+        double sbsperhour = rates * 1.0 / 1728;
         String message = "Required Sorters at "+timesHopperSpeed+"xHopper Speed(9000/h): " + nf.format(sorters) + "\nSbs per hour: " +nf.format(sbsperhour);
         
         sendMessage(source, message);
@@ -94,7 +103,7 @@ public class CalcCommand {
     public static int executeSbToItem(FabricClientCommandSource source, String numberofsbs) {
         double sbs = new Expression(getParsedString(numberofsbs)).calculate();
         double items = sbs * 1728;
-        String message = "Items per SB: " + nf.format(items);
+        String message = "Items: " + nf.format(items);
         sendMessage(source, message);
         return 1;
     }
@@ -102,7 +111,7 @@ public class CalcCommand {
     public static int executeItemToSb(FabricClientCommandSource source, String numberofitems) {
         double items = new Expression(getParsedString(numberofitems)).calculate();
         double sbs = items / 1728;
-        String message = "Sbs per Item: " + nf.format(sbs);
+        String message = "Sbs: " + nf.format(sbs);
 
 
         sendMessage(source, message);
@@ -112,7 +121,7 @@ public class CalcCommand {
     public static int executeSecondsToHopperClock(FabricClientCommandSource source, String seconds) {
         double secondsDouble = new Expression(getParsedString(seconds)).calculate();
         double hopperclock = Math.ceil(secondsDouble *1.25);
-        String message = "Hopper Clock: " + nf.format(hopperclock);
+        String message = "Hopper Clock Items: " + nf.format(hopperclock);
         sendMessage(source, message);
         return 1;
     }
@@ -138,6 +147,27 @@ public class CalcCommand {
         String message = "Stacks Required: " + nf.format(stacks) + "\nLeftover Items: " + nf.format(leftover);
         sendMessage(source, message);        
         return 1;
+        
+    }
+
+    public static int executeStackToItem(FabricClientCommandSource source, String numberofstacks) {
+        double stacks = new Expression(getParsedString(numberofstacks)).calculate();
+        double items = stacks * 64;
+        String message = "Items: " + nf.format(items);
+        sendMessage(source, message);
+        return 1;
+    }
+
+    public static int executeVariables(FabricClientCommandSource source) {
+        String message = """
+                dub: 3456
+                sb: 1728
+                stack: 64
+                min: 60
+                hour: 3600
+                """;
+                source.getPlayer().sendMessage(Text.literal(message));
+        return 1;
     }
 
     public static int executeHelp(FabricClientCommandSource source, String help) {
@@ -145,7 +175,7 @@ public class CalcCommand {
         if (help == "storage") {
             helpMessage = """
                 Storage:
-                Given rate in terms of items per hour and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
+                Given rate in terms of items per hour(can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
                 Usage: /calc storage <itemsperhour> <timesHopperSpeed>
                     """;
         } else if (help == "nether") {
@@ -195,7 +225,14 @@ public class CalcCommand {
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
                 Usage: /calc itemtostack <numberofitems>
                     """;
-        } else {
+        } else if (help == "stacktoitem") {
+            helpMessage = """
+                Stack to Item:
+                Given a number of stacks(can be in expression form) returns the number of items
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                Usage: /calc stacktoitem <numberofstacks>
+                    """;
+                } else {
             helpMessage = """
             Calcmod 
 
