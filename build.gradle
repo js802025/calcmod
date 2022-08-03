@@ -36,6 +36,10 @@ dependencies {
 
 	modImplementation 'dev.xpple:clientarguments:1.4.1'
 	include 'dev.xpple:clientarguments:1.4.1'
+
+	modImplementation 'com.ibm.icu:icu4j:71.1'
+
+	include 'com.ibm.icu:icu4j:71.1'
 	
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.

@@ -17,8 +17,11 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "client": [
       "net.jsa2025.calcmod.calcmod"
+    ],
+    "server": [
+      "net.jsa2025.calcmod.ServerCalcMod"
     ]
   },
   "mixins": [
