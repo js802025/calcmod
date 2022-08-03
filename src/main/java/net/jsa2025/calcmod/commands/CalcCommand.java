@@ -72,7 +72,7 @@ public class CalcCommand {
     }
 
     public static int executeBasicCalculation(FabricClientCommandSource source, String expression) {
-        Expression e = new Expression(expression);
+        Expression e = new Expression(getParsedString(expression));
         String message = "Result: " + nf.format(e.calculate());
         sendMessage(source, message);
         return 1;
@@ -176,7 +176,8 @@ public class CalcCommand {
             helpMessage = """
                 Storage:
                 Given rate in terms of items per hour(can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
-                Usage: /calc storage <itemsperhour> <timesHopperSpeed>
+                Usage: /calc storage <itemsperhour>
+                Usage: /calc storage <timesHopperSpeed> <itemsperhour> 
                     """;
         } else if (help == "nether") {
             helpMessage = """
@@ -237,29 +238,46 @@ public class CalcCommand {
             Calcmod 
 
             Basic(no arguments):
-            Functions like a simple calculator 
+            Functions like a simple calculator but with variables, to see the variables available run /calc variables
+            Usage: /calc <expression>
             
             Storage:
-            Given rate in terms of items per hour and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
+                Given rate in terms of items per hour(can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
+                Usage: /calc storage <itemsperhour>
+                Usage: /calc storage <timesHopperSpeed> <itemsperhour> 
             
             Nether:
-            Returns coords in nether for building portal in correct place.
+                Given a block position returns the nether coordinates
+                Usage: /calc nether <x> <y> <z>
             
             Overworld:
-            Same as nether but reversed 
+                Given a block position returns the overworld coordinates
+                Usage: /calc overworld <x> <y> <z>
             
-            sbtoitem:
-            Given number of sbs return number of items
+            Sb to Item:
+                Given a number of sbs(can be in expression form) returns the number of items
+                Usage: /calc sbtoitem <numberofsbs>
             
-            Itemtosb:
-            Given number of items return amount of sbs needed
+            Item to Sb:
+                Given a number of items(can be in expression form) returns the number of sbs
+
+                Usage: /calc itemtosb <numberofitems>
             
-            SecondstoHopperClock
-            Given seconds return amount of items needed in hopper clock
-            2.5 items per second
+            Seconds to Hopper Clock:
+                Given a number of seconds(can be in expression form) returns the number of ticks in a hopper clock
+                Usage: /calc seconds2hopperclock <seconds>
             
-            SecondstoRepeaterClock
-            Given number of seconds return needed repeater delay 
+            Seconds to Repeater:
+                Given a number of seconds(can be in expression form) returns the number of repeaters and the last tick of the last repeater
+                Usage: /calc seconds2repeater <seconds>
+
+            Item to Stack:
+                Given a number of items(can be in expression form) returns the number of stacks and leftover items
+                Usage: /calc itemtostack <numberofitems>
+
+            Stack to Item:
+                Given a number of stacks(can be in expression form) returns the number of items
+                Usage: /calc stacktoitem <numberofstacks>
                 """;;
         }
 
