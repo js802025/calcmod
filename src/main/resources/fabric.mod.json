@@ -3,18 +3,17 @@
   "id": "calcmod",
   "version": "${version}",
 
-  "name": "ChatCalc Mod",
-  "description": "Basic chat calculator with preset commands for minecraft related calculations such as storage and nether coords.",
+  "name": "CalcMod",
+  "description": "Chat calculator mod with minecraft specific functions and variables.",
   "authors": [
-    "Me!"
+    "js802025"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/js802025/calcmod",
+    "sources": "https://github.com/js802025/calcmod",
+    "issues": "https://github.com/js802025/calcmod/issues"
   },
-
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/calcmod/icon.png",
 
   "environment": "*",
   "entrypoints": {

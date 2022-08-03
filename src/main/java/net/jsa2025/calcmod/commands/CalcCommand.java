@@ -36,7 +36,9 @@ public class CalcCommand {
         .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes(ctx -> executeStorageCalculation(ctx.getSource(), StringArgumentType.getString(ctx, "itemsperhour"), 1)))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "storage"))))
-        .then(ClientCommandManager.literal("nether").then(ClientCommandManager.argument("pos", blockPos())
+        .then(ClientCommandManager.literal("nether")
+        .executes(ctx -> executeNetherCoord(ctx.getSource()))
+        .then(ClientCommandManager.argument("pos", blockPos())
         .executes(ctx -> executeNetherCoord(ctx.getSource(), getCBlockPos(ctx, "pos"))))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "nether"))))
         .then(ClientCommandManager.literal("overworld").then(ClientCommandManager.argument("pos", blockPos())
@@ -48,17 +50,25 @@ public class CalcCommand {
         .then(ClientCommandManager.literal("itemtosb").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"))))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "itemtosb"))))
-        .then(ClientCommandManager.literal("SecondstoHopperClock").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
+        .then(ClientCommandManager.literal("secondstohopperclock").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> executeSecondsToHopperClock(ctx.getSource(), StringArgumentType.getString(ctx, "seconds"))))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "seconds2hopperclock"))))
-        .then(ClientCommandManager.literal("SecondsToRepeater").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
+        .then(ClientCommandManager.literal("secondstorepeater").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> executeSecondsToRepeater(ctx.getSource(), StringArgumentType.getString(ctx, "seconds"))))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "seconds2repeater"))))
         .then(ClientCommandManager.literal("itemtostack").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"))))
+        .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 64)))
+        .then(ClientCommandManager.literal("16s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 16))))
+        .then(ClientCommandManager.literal("1s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .executes(ctx -> executeItemToStack(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 1))))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "itemtostack"))))
         .then(ClientCommandManager.literal("stacktoitem").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
-        .executes(ctx -> executeStackToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofstacks"))))
+        .executes(ctx -> executeStackToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofstacks"), 64)))
+        .then(ClientCommandManager.literal("16s").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .executes(ctx -> executeStackToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofstacks"), 16))))
+        .then(ClientCommandManager.literal("1s").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .executes(ctx -> executeStackToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofstacks"), 1))))
         .then(ClientCommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "stacktoitem"))))
         .then(ClientCommandManager.literal("variables")
         .executes(ctx -> executeVariables(ctx.getSource())))
@@ -73,7 +83,7 @@ public class CalcCommand {
 
     public static int executeBasicCalculation(FabricClientCommandSource source, String expression) {
         Expression e = new Expression(getParsedString(expression));
-        String message = "Result: " + nf.format(e.calculate());
+        String[] message = {"Result: ", nf.format(e.calculate())};
         sendMessage(source, message);
         return 1;
         
@@ -84,26 +94,38 @@ public class CalcCommand {
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;
-        String message = "Required Sorters at "+timesHopperSpeed+"xHopper Speed(9000/h): " + nf.format(sorters) + "\nSbs per hour: " +nf.format(sbsperhour);
+        String[] message = {"Required Sorters at "+timesHopperSpeed+"xHopper Speed(9000/h): ", nf.format(sorters), " \nSbs per hour: ", nf.format(sbsperhour)};
         
         sendMessage(source, message);
         return 1;
     }
 
-    public static int executeNetherCoord(FabricClientCommandSource source, BlockPos pos ) {
-        source.getPlayer().sendMessage(Text.literal("Nether Coord: X: " + nf.format(pos.getX()/8) + " Z: " + nf.format(pos.getZ()/8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "X: " + nf.format(pos.getX()/8) + " Z: " + nf.format(pos.getZ()/8))))));
+    public static int executeNetherCoord(FabricClientCommandSource source, BlockPos... pos ) {
+        BlockPos position;
+        if (pos.length == 0) {
+            position = source.getPlayer().getBlockPos();
+        } else {
+            position = pos[0];
+        }
+        source.getPlayer().sendMessage(Text.literal("Nether Coord: §aX: " + nf.format(position.getX()/8) + " Z: " + nf.format(position.getZ()/8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "X: " + nf.format(position.getX()/8) + " Z: " + nf.format(position.getZ()/8))))));
         return 1;
     }
 
-    public static int executeOverworldCoord(FabricClientCommandSource source, BlockPos pos ) {
-        source.getPlayer().sendMessage(Text.literal("Overworld Coord: X: " + nf.format(pos.getX()*8) + " Z: " + nf.format(pos.getZ()*8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "X: " + nf.format(pos.getX()*8) + " Z: " + nf.format(pos.getZ()*8))))));
+    public static int executeOverworldCoord(FabricClientCommandSource source, BlockPos... pos ) {
+        BlockPos position;
+        if (pos.length == 0) {
+            position = source.getPlayer().getBlockPos();
+        } else {
+            position = pos[0];
+        }
+        source.getPlayer().sendMessage(Text.literal("Overworld Coord: §aX: " + nf.format(position.getX()*8) + " Z: " + nf.format(position.getZ()*8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "X: " + nf.format(position.getX()*8) + " Z: " + nf.format(position.getZ()*8))))));
         return 1;
     }
 
     public static int executeSbToItem(FabricClientCommandSource source, String numberofsbs) {
-        double sbs = new Expression(getParsedString(numberofsbs)).calculate();
+        double sbs = new Expression(getParsedString(numberofsbs, 1)).calculate();
         double items = sbs * 1728;
-        String message = "Items: " + nf.format(items);
+        String message[] = {"Items: ", nf.format(items)};
         sendMessage(source, message);
         return 1;
     }
@@ -111,7 +133,7 @@ public class CalcCommand {
     public static int executeItemToSb(FabricClientCommandSource source, String numberofitems) {
         double items = new Expression(getParsedString(numberofitems)).calculate();
         double sbs = items / 1728;
-        String message = "Sbs: " + nf.format(sbs);
+        String[] message= {"Sbs: ", nf.format(sbs)};
 
 
         sendMessage(source, message);
@@ -121,7 +143,7 @@ public class CalcCommand {
     public static int executeSecondsToHopperClock(FabricClientCommandSource source, String seconds) {
         double secondsDouble = new Expression(getParsedString(seconds)).calculate();
         double hopperclock = Math.ceil(secondsDouble *1.25);
-        String message = "Hopper Clock Items: " + nf.format(hopperclock);
+        String[] message = {"Hopper Clock Items: ", nf.format(hopperclock)};
         sendMessage(source, message);
         return 1;
     }
@@ -131,38 +153,48 @@ public class CalcCommand {
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {
-            String message = "Repeaters Required: " + nf.format(repeaters) +"\nLast Repeater Tick: "+ nf.format(ticks % 4) ;
+            String[] message = {"Repeaters Required: ", nf.format(repeaters), " \nLast Repeater Tick: ", nf.format(ticks % 4)} ;
             sendMessage(source, message);
         } else {
-            String message = "Repeaters Required: " + nf.format(Math.ceil(ticks/4));
+            String[] message = {"Repeaters Required: ", nf.format(Math.ceil(ticks/4))};
             sendMessage(source, message);
         }
         return 1;
     }
     
-    public static int executeItemToStack(FabricClientCommandSource source, String numberofitems) {
-        double items = new Expression(getParsedString(numberofitems)).calculate();
-        double stacks = Math.floor(items/64);
-        double leftover = items % 64;
-        String message = "Stacks Required: " + nf.format(stacks) + "\nLeftover Items: " + nf.format(leftover);
+    public static int executeItemToStack(FabricClientCommandSource source, String numberofitems, int stackSize) {
+        double items = new Expression(getParsedString(numberofitems, stackSize)).calculate();
+        double stacks = Math.floor(items/stackSize);
+        double leftover = items % stackSize;
+        String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};
         sendMessage(source, message);        
         return 1;
         
     }
 
-    public static int executeStackToItem(FabricClientCommandSource source, String numberofstacks) {
-        double stacks = new Expression(getParsedString(numberofstacks)).calculate();
-        double items = stacks * 64;
-        String message = "Items: " + nf.format(items);
+    public static int executeStackToItem(FabricClientCommandSource source, String numberofstacks, int stackSize) {
+        double stacks = new Expression(getParsedString(numberofstacks, 1)).calculate();
+        double items = stacks * stackSize;
+        String[] message = {"Items: ", nf.format(items)};
         sendMessage(source, message);
         return 1;
     }
 
     public static int executeVariables(FabricClientCommandSource source) {
         String message = """
-                dub: 3456
-                sb: 1728
-                stack: 64
+            Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64:
+                dub: 3456(dynamic)
+                dub64: 3456
+                dub16: 864
+                dub1: 54
+                sb: 1728(dynamic)
+                sb64: 1728
+                sb16: 432
+                sb1: 27
+                stack: 64(dynamic)
+                stack64: 64
+                stack16: 16
+                stack1: 1
                 min: 60
                 hour: 3600
                 """;
@@ -174,110 +206,109 @@ public class CalcCommand {
         var helpMessage = "";
         if (help == "storage") {
             helpMessage = """
-                Storage:
+            §LStorage:§r
                 Given rate in terms of items per hour(can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
-                Usage: /calc storage <itemsperhour>
-                Usage: /calc storage <timesHopperSpeed> <itemsperhour> 
+                §cUsage: /calc storage <itemsperhour>
+                Usage: /calc storage <timesHopperSpeed> <itemsperhour> §f
                     """;
         } else if (help == "nether") {
             helpMessage = """
-                Nether:
+            §LNether:§r
                 Given a block position returns the nether coordinates
-                Usage: /calc nether <x> <y> <z>
+                §cUsage: /calc nether <x> <y> <z>§f
                     """;
         } else if (help == "overworld") {
             helpMessage = """
-                Overworld:
+            §LOverworld:§r
                 Given a block position returns the overworld coordinates
-                Usage: /calc overworld <x> <y> <z>
+                §cUsage: /calc overworld <x> <y> <z>§f
                     """;
         } else if (help == "sbtoitem") {
             helpMessage = """
-                Sb to Item:
-                Given a number of sbs(can be in expression form) returns the number of items
+            §LSb to Item:§r
+                Given a number of sbs (can be in expression form) returns the number of items
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
-                Usage: /calc sbtoitem <numberofsbs>
+                §cUsage: /calc sbtoitem <numberofsbs>§f
                     """;
         } else if (help == "itemtosb") {
             helpMessage = """
-                Item to Sb:
-                Given a number of items(can be in expression form) returns the number of sbs
+            §LItem to Sb:§r
+                Given a number of items (can be in expression form) returns the number of sbs
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
-                Usage: /calc itemtosb <numberofitems>
+                §cUsage: /calc itemtosb <numberofitems>§f
                     """;
         } else if (help == "seconds2hopperclock") {
             helpMessage = """
-                Seconds to Hopper Clock:
-                Given a number of seconds(can be in expression form) returns the number of ticks in a hopper clock
+            §LSeconds to Hopper Clock:§r
+                Given a number of seconds (can be in expression form) returns the number of ticks in a hopper clock
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
-                Usage: /calc seconds2hopperclock <seconds>
+                §cUsage: /calc seconds2hopperclock <seconds>§f
                     """;
         } else if (help == "seconds2repeater") {
             helpMessage = """
-                Seconds to Repeater:
-                Given a number of seconds(can be in expression form) returns the number of repeaters and the last tick of the last repeater
+            §LSeconds to Repeater:§r
+                Given a number of seconds (can be in expression form) returns the number of repeaters and the last tick of the last repeater
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
-                Usage: /calc seconds2repeater <seconds>
+                §cUsage: /calc seconds2repeater <seconds>§f
                     """;
         } else if (help == "itemtostack") {
             helpMessage = """
-                Item to Stack:
-                Given a number of items(can be in expression form) returns the number of stacks and leftover items
+            §LItem to Stack:§r
+                Given a number of items (can be in expression form) returns the number of stacks and leftover items
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
-                Usage: /calc itemtostack <numberofitems>
+                §cUsage: /calc itemtostack <numberofitems>§f
                     """;
         } else if (help == "stacktoitem") {
             helpMessage = """
-                Stack to Item:
-                Given a number of stacks(can be in expression form) returns the number of items
+            §LStack to Item:§r
+                Given a number of stacks (can be in expression form) returns the number of items
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
-                Usage: /calc stacktoitem <numberofstacks>
+                §cUsage: /calc stacktoitem <numberofstacks>§f
                     """;
                 } else {
             helpMessage = """
             Calcmod 
 
-            Basic(no arguments):
-            Functions like a simple calculator but with variables, to see the variables available run /calc variables
-            Usage: /calc <expression>
+            §LBasic(no arguments):§r
+                Functions like a simple calculator but with variables, to see the variables available run /calc variables
+                §cUsage: /calc <expression>§f
             
-            Storage:
-                Given rate in terms of items per hour(can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
-                Usage: /calc storage <itemsperhour>
-                Usage: /calc storage <timesHopperSpeed> <itemsperhour> 
+            §LStorage:§r
+                Given rate in terms of items per hour (can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
+                §cUsage: /calc storage <itemsperhour>
+                Usage: /calc storage <timesHopperSpeed> <itemsperhour>§f
             
-            Nether:
+            §LNether:§r
                 Given a block position returns the nether coordinates
-                Usage: /calc nether <x> <y> <z>
+                §cUsage: /calc nether <x> <y> <z>§f
             
-            Overworld:
+            §LOverworld:§r
                 Given a block position returns the overworld coordinates
-                Usage: /calc overworld <x> <y> <z>
+                §cUsage: /calc overworld <x> <y> <z>§f
             
-            Sb to Item:
-                Given a number of sbs(can be in expression form) returns the number of items
-                Usage: /calc sbtoitem <numberofsbs>
+            §LSb to Item:§r
+                Given a number of sbs (can be in expression form) returns the number of items
+                §cUsage: /calc sbtoitem <numberofsbs>§f
             
-            Item to Sb:
-                Given a number of items(can be in expression form) returns the number of sbs
+            §LItem to Sb:§r
+                Given a number of items (can be in expression form) returns the number of sbs
+                §cUsage: /calc itemtosb <numberofitems>§f
+            
+            §LSeconds to Hopper Clock:§r
+                Given a number of seconds (can be in expression form) returns the number of ticks in a hopper clock
+                §cUsage: /calc secondstohopperclock <seconds>§f
+            
+            §LSeconds to Repeater:§r
+                Given a number of seconds (can be in expression form) returns the number of repeaters and the last tick of the last repeater
+                §cUsage: /calc secondstorepeater <seconds>§f
 
-                Usage: /calc itemtosb <numberofitems>
-            
-            Seconds to Hopper Clock:
-                Given a number of seconds(can be in expression form) returns the number of ticks in a hopper clock
-                Usage: /calc seconds2hopperclock <seconds>
-            
-            Seconds to Repeater:
-                Given a number of seconds(can be in expression form) returns the number of repeaters and the last tick of the last repeater
-                Usage: /calc seconds2repeater <seconds>
+            §LItem to Stack:§r
+                Given a number of items (can be in expression form) returns the number of stacks and leftover items
+                §cUsage: /calc itemtostack <numberofitems>§f
 
-            Item to Stack:
-                Given a number of items(can be in expression form) returns the number of stacks and leftover items
-                Usage: /calc itemtostack <numberofitems>
-
-            Stack to Item:
-                Given a number of stacks(can be in expression form) returns the number of items
-                Usage: /calc stacktoitem <numberofstacks>
+            §LStack to Item:§r
+                Given a number of stacks (can be in expression form) returns the number of items
+                §cUsage: /calc stacktoitem <numberofstacks>§f
                 """;;
         }
 
@@ -285,12 +316,28 @@ public class CalcCommand {
         return 1;
     }
 
-    private static String getParsedString(String in) {
+    private static String getParsedString(String in, Integer... nonstackable) {
+        if (nonstackable.length > 0) {
+        if (nonstackable[0] == 1) {
+            return in.replaceAll("dub", "*54").replaceAll("sb", "*27").replaceAll("stack", "*1").replaceAll("min", "*60").replaceAll("hour", "*3600");
+        } else if (nonstackable[0] == 16) {
+            return in.replaceAll("dub", "*864").replaceAll("sb", "*432").replaceAll("stack", "*16").replaceAll("min", "*60").replaceAll("hour", "*3600");
+        }
+    }
         return in.replaceAll("dub", "*3456").replaceAll("sb", "*1728").replaceAll("stack", "*64").replaceAll("min", "*60").replaceAll("hour", "*3600");
     }
 
-    private static void sendMessage(FabricClientCommandSource source, String message) {
-        source.getPlayer().sendMessage(Text.literal(message+" ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)))));
+    private static void sendMessage(FabricClientCommandSource source, String... message) {
+        var messageText = Text.literal("");
+        for (var i = 0; i < message.length; i++) {
+           if (i % 2 == 0) {
+            messageText.append(Text.literal(message[i]));
+           } else {
+            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+           }
+           
+        }
+        source.getPlayer().sendMessage(messageText.append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.toString().replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
 
