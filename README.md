@@ -1,4 +1,4 @@
-# ChatCalc
+# CalcMod
 Convert overworld to nether coordinates, calculate the rates of your farm, figure out how many hoppers you need in your storage, and more all in one mod
 see a full list of features below:
 
