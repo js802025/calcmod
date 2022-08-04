@@ -40,14 +40,24 @@ public class CalcServerCommand {
         .then(CommandManager.argument("pos", blockPos())
         .executes(ctx -> executeNetherCoord(ctx.getSource(), getBlockPos(ctx, "pos"))))
         .then(CommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "nether"))))
-        .then(CommandManager.literal("overworld").then(CommandManager.argument("pos", blockPos())
+        .then(CommandManager.literal("overworld")
+        .executes(ctx -> executeOverworldCoord(ctx.getSource()))
+        .then(CommandManager.argument("pos", blockPos())
         .executes(ctx -> executeOverworldCoord(ctx.getSource(), getBlockPos(ctx, "pos"))))
         .then(CommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "overworld"))))
         .then(CommandManager.literal("sbtoitem").then(CommandManager.argument("numberofsbs", StringArgumentType.greedyString())
-        .executes(ctx -> executeSbToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofsbs"))))
+        .executes(ctx -> executeSbToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofsbs"), 64)))
+        .then(CommandManager.literal("16s").then(CommandManager.argument("numberofsbs", StringArgumentType.greedyString())
+        .executes(ctx -> executeSbToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofsbs"), 16))))
+        .then(CommandManager.literal("1s").then(CommandManager.argument("numberofsbs", StringArgumentType.greedyString())
+        .executes(ctx -> executeSbToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofsbs"), 1))))
         .then(CommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "sbtoitem"))))
         .then(CommandManager.literal("itemtosb").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"))))
+        .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 64)))
+        .then(CommandManager.literal("16s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 16))))
+        .then(CommandManager.literal("1s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .executes(ctx -> executeItemToSb(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 1))))
         .then(CommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "itemtosb"))))
         .then(CommandManager.literal("secondstohopperclock").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> executeSecondsToHopperClock(ctx.getSource(), StringArgumentType.getString(ctx, "seconds"))))
@@ -69,6 +79,10 @@ public class CalcServerCommand {
         .then(CommandManager.literal("1s").then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> executeStackToItem(ctx.getSource(), StringArgumentType.getString(ctx, "numberofstacks"), 1))))
         .then(CommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "stacktoitem"))))
+        .then(CommandManager.literal("rates").then(CommandManager.argument("numberofitems", StringArgumentType.string())
+        .then(CommandManager.argument("time", StringArgumentType.greedyString())
+        .executes(ctx -> executeRates(ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time")))))
+        .then(CommandManager.literal("help").executes(ctx -> executeHelp(ctx.getSource(), "rates"))))
         .then(CommandManager.literal("variables")
         .executes(ctx -> executeVariables(ctx.getSource())))
 
@@ -106,7 +120,9 @@ public class CalcServerCommand {
         } else {
             position = pos[0];
         }
-        source.getPlayer().sendMessage(Text.literal("Nether Coord: §aX: " + nf.format(position.getX()/8) + " Z: " + nf.format(position.getZ()/8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "X: " + nf.format(position.getX()/8) + " Z: " + nf.format(position.getZ()/8))))));
+        String[] message = {"Nether Coords: ", "X: "+nf.format(position.getX()/8)+" Z: "+nf.format(position.getZ()/8)};
+        sendMessage(source, message);
+        //source.getPlayer().sendMessage(Text.literal("Nether Coord: §aX: " + nf.format(position.getX()/8) + " Z: " + nf.format(position.getZ()/8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "Nether Coord: X: " + nf.format(position.getX()/8) + " Z: " + nf.format(position.getZ()/8))))));
         return 1;
     }
 
@@ -117,21 +133,24 @@ public class CalcServerCommand {
         } else {
             position = pos[0];
         }
-        source.getPlayer().sendMessage(Text.literal("Overworld Coord: §aX: " + nf.format(position.getX()*8) + " Z: " + nf.format(position.getZ()*8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "X: " + nf.format(position.getX()*8) + " Z: " + nf.format(position.getZ()*8))))));
+
+        String[] message = {"Overworld Coords: ", "X: "+nf.format(position.getX()*8)+" Z: "+nf.format(position.getZ()*8)};
+        sendMessage(source, message);
+        //source.getPlayer().sendMessage(Text.literal("Overworld Coord: §aX: " + nf.format(position.getX()*8) + " Z: " + nf.format(position.getZ()*8) + " ").append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "Overworld Coord: X: " + nf.format(position.getX()*8) + " Z: " + nf.format(position.getZ()*8))))));
         return 1;
     }
 
-    public static int executeSbToItem(ServerCommandSource source, String numberofsbs) {
-        double sbs = new Expression(getParsedString(numberofsbs, 1)).calculate();
-        double items = sbs * 1728;
+    public static int executeSbToItem(ServerCommandSource source, String numberofsbs, int stackSize) {
+        double sbs = new Expression(getParsedString(numberofsbs, stackSize)).calculate();
+        double items = sbs * stackSize * 27;
         String message[] = {"Items: ", nf.format(items)};
         sendMessage(source, message);
         return 1;
     }
 
-    public static int executeItemToSb(ServerCommandSource source, String numberofitems) {
-        double items = new Expression(getParsedString(numberofitems)).calculate();
-        double sbs = items / 1728;
+    public static int executeItemToSb(ServerCommandSource source, String numberofitems, int stackSize) {
+        double items = new Expression(getParsedString(numberofitems, stackSize)).calculate();
+        double sbs = items / (stackSize * 27);
         String[] message= {"Sbs: ", nf.format(sbs)};
 
 
@@ -142,8 +161,14 @@ public class CalcServerCommand {
     public static int executeSecondsToHopperClock(ServerCommandSource source, String seconds) {
         double secondsDouble = new Expression(getParsedString(seconds)).calculate();
         double hopperclock = Math.ceil(secondsDouble *1.25);
-        String[] message = {"Hopper Clock Items: ", nf.format(hopperclock)};
+        if (hopperclock > 320) {
+            String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64), " \n§cThis exceeds the maximum items of a hopper."};
+            sendMessage(source, message);
+        } else {
+        String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)};
         sendMessage(source, message);
+        }
+       
         return 1;
     }
 
@@ -179,6 +204,16 @@ public class CalcServerCommand {
         return 1;
     }
 
+    public static int executeRates(ServerCommandSource source, String numberofitems, String time) {
+        double items = new Expression(getParsedString(numberofitems)).calculate();
+        double timeDouble = new Expression(getParsedString(time)).calculate();
+        double itemspersecond = items / timeDouble;
+        double rates = itemspersecond * 3600;
+        String[] message = {"Rates: ", nf.format(rates)};
+        sendMessage(source, message);
+        return 1;
+    }
+
     public static int executeVariables(ServerCommandSource source) {
         String message = """
             Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64:
@@ -206,63 +241,70 @@ public class CalcServerCommand {
         if (help == "storage") {
             helpMessage = """
             §LStorage:§r
-                Given rate in terms of items per hour(can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
+                Given rate in terms of items per hour(can be in expression form) and optionally hopper speed, returns the number of needed sorters and rates in terms of sbs per hour
                 §cUsage: /calc storage <itemsperhour>
                 Usage: /calc storage <timesHopperSpeed> <itemsperhour> §f
                     """;
         } else if (help == "nether") {
             helpMessage = """
             §LNether:§r
-                Given a block position returns the nether coordinates
+                Given a block position, returns the nether coordinates
                 §cUsage: /calc nether <x> <y> <z>§f
                     """;
         } else if (help == "overworld") {
             helpMessage = """
             §LOverworld:§r
-                Given a block position returns the overworld coordinates
+                Given a block position, returns the overworld coordinates
                 §cUsage: /calc overworld <x> <y> <z>§f
                     """;
         } else if (help == "sbtoitem") {
             helpMessage = """
             §LSb to Item:§r
-                Given a number of sbs (can be in expression form) returns the number of items
+                Given a number of sbs (can be in expression form), returns the number of items
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
                 §cUsage: /calc sbtoitem <numberofsbs>§f
                     """;
         } else if (help == "itemtosb") {
             helpMessage = """
             §LItem to Sb:§r
-                Given a number of items (can be in expression form) returns the number of sbs
+                Given a number of items (can be in expression form), returns the number of sbs
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
                 §cUsage: /calc itemtosb <numberofitems>§f
                     """;
         } else if (help == "seconds2hopperclock") {
             helpMessage = """
             §LSeconds to Hopper Clock:§r
-                Given a number of seconds (can be in expression form) returns the number of ticks in a hopper clock
+                Given a number of seconds (can be in expression form), returns the number of ticks in a hopper clock
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
                 §cUsage: /calc seconds2hopperclock <seconds>§f
                     """;
         } else if (help == "seconds2repeater") {
             helpMessage = """
             §LSeconds to Repeater:§r
-                Given a number of seconds (can be in expression form) returns the number of repeaters and the last tick of the last repeater
+                Given a number of seconds (can be in expression form), returns the number of repeaters and the last tick of the last repeater
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
                 §cUsage: /calc seconds2repeater <seconds>§f
                     """;
         } else if (help == "itemtostack") {
             helpMessage = """
             §LItem to Stack:§r
-                Given a number of items (can be in expression form) returns the number of stacks and leftover items
+                Given a number of items (can be in expression form), returns the number of stacks and leftover items
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
                 §cUsage: /calc itemtostack <numberofitems>§f
                     """;
         } else if (help == "stacktoitem") {
             helpMessage = """
             §LStack to Item:§r
-                Given a number of stacks (can be in expression form) returns the number of items
+                Given a number of stacks (can be in expression form), returns the number of items
                 You can include variables in the expression to obtain a list of the variables available run /calc variables
                 §cUsage: /calc stacktoitem <numberofstacks>§f
+                    """;
+         } else if (help == "rates") {
+            helpMessage = """
+            §LRates:§r
+                Given a number of items and afk time in seconds (can be in expression form), returns the number of items per hour
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                §cUsage: /calc rates <numberofitems> <time>§f
                     """;
                 } else {
             helpMessage = """
@@ -273,41 +315,46 @@ public class CalcServerCommand {
                 §cUsage: /calc <expression>§f
             
             §LStorage:§r
-                Given rate in terms of items per hour (can be in expression form) and optionally hopper speed returns the number of needed sorters and rates in terms of sbs per hour
+                Given rate in terms of items per hour (can be in expression form) and optionally hopper speed, returns the number of needed sorters and rates in terms of sbs per hour
                 §cUsage: /calc storage <itemsperhour>
                 Usage: /calc storage <timesHopperSpeed> <itemsperhour>§f
             
             §LNether:§r
-                Given a block position returns the nether coordinates
+                Given a block position, returns the nether coordinates
                 §cUsage: /calc nether <x> <y> <z>§f
             
             §LOverworld:§r
-                Given a block position returns the overworld coordinates
+                Given a block position, returns the overworld coordinates
                 §cUsage: /calc overworld <x> <y> <z>§f
             
             §LSb to Item:§r
-                Given a number of sbs (can be in expression form) returns the number of items
+                Given a number of sbs (can be in expression form), returns the number of items
                 §cUsage: /calc sbtoitem <numberofsbs>§f
             
             §LItem to Sb:§r
-                Given a number of items (can be in expression form) returns the number of sbs
+                Given a number of items (can be in expression form), returns the number of sbs
                 §cUsage: /calc itemtosb <numberofitems>§f
             
             §LSeconds to Hopper Clock:§r
-                Given a number of seconds (can be in expression form) returns the number of ticks in a hopper clock
+                Given a number of seconds (can be in expression form), returns the number of ticks in a hopper clock
                 §cUsage: /calc secondstohopperclock <seconds>§f
             
             §LSeconds to Repeater:§r
-                Given a number of seconds (can be in expression form) returns the number of repeaters and the last tick of the last repeater
+                Given a number of seconds (can be in expression form), returns the number of repeaters and the last tick of the last repeater
                 §cUsage: /calc secondstorepeater <seconds>§f
 
             §LItem to Stack:§r
-                Given a number of items (can be in expression form) returns the number of stacks and leftover items
+                Given a number of items (can be in expression form), returns the number of stacks and leftover items
                 §cUsage: /calc itemtostack <numberofitems>§f
 
             §LStack to Item:§r
-                Given a number of stacks (can be in expression form) returns the number of items
+                Given a number of stacks (can be in expression form), returns the number of items
                 §cUsage: /calc stacktoitem <numberofstacks>§f
+            
+            §LRates:§r
+                Given a number of items and afk time in seconds (can be in expression form), returns the number of items per hour
+                You can include variables in the expression to obtain a list of the variables available run /calc variables
+                §cUsage: /calc rates <numberofitems> <time>§f
                 """;;
         }
 
@@ -318,25 +365,30 @@ public class CalcServerCommand {
     private static String getParsedString(String in, Integer... nonstackable) {
         if (nonstackable.length > 0) {
         if (nonstackable[0] == 1) {
-            return in.replaceAll("dub", "*54").replaceAll("sb", "*27").replaceAll("stack", "*1").replaceAll("min", "*60").replaceAll("hour", "*3600");
+            return in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)");
         } else if (nonstackable[0] == 16) {
-            return in.replaceAll("dub", "*864").replaceAll("sb", "*432").replaceAll("stack", "*16").replaceAll("min", "*60").replaceAll("hour", "*3600");
+           return  in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)");
         }
     }
-        return in.replaceAll("dub", "*3456").replaceAll("sb", "*1728").replaceAll("stack", "*64").replaceAll("min", "*60").replaceAll("hour", "*3600");
+        return in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(3456)").replaceAll("sb", "(1728)").replaceAll("stack", "(64)").replaceAll("min", "(60)").replaceAll("hour", "(3600)");
     }
 
     private static void sendMessage(ServerCommandSource source, String... message) {
         var messageText = Text.literal("");
+        String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
             messageText.append(Text.literal(message[i]));
+            m += message[i];
            } else {
             messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            m += message[i];
            }
            
         }
-        source.getPlayer().sendMessage(messageText.append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.toString().replaceAll("§a", "").replaceAll("§f", ""))))));
+
+        messageText.append(Text.literal(" "));
+        source.getPlayer().sendMessage(messageText.append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
 

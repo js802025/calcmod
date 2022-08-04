@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "CalcMod",
-  "description": "Chat calculator mod with minecraft specific functions and variables.",
+  "description": "A calculator in your chat with shortcuts designed for Minecraft.",
   "authors": [
     "js802025"
   ],
@@ -27,7 +27,7 @@
   "mixins": [
     "calcmod.mixins.json"
   ],
-
+  "licence":"MIT",
   "depends": {
     "fabricloader": ">=0.14.6",
     "fabric": "*",
