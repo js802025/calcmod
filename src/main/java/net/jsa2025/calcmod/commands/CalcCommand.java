@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.math.BlockPos;
 
+import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -96,15 +97,15 @@ public class CalcCommand {
     }
 
     public static int executeBasicCalculation(FabricClientCommandSource source, String expression) {
-        Expression e = new Expression(getParsedString(expression));
-        String[] message = {"Result: ", nf.format(e.calculate())};
+        double result = getParsedExpression(expression);
+        String[] message = {"Result: ", nf.format(result)};
         sendMessage(source, message);
         return 1;
         
     }
 
     public static int executeStorageCalculation(FabricClientCommandSource source, String itemsperhour, int timesHopperSpeed) {
-        double rates = new Expression(getParsedString(itemsperhour)).calculate();
+        double rates = getParsedExpression(itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;
@@ -142,7 +143,7 @@ public class CalcCommand {
     }
 
     public static int executeSbToItem(FabricClientCommandSource source, String numberofsbs, int stackSize) {
-        double sbs = new Expression(getParsedString(numberofsbs, stackSize)).calculate();
+        double sbs = getParsedExpression(numberofsbs, stackSize);
         double items = sbs * stackSize * 27;
         String message[] = {"Items: ", nf.format(items)};
         sendMessage(source, message);
@@ -150,7 +151,7 @@ public class CalcCommand {
     }
 
     public static int executeItemToSb(FabricClientCommandSource source, String numberofitems, int stackSize) {
-        double items = new Expression(getParsedString(numberofitems, stackSize)).calculate();
+        double items = getParsedExpression(numberofitems, stackSize);
         double sbs = items / (stackSize * 27);
         String[] message= {"Sbs: ", nf.format(sbs)};
 
@@ -160,7 +161,7 @@ public class CalcCommand {
     }
 
     public static int executeSecondsToHopperClock(FabricClientCommandSource source, String seconds) {
-        double secondsDouble = new Expression(getParsedString(seconds)).calculate();
+        double secondsDouble = getParsedExpression(seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {
             String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64), " \n§cThis exceeds the maximum items of a hopper."};
@@ -173,7 +174,7 @@ public class CalcCommand {
     }
 
     public static int executeSecondsToRepeater(FabricClientCommandSource source, String seconds) {
-        double secondsDouble = new Expression(getParsedString(seconds)).calculate();
+        double secondsDouble = getParsedExpression(seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {
@@ -187,7 +188,7 @@ public class CalcCommand {
     }
     
     public static int executeItemToStack(FabricClientCommandSource source, String numberofitems, int stackSize) {
-        double items = new Expression(getParsedString(numberofitems, stackSize)).calculate();
+        double items = getParsedExpression(numberofitems, stackSize);
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
         String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};
@@ -197,7 +198,7 @@ public class CalcCommand {
     }
 
     public static int executeStackToItem(FabricClientCommandSource source, String numberofstacks, int stackSize) {
-        double stacks = new Expression(getParsedString(numberofstacks, 1)).calculate();
+        double stacks = getParsedExpression(numberofstacks, 1);
         double items = stacks * stackSize;
         String[] message = {"Items: ", nf.format(items)};
         sendMessage(source, message);
@@ -205,8 +206,8 @@ public class CalcCommand {
     }
 
     public static int executeRates(FabricClientCommandSource source, String numberofitems, String time) {
-        double items = new Expression(getParsedString(numberofitems)).calculate();
-        double timeDouble = new Expression(getParsedString(time)).calculate();
+        double items = getParsedExpression(numberofitems);
+        double timeDouble = getParsedExpression(time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         String[] message = {"Rates: ", nf.format(rates)};
@@ -362,15 +363,15 @@ public class CalcCommand {
         return 1;
     }
 
-    private static String getParsedString(String in, Integer... nonstackable) {
+    private static double getParsedExpression(String in, Integer... nonstackable) {
         if (nonstackable.length > 0) {
             if (nonstackable[0] == 1) {
-                return in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)");
+            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)")).calculate();
             } else if (nonstackable[0] == 16) {
-               return  in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)");
+               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)")).calculate();
             }
         }
-            return in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(3456)").replaceAll("sb", "(1728)").replaceAll("stack", "(64)").replaceAll("min", "(60)").replaceAll("hour", "(3600)");
+            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(3456)").replaceAll("sb", "(1728)").replaceAll("stack", "(64)").replaceAll("min", "(60)").replaceAll("hour", "(3600)")).calculate();
         }
 
     private static void sendMessage(FabricClientCommandSource source, String... message) {
