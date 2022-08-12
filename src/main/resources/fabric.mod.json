@@ -18,15 +18,12 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "net.jsa2025.calcmod.calcmod"
+      "net.jsa2025.calcmod.CalcMod"
     ],
     "server": [
       "net.jsa2025.calcmod.ServerCalcMod"
     ]
   },
-  "mixins": [
-    "calcmod.mixins.json"
-  ],
   "license":"MIT",
   "depends": {
     "fabricloader": ">=0.14.6",
