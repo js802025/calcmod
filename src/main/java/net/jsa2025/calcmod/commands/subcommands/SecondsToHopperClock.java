@@ -66,7 +66,6 @@ public class SecondsToHopperClock {
     public static String helpMessage = """
         §LSeconds to Hopper Clock:§r
             Given a number of seconds (can be in expression form), returns the number of ticks in a hopper clock
-            You can include variables in the expression to obtain a list of the variables available run /calc variables
             §cUsage: /calc secondstohopperclock <seconds>§f
                 """;
 

@@ -67,7 +67,6 @@ public class SecondsToRepeater {
     public static String helpMessage = """
         §LSeconds to Repeater:§r
             Given a number of seconds (can be in expression form), returns the number of repeaters and the last tick of the last repeater
-            You can include variables in the expression to obtain a list of the variables available run /calc variables
             §cUsage: /calc secondstorepeater <seconds>§f
                 """;
 }

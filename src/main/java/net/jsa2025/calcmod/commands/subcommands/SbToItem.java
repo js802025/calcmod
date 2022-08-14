@@ -86,7 +86,6 @@ public class SbToItem {
     public static String helpMessage = """
         §LSb to Item:§r
             Given a number of sbs (can be in expression form), returns the number of items
-            You can include variables in the expression to obtain a list of the variables available run /calc variables
             §cUsage: /calc sbtoitem <numberofsbs>§f
                 """;
     

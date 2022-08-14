@@ -86,7 +86,6 @@ public class ItemToStack {
     public static String helpMessage = """
         §LItem to Stack:§r
             Given a number of items (can be in expression form), returns the number of stacks and leftover items
-            You can include variables in the expression to obtain a list of the variables available run /calc variables
             §cUsage: /calc itemtostack <numberofitems>§f
                 """;
 }

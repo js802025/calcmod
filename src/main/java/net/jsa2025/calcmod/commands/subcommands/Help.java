@@ -56,6 +56,7 @@ public class Help {
         help.put("stacktoitem", StackToItem.helpMessage);
         help.put("rates", Rates.helpMessage);
         help.put("allaystorage", AllayStorage.helpMessage);
+        help.put("craft", Craft.helpMessage);
         help.put("random", Random.helpMessage);
         if (hterm.length == 0) {
             String helpMenu = "";

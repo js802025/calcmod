@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import net.jsa2025.calcmod.commands.subcommands.Basic;
+import net.jsa2025.calcmod.commands.subcommands.Craft;
 import  net.jsa2025.calcmod.commands.subcommands.Storage;
 import net.jsa2025.calcmod.commands.subcommands.Nether;
 import net.jsa2025.calcmod.commands.subcommands.Overworld;
@@ -54,6 +55,7 @@ public class CalcCommand {
         command = Rates.register(command);
         command = AllayStorage.register(command);
         command = Random.register(command);
+        command = Craft.register(command, registry);
         command = Variables.register(command);
         command = Help.register(command);
         dispacther.register(command);
@@ -75,6 +77,7 @@ public class CalcCommand {
         command = Rates.registerServer(command);
         command = AllayStorage.registerServer(command);
         command = Random.registerServer(command);
+        command = Craft.registerServer(command, registry);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
         dispatcher.register(command);
