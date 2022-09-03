@@ -72,7 +72,9 @@ public class Craft {
     public static String[] execute(Recipe item, String amount) {    
 
         var is = item.getIngredients();
-        int a = (int) Math.floor(CalcCommand.getParsedExpression(amount));
+        var outputSize = item.getOutput().getCount();
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(amount));
+        int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
         for (Object i : is) {
@@ -114,7 +116,7 @@ public class Craft {
                 message.add("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+a+" "+item.getOutput().getName().getString()+"s: \n"+message.get(0));
+        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput().getName().getString()+"s: \n"+message.get(0));
 
         
         return message.toArray(new String[message.size()]);
