@@ -58,6 +58,7 @@ public class Help {
         help.put("allaystorage", AllayStorage.helpMessage);
         help.put("craft", Craft.helpMessage);
         help.put("random", Random.helpMessage);
+        help.put("signaltoitems", SignalToItems.helpMessage);
         if (hterm.length == 0) {
             String helpMenu = "";
             for (Map.Entry<String, String> me :

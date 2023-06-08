@@ -17,6 +17,7 @@ import net.jsa2025.calcmod.commands.subcommands.SbToItem;
 import net.jsa2025.calcmod.commands.subcommands.ItemToSb;
 import net.jsa2025.calcmod.commands.subcommands.SecondsToHopperClock;
 import net.jsa2025.calcmod.commands.subcommands.SecondsToRepeater;
+import net.jsa2025.calcmod.commands.subcommands.SignalToItems;
 import net.jsa2025.calcmod.commands.subcommands.ItemToStack;
 import net.jsa2025.calcmod.commands.subcommands.StackToItem;
 import net.jsa2025.calcmod.commands.subcommands.Rates;
@@ -39,7 +40,7 @@ import java.util.Locale;
 
 public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
-    static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US")); 
+    static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     public static void register (CommandDispatcher<FabricClientCommandSource> dispacther, CommandRegistryAccess registry) {
         LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
         command = Basic.register(command);
@@ -56,6 +57,7 @@ public class CalcCommand {
         command = AllayStorage.register(command);
         command = Random.register(command);
         command = Craft.register(command, registry);
+        command = SignalToItems.register(command);
         command = Variables.register(command);
         command = Help.register(command);
         dispacther.register(command);
@@ -78,6 +80,7 @@ public class CalcCommand {
         command = AllayStorage.registerServer(command);
         command = Random.registerServer(command);
         command = Craft.registerServer(command, registry);
+        command = SignalToItems.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
         dispatcher.register(command);
@@ -95,6 +98,14 @@ public class CalcCommand {
         }
             return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(3456)").replaceAll("sb", "(1728)").replaceAll("stack", "(64)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll(",", "")).calculate();
         }
+
+    public static String getParsedStack(double items, int stacksize) {
+        if (items >= 64) {
+            return "Stacks: "+nf.format(Math.floor(items / stacksize))+", Items: "+ nf.format(items % stacksize);
+        } else {
+            return nf.format(items);
+        }
+    }
 
     public static void sendMessage(FabricClientCommandSource source, String[] message, Boolean... isHelpMessage) {
         var messageText = Text.literal("");
