@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -23,7 +24,7 @@ public class SecondsToRepeater {
         command
         .then(ClientCommandManager.literal("secondstorepeater").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "seconds"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
@@ -39,7 +40,7 @@ public class SecondsToRepeater {
         command
         .then(CommandManager.literal("secondstorepeater").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "seconds"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
@@ -51,8 +52,8 @@ public class SecondsToRepeater {
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), seconds);
+    public static String[] execute(PlayerEntity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player.getBlockPos(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {

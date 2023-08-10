@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -25,7 +26,7 @@ public class Basic {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "expression"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -35,15 +36,15 @@ public class Basic {
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
         .then(CommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "expression"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, String expression) {
-        double result = CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), expression);
+    public static String[] execute(PlayerEntity player, String expression) {
+        double result = CalcCommand.getParsedExpression(player.getBlockPos(), expression);
         String[] message = {"Result: ", nf.format(result)};
         return message;
     }

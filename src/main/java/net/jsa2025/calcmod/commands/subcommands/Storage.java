@@ -13,6 +13,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -24,19 +25,19 @@ public class Storage {
         command
         .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })
         .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
         .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
@@ -52,19 +53,19 @@ public class Storage {
         command
         .then(CommandManager.literal("storage").then(CommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })
         .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
         .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
@@ -76,8 +77,8 @@ public class Storage {
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, String itemsperhour, int timesHopperSpeed) {
-        double rates = CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), itemsperhour);
+    public static String[] execute(PlayerEntity player, String itemsperhour, int timesHopperSpeed) {
+        double rates = CalcCommand.getParsedExpression(player.getBlockPos(), itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;

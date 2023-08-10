@@ -23,7 +23,7 @@ public class SecondsToHopperClock {
         command
         .then(ClientCommandManager.literal("secondstohopperclock").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "seconds"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
@@ -39,7 +39,7 @@ public class SecondsToHopperClock {
         command
         .then(CommandManager.literal("secondstohopperclock").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "seconds"));
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
@@ -51,8 +51,8 @@ public class SecondsToHopperClock {
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), seconds);
+    public static String[] execute(PlayerEntity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player.getBlockPos(), seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {
             String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64), " \n§cThis exceeds the maximum items of a hopper."};
