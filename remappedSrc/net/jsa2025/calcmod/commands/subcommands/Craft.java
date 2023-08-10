@@ -39,7 +39,7 @@ public class Craft {
         .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
         .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
+            String[] message = execute((ServerCommandSource) ctx.getSource(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
@@ -56,7 +56,7 @@ public class Craft {
         .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(CommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
+            String[] message = execute((ServerCommandSource) ctx.getSource(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
@@ -69,11 +69,11 @@ public class Craft {
     }
 
 
-    public static String[] execute(Recipe item, String amount) {    
+    public static String[] execute(ServerCommandSource commandSource, Recipe item, String amount) {    
 
         var is = item.getIngredients();
         var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();

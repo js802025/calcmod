@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import net.minecraft.command.argument.BlockPosArgumentType;
-
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 

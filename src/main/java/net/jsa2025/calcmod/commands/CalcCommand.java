@@ -29,6 +29,8 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.server.command.CommandManager;
@@ -41,7 +43,7 @@ import java.util.Locale;
 public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    public static void register (CommandDispatcher<FabricClientCommandSource> dispacther, CommandRegistryAccess registry) {
+    public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
         LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
         command = Basic.register(command);
         command = Storage.register(command);
@@ -60,7 +62,7 @@ public class CalcCommand {
         command = SignalToItems.register(command);
         command = Variables.register(command);
         command = Help.register(command);
-        dispacther.register(command);
+        dispatcher.register(command);
 
     }
 
@@ -83,20 +85,21 @@ public class CalcCommand {
         command = SignalToItems.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
+
         dispatcher.register(command);
     }
 
    
 
-    public static double getParsedExpression(String in, Integer... nonstackable) {
+    public static double getParsedExpression(BlockPos playerPos, String in,Integer... nonstackable) {
         if (nonstackable.length > 0) {
             if (nonstackable[0] == 1) {
-            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll(",", "")).calculate();
+            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
             } else if (nonstackable[0] == 16) {
-               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll(",", "")).calculate();
+               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
             }
         }
-            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(3456)").replaceAll("sb", "(1728)").replaceAll("stack", "(64)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll(",", "")).calculate();
+            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(3456)").replaceAll("sb", "(1728)").replaceAll("stack", "(64)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
         }
 
     public static String getParsedStack(double items, int stacksize) {

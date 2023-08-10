@@ -34,7 +34,7 @@ public class SignalToItems {
         .then(ClientCommandManager.literal("signaltoitems")
         .then(ClientCommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
         .then(ClientCommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))).then(ClientCommandManager.literal("help").executes(ctx -> {
@@ -51,7 +51,7 @@ public class SignalToItems {
         .then(CommandManager.literal("signaltoitems")
         .then(CommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
         .then(CommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))).then(ClientCommandManager.literal("help").executes(ctx -> {
@@ -63,8 +63,8 @@ public class SignalToItems {
         return command;
     }
 
-    public static String[] execute(String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(signal);
+    public static String[] execute(ServerCommandSource commandSource, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), signal);
         var containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;

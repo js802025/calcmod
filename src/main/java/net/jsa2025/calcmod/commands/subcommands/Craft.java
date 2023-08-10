@@ -22,7 +22,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -30,7 +29,6 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.DynamicRegistryManager.ImmutableImpl;
 
 
 public class Craft {
@@ -42,7 +40,7 @@ public class Craft {
         .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
         .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            String[] message = execute((ServerCommandSource) ctx.getSource(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
@@ -59,7 +57,7 @@ public class Craft {
         .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(CommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            String[] message = execute((ServerCommandSource) ctx.getSource(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
@@ -72,11 +70,11 @@ public class Craft {
     }
 
 
-    public static String[] execute(Recipe item, String amount, DynamicRegistryManager registryManager) {    
+    public static String[] execute(ServerCommandSource commandSource, Recipe item, String amount, DynamicRegistryManager registryManager) {    
 
         var is = item.getIngredients();
         var outputSize = item.getOutput(registryManager).getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
