@@ -25,7 +25,7 @@ public class Help {
         command
         .then(ClientCommandManager.literal("help")
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), );
+            String[] message = execute(ctx.getSource().getPlayer(), );
             CalcCommand.sendMessage(ctx.getSource(), message, true);
             return 1;
         }));
@@ -36,14 +36,14 @@ public class Help {
         command
         .then(CommandManager.literal("help")
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), );
+            String[] message = execute(ctx.getSource().getPlayer(), );
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, String... hterm) {
+    public static String[] execute(PlayerEntity player, String... hterm) {
         Map<String, String> help = new LinkedHashMap<String, String>();
         help.put("storage", Storage.helpMessage);
         help.put("nether", Nether.helpMessage);

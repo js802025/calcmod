@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -23,19 +24,19 @@ public class ItemToStack {
         command
         .then(ClientCommandManager.literal("itemtostack").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 64);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
         .then(ClientCommandManager.literal("16s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 16);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 16);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
         .then(ClientCommandManager.literal("1s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
@@ -51,19 +52,19 @@ public class ItemToStack {
         command
         .then(CommandManager.literal("itemtostack").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
         .then(CommandManager.literal("16s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 16);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
         .then(CommandManager.literal("1s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
@@ -75,8 +76,8 @@ public class ItemToStack {
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), numberofitems, stackSize);
+    public static String[] execute(PlayerEntity player, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(player.getBlockPos(), numberofitems, stackSize);
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
         String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};      

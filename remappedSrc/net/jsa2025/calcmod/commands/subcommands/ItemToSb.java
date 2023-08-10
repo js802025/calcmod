@@ -23,19 +23,19 @@ public class ItemToSb {
         command
         .then(ClientCommandManager.literal("itemtosb").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 64);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
         .then(ClientCommandManager.literal("16s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 16);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 16);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
         .then(ClientCommandManager.literal("1s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
@@ -51,19 +51,19 @@ public class ItemToSb {
         command
         .then(CommandManager.literal("itemtosb").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
         .then(CommandManager.literal("16s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 16);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
         .then(CommandManager.literal("1s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "numberofitems"), 1);
+            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
@@ -75,8 +75,8 @@ public class ItemToSb {
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(commandSource.getPlayer().getBlockPos(), numberofitems, stackSize);
+    public static String[] execute(PlayerEntity player, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(player.getBlockPos(), numberofitems, stackSize);
         double sbs = items / (stackSize * 27);
         String[] message= {"Sbs: ", nf.format(sbs)};
 

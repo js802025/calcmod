@@ -25,13 +25,13 @@ public class Nether {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommandManager.literal("nether").executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), ctx.getSource().getPlayer().getBlockPos());
+            String[] message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }).then(ClientCommandManager.argument("pos", CBlockPosArgumentType.blockPos())
         .executes((ctx) -> {
             BlockPos pos = CBlockPosArgumentType.getCBlockPos(ctx, "pos");
-            String[] message = execute((ServerCommandSource) ctx.getSource(), pos);
+            String[] message = execute(ctx.getSource().getPlayer(), pos);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })).then(ClientCommandManager.literal("help").executes((ctx) -> {
@@ -45,13 +45,13 @@ public class Nether {
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
         .then(CommandManager.literal("nether").executes((ctx) -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(), ctx.getSource().getPlayer().getBlockPos());
+            String[] message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
         .executes((ctx) -> {
             BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
-            String[] message = execute((ServerCommandSource) ctx.getSource(), pos);
+            String[] message = execute(ctx.getSource().getPlayer(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })).then(CommandManager.literal("help").executes((ctx) -> {
@@ -62,7 +62,7 @@ public class Nether {
         return command;
     }
 
-    public static String[] execute(ServerCommandSource commandSource, BlockPos... pos) {
+    public static String[] execute(PlayerEntity player, BlockPos... pos) {
         BlockPos position;
         position = pos[0];
         String[] message = {"Nether Coords: ", "X: "+nf.format(position.getX()/8)+" Z: "+nf.format(position.getZ()/8)};
