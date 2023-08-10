@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
+
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import dev.xpple.clientarguments.arguments.CBlockPosArgumentType;
@@ -12,18 +13,18 @@ import net.minecraft.util.math.BlockPos;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
-
 import net.minecraft.command.argument.BlockPosArgumentType;
+
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
-public class Overworld {
+public class Nether {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("overworld").executes((ctx) -> {
+        .then(ClientCommandManager.literal("nether").executes((ctx) -> {
             String[] message = execute((ServerCommandSource) ctx.getSource(), ctx.getSource().getPlayer().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -34,7 +35,7 @@ public class Overworld {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })).then(ClientCommandManager.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("overworld");
+            String[] message = Help.execute("nether");
             CalcCommand.sendMessage(ctx.getSource(), message, true);
             return 1;
         })));
@@ -43,7 +44,7 @@ public class Overworld {
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
-        .then(CommandManager.literal("overworld").executes((ctx) -> {
+        .then(CommandManager.literal("nether").executes((ctx) -> {
             String[] message = execute((ServerCommandSource) ctx.getSource(), ctx.getSource().getPlayer().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
@@ -54,7 +55,7 @@ public class Overworld {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })).then(CommandManager.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("overworld");
+            String[] message = Help.execute("nether");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
             return 1;
         })));
@@ -64,17 +65,13 @@ public class Overworld {
     public static String[] execute(ServerCommandSource commandSource, BlockPos... pos) {
         BlockPos position;
         position = pos[0];
-        
-
-        String[] message = {"Overworld Coords: ", "X: "+nf.format(position.getX()*8)+" Z: "+nf.format(position.getZ()*8)};
+        String[] message = {"Nether Coords: ", "X: "+nf.format(position.getX()/8)+" Z: "+nf.format(position.getZ()/8)};
         return message;
     }
 
     public static String helpMessage = """
-        §LOverworld:§r
-            Given a block position in the nether, returns the overworld coordinates
-            §cUsage: /calc overworld <x> <y> <z>§f
+        §LNether:§r
+            Given a block position in the overworld, returns the nether coordinates
+            §cUsage: /calc nether <x> <y> <z>§f
                 """;
-
-
 }

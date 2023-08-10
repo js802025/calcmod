@@ -21,14 +21,14 @@
       "net.jsa2025.calcmod.CalcMod"
     ],
     "server": [
-      "net.jsa2025.calcmod.ServerCalcMod"
+      "net.jsa2025.calcmod.CalcMod"
     ]
   },
   "license":"MIT",
   "depends": {
     "fabricloader": ">=0.14.6",
     "fabric": "*",
-    "minecraft": "~1.19",
+    "minecraft": "~1.20",
     "java": ">=17"
   },
   "suggests": {

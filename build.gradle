@@ -35,8 +35,8 @@ dependencies {
 	modImplementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
 	include 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
 
-	modImplementation 'dev.xpple:clientarguments:1.4.1'
-	include 'dev.xpple:clientarguments:1.4.1'
+	modImplementation 'dev.xpple:clientarguments:1.5.1'
+	include 'dev.xpple:clientarguments:1.5.1'
 
 
 	// include 'com.ibm.icu:icu4j:71.1'

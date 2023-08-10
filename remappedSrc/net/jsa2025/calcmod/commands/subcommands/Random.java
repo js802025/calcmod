@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 
+
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -51,7 +52,7 @@ public class Random {
             return 1;
         }))
         .then(CommandManager.literal("minmax").then(CommandManager.argument("min", StringArgumentType.string()).then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute((ServerCommandSource) ctx.getSource(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+            String[] message = execute((ServerCommandSource) ctx.getSource(), StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))))
