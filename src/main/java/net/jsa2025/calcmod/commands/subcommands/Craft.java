@@ -119,16 +119,17 @@ public class Craft {
                 message.add("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
+        message.set(0,
+                "Ingredients needed for crafting §b"+nf.format(inputAmount)+"§f "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
 
         
         return message.toArray(new String[message.size()]);
     }
 
     public static String helpMessage = """
-        §LCraft:§r
-        Given an item and the quanity you want to craft of it, returns the amounts of the ingredients needed to craft the quantity of the item.
-        §cUsage: /calc craft <item> <amount>§f
+        §b§LCraft:§r§f
+        Given a desired item and the quantity to be crafted §7§o(can be in expression form)§r§f, returns the amounts of the items needed to craft the amount of the desired item.
+            §eUsage: /calc craft <item> <amount>§f
             """;
     
 }

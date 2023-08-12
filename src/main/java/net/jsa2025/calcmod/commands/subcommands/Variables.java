@@ -42,8 +42,9 @@ public class Variables {
 
     public static String[] execute() {
         String message = """
-            Variables can be used inside equations in any number field. They act as shortcuts instead of having to remember that “a double chest full of 16 stackable items is 864.”
-            If no stack size is given, variables default to the stack size of each command
+            §bVariables§f can be used inside equations in any number field. They act as shortcuts instead of having to remember that “a double chest full of 16 stackable items is 864.”
+            If no stack size is given, variables default to the stack size of each command.
+            
                 dub: 3456 (default)
                 dub64: 3456
                 dub16: 864

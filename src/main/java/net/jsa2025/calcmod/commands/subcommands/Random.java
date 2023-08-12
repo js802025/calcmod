@@ -81,9 +81,9 @@ public class Random {
     }
 
     public static String helpMessage = """
-        §LRandom:§r
-            Given a min & max value, returns a random number between 0 and the max value.
-            §cUsage: /calc random <max>§f
+        §b§LRandom:§r§f
+            Given a maximum and/or minimum value, returns a random number between those values §7(inclusive)§r. If just a maximum value is entered, picks a random number from 0 to the max value §7(inclusive)§r.
+            §eUsage: /calc random <max>§f
             """;
     
 }
