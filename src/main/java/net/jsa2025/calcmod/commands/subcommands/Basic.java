@@ -1,10 +1,9 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.jsa2025.calcmod.commands.CalcCommand;

@@ -2,8 +2,8 @@ package net.jsa2025.calcmod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ public class CalcMod implements DedicatedServerModInitializer, ClientModInitiali
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		ClientCommandRegistrationCallback.EVENT.register(CalcCommand::register);
+		ClientCommandManager.DISPATCHER.register(CalcCommand.register());
 		
 	}
 	@Override

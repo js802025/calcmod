@@ -4,9 +4,8 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.jsa2025.calcmod.commands.CalcCommand;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -25,7 +24,7 @@ public class Help {
         command
         .then(ClientCommandManager.literal("help")
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), );
+            String[] message = execute();
             CalcCommand.sendMessage(ctx.getSource(), message, true);
             return 1;
         }));
@@ -36,14 +35,14 @@ public class Help {
         command
         .then(CommandManager.literal("help")
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), );
+            String[] message = execute();
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String... hterm) {
+    public static String[] execute(String... hterm) {
         Map<String, String> help = new LinkedHashMap<String, String>();
         help.put("storage", Storage.helpMessage);
         help.put("nether", Nether.helpMessage);
