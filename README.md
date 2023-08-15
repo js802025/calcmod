@@ -1,13 +1,21 @@
 
-![CalcMod Logo](https://i.ibb.co/d4SNFmx/calcss.png)
+[![CalcMod Logo](https://i.ibb.co/gWjwWXv/calcmodsmall.png)](https://letmegooglethat.com/?q=a+calculator+in+your+chat+with+shortcuts+designed+for+minecraft!!!!!!!!!!!!!!!!!!!!!!)  [![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/github_vector.svg)](https://github.com/js802025/calcmod)  [![curseforge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/curseforge_vector.svg) 
+](https://www.curseforge.com/minecraft/mc-mods/calcmod) [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/modrinth_vector.svg)](https://modrinth.com/mod/calcmod)
 
 
-A handy calculator in your Minecraft chat with features to determine farm rates, generate random numbers, convert between Overworld and Nether coordinates, and a bunch of other nerdy things.
+<br>
+
+A calculator in your Minecraft chat with features to determine farm rates, generate random numbers, convert between Overworld and Nether coordinates, and a bunch of other nerdy things.
 
 
-Example: ```/calc craft piston 3 sb```  
-![Craft feature example](https://i.ibb.co/2yyZT55/final.png)
+<br>  
 
+
+| /calc craft piston 3 sb                                                                            |
+|----------------------------------------------------------------------------------------------------|
+| [![Craft feature example](https://i.ibb.co/2yyZT55/final.png)](https://i.ibb.co/6Yw0NsC/giphy.gif) |
+
+<i>Click <font color=#55ff55>any</font> green text to copy it to your clipboard!</i>
 
 ___
 
@@ -27,7 +35,7 @@ Functions like a simple calculator with some handy variables. To see a list of v
 <details>
 <summary>Storage Utils</summary>
 
-Calculates the number of needed item sorters given a rate of items per hour *(can be in expression form)*. Additional input for multiple times hopper speed sorters, and a separate command for Allay based non stackable sorters.
+Calculates the number of needed item sorters given a rate of items per hour *(can be in expression form)*. Additional input for multiple times hopper speed sorters, and a separate command for Allay based non-stackable sorters.
 
 >Usage: ```/calc storage <itemsperhour>```  
 >Usage: ```/calc storage <timesHopperSpeed> <itemsperhour> ```  
@@ -139,22 +147,22 @@ If no stack size is given, variables default to the stack size of each command
 <details>
 <summary>List of all variables</summary>
 
-| **Name** | **Value**     |
-|----------|---------------|
-| dub      | 3456 (default)|
-| dub64    | 3456          |
-| dub16    | 864           |
-| dub1     | 54            |
-| sb       | 1728 (default)|
-| sb64     | 1728          |
-| sb16     | 432           |
-| sb1      | 27            |
-| stack    | 64 (default)  |
-| stack64  | 64            |
-| stack16  | 16            |
-| stack1   | 1             |
-| min      | 60            |
-| hour     | 3600          |
+| **Name** | **Value**      |
+|----------|----------------|
+| dub      | 3456 (default) |
+| dub64    | 3456           |
+| dub16    | 864            |
+| dub1     | 54             |
+| sb       | 1728 (default) |
+| sb64     | 1728           |
+| sb16     | 432            |
+| sb1      | 27             |
+| stack    | 64 (default)   |
+| stack64  | 64             |
+| stack16  | 16             |
+| stack1   | 1              |
+| min      | 60             |
+| hour     | 3600           |
 </details>
 
-</br>
+<br>

@@ -81,7 +81,11 @@ public class Storage {
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;
-        String[] message = {"Required Sorters at "+timesHopperSpeed+"xHopper Speed(9000/h): ", nf.format(sorters), " \nSbs per hour: ", nf.format(sbsperhour)};
+        String[] message =
+                {"Required sorters at "+nf.format(timesHopperSpeed)+"x hopper speed ("+nf.format(timesHopperSpeed*9000)+
+                " items/hr): ", nf.format(sorters),
+                " " +
+                "\nShulker boxes per hour: ", nf.format(sbsperhour)};
         
         return message;
     }
