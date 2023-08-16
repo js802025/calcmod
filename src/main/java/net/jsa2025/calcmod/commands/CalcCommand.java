@@ -38,6 +38,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 
 
+import java.util.HashMap;
 import java.util.Locale;
 
 public class CalcCommand {
@@ -92,14 +93,40 @@ public class CalcCommand {
    
 
     public static double getParsedExpression(BlockPos playerPos, String in,Integer... nonstackable) {
-        if (nonstackable.length > 0) {
-            if (nonstackable[0] == 1) {
-            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
-            } else if (nonstackable[0] == 16) {
-               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
-            }
+        int stackSize;
+        if (nonstackable.length == 0) stackSize = 64;
+        else stackSize = nonstackable[0];
+        HashMap<String, Double> vars = new HashMap<>();
+        vars.put("dub64", 3456.0);
+        vars.put("dub16", 864.0);
+        vars.put("dub1", 54.0);
+        vars.put("sb64", 1728.0);
+        vars.put("sb16", 432.0);
+        vars.put("sb1", 27.0);
+        vars.put("stack64", 64.0);
+        vars.put("stack16", 16.0);
+        vars.put("stack1", 1.0);
+        vars.put("min", 60.0);
+        vars.put("hour", 3600.0);
+        vars.put("x", (double)playerPos.getX());
+        vars.put("y", (double) playerPos.getX());
+        vars.put("z", (double) playerPos.getZ());
+        vars.put("dub", vars.get("dub"+ stackSize));
+        vars.put("sb", vars.get("sb"+stackSize));
+        vars.put("stack", vars.get("stack"+stackSize));
+        String withVars = in;
+
+        for (String key : vars.keySet()) {
+            withVars = withVars.replaceAll(key, "("+vars.get(key)+")");
         }
-            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(3456)").replaceAll("sb", "(1728)").replaceAll("stack", "(64)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
+//        if (nonstackable.length > 0) {
+//            if (nonstackable[0] == 1) {
+//            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
+//            } else if (nonstackable[0] == 16) {
+//               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
+//            }
+//        }
+            return new Expression(withVars).calculate();
         }
 
     public static String getParsedStack(double items, int stacksize) {
