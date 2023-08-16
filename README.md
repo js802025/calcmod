@@ -133,7 +133,7 @@ Given a number of seconds *(can be in expression form)*, returns the number of i
 
 Given a number of seconds *(can be in expression form)*, returns the number of repeaters and their delay.
 
-> Usage: ```/calc secondstorepeter <seconds>```
+> Usage: ```/calc secondstorepeater <seconds>```
 </details>
 
 ---
