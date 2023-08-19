@@ -45,7 +45,7 @@ public class Basic {
 
     public static String[] execute(PlayerEntity player, String expression) {
         double result = CalcCommand.getParsedExpression(player.getBlockPos(), expression);
-        String[] message = {"Result: ", nf.format(result)};
+        String[] message = {expression+" = ", nf.format(result)};
         return message;
     }
 }
