@@ -58,6 +58,7 @@ public class Piglin {
                     CalcCommand.sendMessageServer(ctx.getSource(), message, true);
                     return 1;
                 })));
+      return command;
     }
 
     public static String[] execute(PlayerEntity player, Integer gold, String item) {
