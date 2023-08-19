@@ -3,24 +3,14 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import dev.xpple.clientarguments.arguments.CBlockPosArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
+import net.jsa2025.calcmod.commands.arguments.BarterSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.CBarterSuggestionProvider;
-import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
-
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class Piglin {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
@@ -43,22 +33,21 @@ public class Piglin {
     }
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-//        command
-//                .then(CommandManager.literal("nether").executes((ctx) -> {
-//                    String[] message = execute(ctx.getSource().getPlayer().getBlockPos());
-//                    CalcCommand.sendMessageServer(ctx.getSource(), message);
-//                    return 1;
-//                }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
-//                        .executes((ctx) -> {
-//                            BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
-//                            String[] message = execute(pos);
-//                            CalcCommand.sendMessageServer(ctx.getSource(), message);
-//                            return 1;
-//                        })).then(CommandManager.literal("help").executes((ctx) -> {
-//                    String[] message = Help.execute("nether");
-//                    CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-//                    return 1;
-//                })));
+        command
+                .then(CommandManager.literal("piglin")
+                        .then(CommandManager.argument("gold", IntegerArgumentType.integer())
+                                .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
+                                        .executes((ctx) -> {
+                                            Integer gold = IntegerArgumentType.getInteger(ctx, "gold");
+                                            String item = StringArgumentType.getString(ctx, "item");
+                                            String[] message = execute(ctx.getSource().getPlayer(), gold, item);
+                                            CalcCommand.sendMessageServer(ctx.getSource(), message);
+                                            return 1;
+                                        }))).then(CommandManager.literal("help").executes((ctx) -> {
+                            String[] message = Help.execute("nether");
+                            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+                            return 1;
+                        })));
         return command;
     }
 
