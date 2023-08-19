@@ -83,14 +83,14 @@ public class Craft {
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
         for (Object i : is) {
             Ingredient ingredient = (Ingredient) i;
-            if (ingredient.getMatchingStacks().length > 0) {
-                if (ingredients.containsKey(ingredient.getMatchingStacks()[0].getName().getString())) {
+            if (ingredient.getMatchingStacksClient().length > 0) {
+                if (ingredients.containsKey(ingredient.getMatchingStacksClient()[0].getName().getString())) {
                     
 
-                    ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), ingredients.get(ingredient.getMatchingStacks()[0].getName().getString()) + a );
+                    ingredients.put(ingredient.getMatchingStacksClient()[0].getName().getString(), ingredients.get(ingredient.getMatchingStacksClient()[0].getName().getString()) + a );
                 } else {
-                    ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), a);
-                    ingredientsStacks.put(ingredient.getMatchingStacks()[0].getName().getString(), ingredient.getMatchingStacks()[0]);
+                    ingredients.put(ingredient.getMatchingStacksClient()[0].getName().getString(), a);
+                    ingredientsStacks.put(ingredient.getMatchingStacksClient()[0].getName().getString(), ingredient.getMatchingStacksClient()[0]);
                 }
                 
             //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
