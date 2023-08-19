@@ -12,7 +12,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class Piglin {
+
+    static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
                 .then(ClientCommandManager.literal("piglin")
@@ -53,7 +58,7 @@ public class Piglin {
 
     public static String[] execute(PlayerEntity player, Integer gold, String item) {
         double amount_of_items = gold/CBarterSuggestionProvider.barter.get(item);
-        String[] message = {"Number of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(amount_of_items)};
+        String[] message = {"Number of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(nf.format(amount_of_items))};
         return message;
 
 
