@@ -33,7 +33,7 @@ public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClien
                 return;
             }
             if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
-                builder.suggest(item);
+                builder.suggest(recipe.getNamespace()+":"+item);
             }
         });
 

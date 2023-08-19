@@ -7,23 +7,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-import net.jsa2025.calcmod.commands.subcommands.Basic;
-import net.jsa2025.calcmod.commands.subcommands.Craft;
-import  net.jsa2025.calcmod.commands.subcommands.Storage;
-import net.jsa2025.calcmod.commands.subcommands.Nether;
-import net.jsa2025.calcmod.commands.subcommands.Overworld;
-import net.jsa2025.calcmod.commands.subcommands.Random;
-import net.jsa2025.calcmod.commands.subcommands.SbToItem;
-import net.jsa2025.calcmod.commands.subcommands.ItemToSb;
-import net.jsa2025.calcmod.commands.subcommands.SecondsToHopperClock;
-import net.jsa2025.calcmod.commands.subcommands.SecondsToRepeater;
-import net.jsa2025.calcmod.commands.subcommands.SignalToItems;
-import net.jsa2025.calcmod.commands.subcommands.ItemToStack;
-import net.jsa2025.calcmod.commands.subcommands.StackToItem;
-import net.jsa2025.calcmod.commands.subcommands.Rates;
-import net.jsa2025.calcmod.commands.subcommands.AllayStorage;
-import net.jsa2025.calcmod.commands.subcommands.Help;
-import net.jsa2025.calcmod.commands.subcommands.Variables;
+import net.jsa2025.calcmod.commands.subcommands.*;
 
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.ClickEvent;
@@ -61,6 +45,7 @@ public class CalcCommand {
         command = Random.register(command);
         command = Craft.register(command, registry);
         command = SignalToItems.register(command);
+        command = Piglin.register(command);
         command = Variables.register(command);
         command = Help.register(command);
         dispatcher.register(command);
