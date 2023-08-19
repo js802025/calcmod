@@ -4,11 +4,13 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import com.mojang.brigadier.CommandDispatcher;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 
 import net.jsa2025.calcmod.commands.subcommands.*;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
@@ -72,6 +74,14 @@ public class CalcCommand {
         command = Help.registerServer(command);
 
         dispatcher.register(command);
+
+        LiteralArgumentBuilder<ServerCommandSource> copyCommand = CommandManager.literal("copy").then(CommandManager.argument("text", StringArgumentType.string()).executes((ctx) -> {
+            String text = StringArgumentType.getString(ctx, "text");
+            MinecraftClient.getInstance().keyboard.setClipboard(text);
+            return 1;
+        }));
+
+        dispatcher.register(copyCommand);
     }
 
    
@@ -130,7 +140,7 @@ public class CalcCommand {
             messageText.append(new LiteralText(message[i]));
             m += message[i];
            } else {
-            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+message[i]+'"'))));
             m += message[i];
            }
            
@@ -143,7 +153,7 @@ public class CalcCommand {
             } 
         }
         messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))));
     }
 
     
