@@ -28,6 +28,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
@@ -74,7 +75,7 @@ public class Craft {
     public static String[] execute(PlayerEntity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
 
         var is = item.getIngredients();
-        var outputSize = item.getOutput().getCount();
+        var outputSize = item.getOutput(registryManager).getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getBlockPos(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
@@ -118,7 +119,7 @@ public class Craft {
                 message.add("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput().getName().getString()+"s: \n"+message.get(0));
+        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
 
         
         return message.toArray(new String[message.size()]);
