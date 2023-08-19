@@ -18,7 +18,8 @@ import java.util.Locale;
 
 public class Piglin {
 
-    static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
+    static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
+    
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
                 .then(ClientCommandManager.literal("piglin")
@@ -54,7 +55,6 @@ public class Piglin {
                     CalcCommand.sendMessageServer(ctx.getSource(), message, true);
                     return 1;
                 })));
-        return command;
     }
 
     public static String[] execute(PlayerEntity player, Integer gold, String item) {
