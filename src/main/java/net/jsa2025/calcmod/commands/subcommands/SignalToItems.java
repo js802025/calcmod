@@ -2,9 +2,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
@@ -29,23 +27,7 @@ import java.util.Map;
 public class SignalToItems {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("signaltoitems")
-        .then(ClientCommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
-        .then(ClientCommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))).then(ClientCommandManager.literal("help").executes(ctx -> {
-            String[] message = Help.execute("signaltoitems");
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
-            return 1;
-        })
-        ));
-        return command;
-    }
+
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
@@ -55,9 +37,9 @@ public class SignalToItems {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }))).then(ClientCommandManager.literal("help").executes(ctx -> {
+        }))).then(CommandManager.literal("help").executes(ctx -> {
             String[] message = Help.execute("signaltoitems");
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
+            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
             return 1;
         })
         ));

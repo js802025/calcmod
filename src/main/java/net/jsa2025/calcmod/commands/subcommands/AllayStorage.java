@@ -3,9 +3,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
+import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -20,19 +18,6 @@ public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("allaystorage").then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })).then(ClientCommandManager.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("allaystorage");
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
-            return 1;
-        })));
-        return command;
-    }
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command

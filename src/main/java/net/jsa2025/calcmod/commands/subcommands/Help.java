@@ -4,8 +4,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
+import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -19,17 +18,7 @@ import net.minecraft.server.command.ServerCommandSource;
 public class Help {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("help")
-        .executes(ctx -> {
-            String[] message = execute();
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
-            return 1;
-        }));
-        return command;
-    }
+
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command

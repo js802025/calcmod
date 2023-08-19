@@ -2,8 +2,9 @@ package net.jsa2025.calcmod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+//import net.fabricmc.fabric.api.command.v1;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 
@@ -20,8 +21,8 @@ public class CalcMod implements DedicatedServerModInitializer, ClientModInitiali
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		ClientCommandManager.DISPATCHER.register(CalcCommand.register());
-		
+		//CommandRegistrationCallback.DISPATCHER.register(CalcCommand.register());
+		CommandRegistrationCallback.EVENT.register(CalcCommand::registerServer);
 	}
 	@Override
 	public void onInitializeServer() {
