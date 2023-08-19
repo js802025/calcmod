@@ -4,7 +4,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import dev.xpple.clientarguments.arguments.CIdentifierArgumentType;
+
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.jsa2025.calcmod.commands.arguments.clientarguments.CIdentifierArgumentType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
