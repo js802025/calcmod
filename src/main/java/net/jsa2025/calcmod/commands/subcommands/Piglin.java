@@ -10,7 +10,7 @@ import net.jsa2025.calcmod.commands.arguments.BarterSuggestionProvider;
 
 
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -29,7 +29,7 @@ public class Piglin {
                         .executes((ctx) -> {
                             Integer gold = IntegerArgumentType.getInteger(ctx, "gold");
                             String item = StringArgumentType.getString(ctx, "item");
-                            String[] message = execute(ctx.getSource().getPlayerOrException(), gold, item);
+                            String[] message = execute(ctx.getSource().getEntity(), gold, item);
                             CalcCommand.sendMessageServer(ctx.getSource(), message);
                             return 0;
                         }))).then(Commands.literal("help").executes((ctx) -> {
@@ -40,7 +40,7 @@ public class Piglin {
       return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, Integer gold, String item) {
+    public static String[] execute(Entity player, Integer gold, String item) {
         double amount_of_items = gold/BarterSuggestionProvider.barter.get(item);
         String[] message = {"Number of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(nf.format(amount_of_items))};
         return message;

@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands;
 
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -82,7 +83,7 @@ public class CalcCommand {
         LiteralArgumentBuilder<CommandSource> copyCommand = Commands.literal("copy")
                 .then(Commands.argument("text", StringArgumentType.string())
                         .executes(ctx -> {
-                            Minecraft.getInstance().keyboardHandler.setClipboard(StringArgumentType.getString(ctx, "text"));
+                            Minecraft.getInstance().keyboardListener.setClipboardString(StringArgumentType.getString(ctx, "text"));
                             return 0;
                         }));
 
@@ -138,14 +139,14 @@ public class CalcCommand {
 
 
     public static void sendMessageServer(CommandSource source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        TranslationTextComponent messageText = new TranslationTextComponent("");
+        TextComponentString messageText = new TextComponentString("");
         String m = "";
         for (int i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(new TranslationTextComponent(message[i]));
+            messageText.appendSibling(new TextComponentString(message[i]));
             m += message[i];
            } else {
-            messageText.append(new TranslationTextComponent("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+message[i]+'"'))));
+            messageText.appendSibling(new TextComponentString("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+message[i]+'"'))));
             m += message[i];
            }
            
@@ -153,12 +154,12 @@ public class CalcCommand {
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayerOrException().sendMessage(messageText);
+                source.getEntity().sendMessage(messageText);
                 return;
             } 
         }
-        messageText.append(new TranslationTextComponent(" "));
-        source.getPlayerOrException().sendMessage(messageText.append(new TranslationTextComponent("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))));
+        messageText.appendSibling(new TextComponentString(" "));
+        source.getEntity().sendMessage(messageText.appendSibling(new TextComponentString("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))));
     }
 
     

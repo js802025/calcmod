@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands.arguments;
 
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -27,7 +28,7 @@ public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourc
 
         //     return item;
         // });
-        Stream<ResourceLocation> recipeStream = context.getSource().getServer().getRecipeManager().getRecipeIds();
+        Collection<ResourceLocation> recipeStream = context.getSource().getServer().getRecipeManager().getIds();
         recipeStream.forEach(recipe -> {
             String item = recipe.getPath();
             if (item == null) {

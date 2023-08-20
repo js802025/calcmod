@@ -17,7 +17,7 @@ import net.minecraft.command.Commands;import net.minecraft.command.CommandSource
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
@@ -33,8 +33,8 @@ public class Craft {
         .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String item = StringArgumentType.getString(ctx, "item");
-            Optional<? extends IRecipe<?>> itemR = ctx.getSource().getServer().getRecipeManager().byKey(ResourceLocation.tryParse(item));
-            String[] message = execute(ctx.getSource().getPlayerOrException(), itemR.get(), StringArgumentType.getString(ctx, "amount"));
+            IRecipe itemR = ctx.getSource().getServer().getRecipeManager().getRecipe(ResourceLocation.makeResourceLocation(item)); // (ResourceLocation.tryParse(item));
+            String[] message = execute(ctx.getSource().getEntity(), itemR, StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -47,24 +47,24 @@ public class Craft {
     }
 
 
-    public static String[] execute(ServerPlayerEntity player, IRecipe item, String amount) {
+    public static String[] execute(Entity player, IRecipe item, String amount) {
 
         NonNullList<Ingredient> is = item.getIngredients();
-        int outputSize = item.getResultItem().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), amount));
+        int outputSize = item.getRecipeOutput().getCount();
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getPosition(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
         for (Object i : is) {
             Ingredient ingredient = (Ingredient) i;
-            if (ingredient.getItems().length > 0) {
-                if (ingredients.containsKey(ingredient.getItems()[0].getDisplayName().getString())) {
+            if (ingredient.getMatchingStacks().length > 0) {
+                if (ingredients.containsKey(ingredient.getMatchingStacks()[0].getDisplayName().getString())) {
                     
 
-                    ingredients.put(ingredient.getItems()[0].getDisplayName().getString(), ingredients.get(ingredient.getItems()[0].getDisplayName().getString()) + a );
+                    ingredients.put(ingredient.getMatchingStacks()[0].getDisplayName().getString(), ingredients.get(ingredient.getMatchingStacks()[0].getDisplayName().getString()) + a );
                 } else {
-                    ingredients.put(ingredient.getItems()[0].getDisplayName().getString(), a);
-                    ingredientsStacks.put(ingredient.getItems()[0].getDisplayName().getString(), ingredient.getItems()[0]);
+                    ingredients.put(ingredient.getMatchingStacks()[0].getDisplayName().getString(), a);
+                    ingredientsStacks.put(ingredient.getMatchingStacks()[0].getDisplayName().getString(), ingredient.getMatchingStacks()[0]);
                 }
                 
             //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
@@ -94,7 +94,7 @@ public class Craft {
                 message.add("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getResultItem().getDisplayName().getString()+"s: \n"+message.get(0));
+        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getRecipeOutput().getDisplayName().getString()+"s: \n"+message.get(0));
 
         
         return message.toArray(new String[message.size()]);

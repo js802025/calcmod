@@ -10,7 +10,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 
 public class SbToItem {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -21,19 +21,19 @@ public class SbToItem {
         command
         .then(Commands.literal("sbtoitem").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("16s").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofsbs"), 16);
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("1s").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofsbs"), 1);
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -45,8 +45,8 @@ public class SbToItem {
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String numberofsbs, int stackSize) {
-        double sbs = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofsbs, stackSize);
+    public static String[] execute(Entity player, String numberofsbs, int stackSize) {
+        double sbs = CalcCommand.getParsedExpression(player.getPosition(), numberofsbs, stackSize);
         double items = sbs * stackSize * 27;
         String message[] = {"Items: ", nf.format(items)};
         return message;

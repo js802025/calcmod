@@ -22,7 +22,7 @@ public class Rates {
         .then(ClientCommands.literal("rates").then(ClientCommands.argument("numberofitems", StringArgumentType.string())
         .then(ClientCommands.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })))
@@ -40,7 +40,7 @@ public class Rates {
         .then(Commands.literal("rates").then(Commands.argument("numberofitems", StringArgumentType.string())
         .then(Commands.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -53,9 +53,9 @@ public class Rates {
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), time);
+    public static String[] execute(Entity player, String numberofitems, String time) {
+        double items = CalcCommand.getParsedExpression(player.getPosition(), numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(player.getPosition(), time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         String[] message = {"Rates: ", nf.format(rates)};

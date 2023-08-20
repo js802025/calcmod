@@ -40,7 +40,7 @@ public class Craft {
         .then(ClientCommands.literal("craft").then(ClientCommands.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
         .then(ClientCommands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            String[] message = execute(ctx.getSource().getEntity(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })))
@@ -57,7 +57,7 @@ public class Craft {
         .then(Commands.literal("craft").then(Commands.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            String[] message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -70,11 +70,11 @@ public class Craft {
     }
 
 
-    public static String[] execute(ServerPlayerEntity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
+    public static String[] execute(Entity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
 
         var is = item.getIngredients();
         var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getPosition(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();

@@ -21,7 +21,7 @@ public class AllayStorage {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommands.literal("allaystorage").then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })).then(ClientCommands.literal("help").executes((ctx) -> {
@@ -35,7 +35,7 @@ public class AllayStorage {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("allaystorage").then(Commands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })).then(Commands.literal("help").executes((ctx) -> {
@@ -47,8 +47,8 @@ public class AllayStorage {
     }
     
 
-    public static String[] execute(ServerPlayerEntity player, String itemsperhour) {
-        double rates = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), itemsperhour, 1);
+    public static String[] execute(Entity player, String itemsperhour) {
+        double rates = CalcCommand.getParsedExpression(player.getPosition(), itemsperhour, 1);
         double ratesinsec = rates / 3600;
         double allaycooldown = 3;
         String allaystorage = nf.format(Math.ceil(ratesinsec/(1/allaycooldown)));

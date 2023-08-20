@@ -23,7 +23,7 @@ public class Basic {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "expression"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         }));
@@ -33,15 +33,15 @@ public class Basic {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "expression"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }));
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String expression) {
-        double result = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), expression);
+    public static String[] execute(Entity player, String expression) {
+        double result = CalcCommand.getParsedExpression(player.getPosition(), expression);
         String[] message = {"Result: ", nf.format(result)};
         return message;
     }

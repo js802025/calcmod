@@ -12,7 +12,7 @@ import java.util.Locale;
 
 
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 
 public class StackToItem {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -23,19 +23,19 @@ public class StackToItem {
         command
         .then(Commands.literal("stacktoitem").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("16s").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("1s").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -47,8 +47,8 @@ public class StackToItem {
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String numberofstacks, int stackSize) {
-        double stacks = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofstacks, 1);
+    public static String[] execute(Entity player, String numberofstacks, int stackSize) {
+        double stacks = CalcCommand.getParsedExpression(player.getPosition(), numberofstacks, 1);
         double items = stacks * stackSize;
         String[] message = {"Items: ", nf.format(items)};
         return message;

@@ -10,7 +10,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,7 +33,7 @@ public class SignalToItems {
         .then(Commands.literal("signaltoitems")
         .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
         .then(Commands.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))).then(Commands.literal("help").executes(ctx -> {
@@ -45,8 +45,8 @@ public class SignalToItems {
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), signal);
+    public static String[] execute(Entity player, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(player.getPosition(), signal);
         Map<String, Integer> containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;

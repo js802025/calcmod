@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 
 public class Random {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -24,12 +24,12 @@ public class Random {
         command
         .then(Commands.literal("random")
         .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "max"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("minmax").then(Commands.argument("min", StringArgumentType.string()).then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+            String[] message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))))
@@ -42,14 +42,14 @@ public class Random {
     }
 
 
-    public static String[] execute(ServerPlayerEntity player, String... range) {
+    public static String[] execute(Entity player, String... range) {
         if (range.length == 1) {
-        double maxInt = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), range[0]);
+        double maxInt = CalcCommand.getParsedExpression(player.getPosition(), range[0]);
         String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
         return new String[] { "Random number between 0 and " + range[0] + " is ", random };
         } else if (range.length == 2 ) {
-            double max = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), range[1]);
-            double min = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), range[0]);
+            double max = CalcCommand.getParsedExpression(player.getPosition(), range[1]);
+            double min = CalcCommand.getParsedExpression(player.getPosition(), range[0]);
             String random = nf.format(ThreadLocalRandom.current().nextInt((int) min, (int) max + 1));
             return new String[] { "Random number between "+range[0]+" and " + range[1] + " is ", random };
 

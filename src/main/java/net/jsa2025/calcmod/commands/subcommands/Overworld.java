@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import net.minecraft.command.arguments.BlockPosArgument;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
 import java.text.DecimalFormat;
@@ -22,13 +22,13 @@ public class Overworld {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), ctx.getSource().getPlayerOrException().getEntity().getCommandSenderBlockPosition());
+            String[] message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
             BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
-            String[] message = execute(ctx.getSource().getPlayerOrException(), pos);
+            String[] message = execute(ctx.getSource().getEntity(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })).then(Commands.literal("help").executes((ctx) -> {
@@ -39,7 +39,7 @@ public class Overworld {
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, BlockPos... pos) {
+    public static String[] execute(Entity player, BlockPos... pos) {
         BlockPos position;
         position = pos[0];
         

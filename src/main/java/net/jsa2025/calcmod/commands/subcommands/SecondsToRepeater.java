@@ -11,7 +11,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 
 public class SecondsToRepeater {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -22,7 +22,7 @@ public class SecondsToRepeater {
         command
         .then(Commands.literal("secondstorepeater").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "seconds"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
@@ -34,8 +34,8 @@ public class SecondsToRepeater {
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), seconds);
+    public static String[] execute(Entity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player.getPosition(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {

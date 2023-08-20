@@ -21,7 +21,7 @@ public class Nether {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommands.literal("nether").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException().getBlockPos());
+            String[] message = execute(ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         }).then(ClientCommands.argument("pos", CBlockPosArgumentType.blockPos())
@@ -41,7 +41,7 @@ public class Nether {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("nether").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException().getBlockPos());
+            String[] message = execute(ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgumentType.blockPos())

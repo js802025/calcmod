@@ -130,6 +130,8 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven { url = 'https://maven.minecraftforge.net/' }
+    mavenCentral()
 }
 
 

@@ -22,7 +22,7 @@ public class Nether {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("nether").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException().getEntity().getCommandSenderBlockPosition());
+            String[] message = execute(ctx.getSource().getEntity().getPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())

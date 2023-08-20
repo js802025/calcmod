@@ -10,7 +10,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 
 
 public class Basic {
@@ -21,15 +21,15 @@ public class Basic {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "expression"));
+            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }));
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String expression) {
-        double result = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), expression);
+    public static String[] execute(Entity player, String expression) {
+        double result = CalcCommand.getParsedExpression(player.getEntity().getPosition(), expression);
         String[] message = {expression+" = ", nf.format(result)};
         return message;
     }
