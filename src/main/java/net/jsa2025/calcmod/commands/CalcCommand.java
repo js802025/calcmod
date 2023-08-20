@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Style;
 import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import org.mariuszgromada.math.mxparser.License;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -112,7 +113,8 @@ public class CalcCommand {
 //               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
 //            }
 //        }
-        return new Expression().calculate();
+        License.iConfirmNonCommercialUse("jsa");
+        return new Expression(withVars).calculate();
         }
 
     public static String getParsedStack(double items, int stacksize) {
@@ -125,7 +127,6 @@ public class CalcCommand {
 
 
     public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        CalcMod.LOGGER.log(Level.INFO, "Sending message...");
         var messageText = Component.literal("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
