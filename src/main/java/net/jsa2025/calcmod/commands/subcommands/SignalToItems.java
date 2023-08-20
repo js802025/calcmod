@@ -9,9 +9,8 @@ import com.mojang.brigadier.tree.CommandNode;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -29,25 +28,25 @@ public class SignalToItems {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("signaltoitems")
-        .then(CommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
-        .then(CommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(Commands.literal("signaltoitems")
+        .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
+        .then(Commands.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))).then(CommandManager.literal("help").executes(ctx -> {
+            return 0;
+        }))).then(Commands.literal("help").executes(ctx -> {
             String[] message = Help.execute("signaltoitems");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })
         ));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getBlockPos(), signal);
+    public static String[] execute(ServerPlayer player, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(player.getOnPos(), signal);
         var containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;

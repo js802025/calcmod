@@ -12,21 +12,14 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-
-import net.minecraft.command.arguments.IdentifierArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
+import java.util.*;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 
 
 public class Craft {
@@ -34,42 +27,44 @@ public class Craft {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
-        .then(CommandManager.argument("amount", StringArgumentType.greedyString())
+        .then(Commands.literal("craft").then(Commands.argument("item", StringArgumentType.string()).suggests(new RecipeSuggestionProvider())
+        .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
+            String item = StringArgumentType.getString(ctx, "item");
+            Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
+            String[] message = execute(ctx.getSource().getPlayer(), itemR.get(), StringArgumentType.getString(ctx, "amount"), ctx.getSource().registryAccess());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             String[] message = Help.execute("craft");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
 
-    public static String[] execute(PlayerEntity player, Recipe item, String amount) {
+    public static String[] execute(ServerPlayer player, Recipe item, String amount, RegistryAccess registryAccess) {
 
-        var is = item.getPreviewInputs();
-        var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getBlockPos(), amount));
+        var is = item.getIngredients();
+        var outputSize = item.getResultItem(registryAccess).getCount();
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getOnPos(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
         for (Object i : is) {
             Ingredient ingredient = (Ingredient) i;
-            if (ingredient.getMatchingStacksClient().length > 0) {
-                if (ingredients.containsKey(ingredient.getMatchingStacksClient()[0].getName().getString())) {
+            if (ingredient.getItems().length > 0) {
+                if (ingredients.containsKey(ingredient.getItems()[0].getDisplayName().getString())) {
                     
 
-                    ingredients.put(ingredient.getMatchingStacksClient()[0].getName().getString(), ingredients.get(ingredient.getMatchingStacksClient()[0].getName().getString()) + a );
+                    ingredients.put(ingredient.getItems()[0].getDisplayName().getString(), ingredients.get(ingredient.getItems()[0].getDisplayName().getString()) + a );
                 } else {
-                    ingredients.put(ingredient.getMatchingStacksClient()[0].getName().getString(), a);
-                    ingredientsStacks.put(ingredient.getMatchingStacksClient()[0].getName().getString(), ingredient.getMatchingStacksClient()[0]);
+                    ingredients.put(ingredient.getItems()[0].getDisplayName().getString(), a);
+                    ingredientsStacks.put(ingredient.getItems()[0].getDisplayName().getString(), ingredient.getItems()[0]);
                 }
                 
             //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
@@ -80,7 +75,7 @@ public class Craft {
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
-            int stackSize = ingredientsStacks.get(entry.getKey()).getMaxCount();
+            int stackSize = ingredientsStacks.get(entry.getKey()).getMaxStackSize();
             double sb = Math.floor(value/(stackSize*27));
             String sbString = nf.format(sb);
             int remainder = value % (stackSize*27);
@@ -99,7 +94,7 @@ public class Craft {
                 message.add("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput().getName().getString()+"s: \n"+message.get(0));
+        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getResultItem(registryAccess).getDisplayName().getString()+"s: \n"+message.get(0));
 
         
         return message.toArray(new String[message.size()]);

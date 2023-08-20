@@ -10,45 +10,44 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
 public class ItemToStack {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("itemtostack").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .then(Commands.literal("itemtostack").then(Commands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         }))
-        .then(CommandManager.literal("16s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .then(Commands.literal("16s").then(Commands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.literal("1s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
+        .then(Commands.literal("1s").then(Commands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             String[] message = Help.execute("itemtostack");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(player.getBlockPos(), numberofitems, stackSize);
+    public static String[] execute(ServerPlayer player, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(player.getOnPos(), numberofitems, stackSize);
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
         String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};      

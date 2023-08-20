@@ -7,11 +7,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.BarterSuggestionProvider;
-import net.minecraft.entity.player.PlayerEntity;
 
 
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -22,26 +21,26 @@ public class Piglin {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
       command
-                .then(CommandManager.literal("piglin")
-                        .then(CommandManager.argument("gold", IntegerArgumentType.integer())
-                                .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
+                .then(Commands.literal("piglin")
+                        .then(Commands.argument("gold", IntegerArgumentType.integer())
+                                .then(Commands.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
                         .executes((ctx) -> {
                             Integer gold = IntegerArgumentType.getInteger(ctx, "gold");
                             String item = StringArgumentType.getString(ctx, "item");
                             String[] message = execute(ctx.getSource().getPlayer(), gold, item);
                             CalcCommand.sendMessageServer(ctx.getSource(), message);
-                            return 1;
-                        }))).then(CommandManager.literal("help").executes((ctx) -> {
+                            return 0;
+                        }))).then(Commands.literal("help").executes((ctx) -> {
                     String[] message = Help.execute("nether");
                     CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-                    return 1;
+                    return 0;
                 })));
       return command;
     }
 
-    public static String[] execute(PlayerEntity player, Integer gold, String item) {
+    public static String[] execute(ServerPlayer player, Integer gold, String item) {
         double amount_of_items = gold/BarterSuggestionProvider.barter.get(item);
         String[] message = {"Number of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(nf.format(amount_of_items))};
         return message;

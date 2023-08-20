@@ -10,33 +10,32 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
 public class SecondsToRepeater {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("secondstorepeater").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
+        .then(Commands.literal("secondstorepeater").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         }))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             String[] message = Help.execute("secondstorepeater");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getBlockPos(), seconds);
+    public static String[] execute(ServerPlayer player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player.getOnPos(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {

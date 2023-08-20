@@ -1,7 +1,7 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommands;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -12,9 +12,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 
 
 
@@ -24,26 +22,26 @@ public class Basic {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US")); 
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(ClientCommands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         }));
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         }));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String expression) {
-        double result = CalcCommand.getParsedExpression(player.getBlockPos(), expression);
+    public static String[] execute(ServerPlayer player, String expression) {
+        double result = CalcCommand.getParsedExpression(player.getOnPos(), expression);
         String[] message = {"Result: ", nf.format(result)};
         return message;
     }

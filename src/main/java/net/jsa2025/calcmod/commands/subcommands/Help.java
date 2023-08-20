@@ -12,21 +12,19 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 public class Help {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("help")
+        .then(Commands.literal("help")
         .executes(ctx -> {
             String[] message = execute();
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         }));
         return command;
     }

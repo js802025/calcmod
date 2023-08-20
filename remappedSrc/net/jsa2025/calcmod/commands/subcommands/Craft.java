@@ -8,7 +8,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.xpple.clientarguments.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
 
 
@@ -27,9 +27,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
 
@@ -39,44 +37,44 @@ public class Craft {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command, CommandRegistryAccess registry) {
         command
-        .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
-        .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
+        .then(ClientCommands.literal("craft").then(ClientCommands.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
+        .then(ClientCommands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
+        .then(ClientCommands.literal("help").executes(ctx -> {
             String[] message = Help.execute("craft");
             CalcCommand.sendMessage(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command, CommandRegistryAccess registry) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command, CommandRegistryAccess registry) {
         command
-        .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
-        .then(CommandManager.argument("amount", StringArgumentType.greedyString())
+        .then(Commands.literal("craft").then(Commands.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
+        .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             String[] message = Help.execute("craft");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
 
-    public static String[] execute(PlayerEntity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
+    public static String[] execute(ServerPlayer player, Recipe item, String amount, DynamicRegistryManager registryManager) {
 
         var is = item.getIngredients();
         var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getBlockPos(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getOnPos(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();

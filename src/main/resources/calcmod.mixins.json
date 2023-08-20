@@ -1,9 +1,0 @@
-{
-  "required": true,
-  "minVersion": "0.8",
-  "package": "net.jsa2025.calcmod.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "injectors": {
-    "defaultRequire": 1
-  }
-}

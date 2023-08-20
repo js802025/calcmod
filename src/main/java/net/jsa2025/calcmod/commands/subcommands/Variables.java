@@ -9,21 +9,19 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 public class Variables {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("variables")
+        .then(Commands.literal("variables")
         .executes(ctx -> {
             String[] message = execute();
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         }));
         return command;
     }

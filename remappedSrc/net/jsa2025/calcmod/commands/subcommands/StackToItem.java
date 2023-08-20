@@ -4,7 +4,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
@@ -12,71 +12,69 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 public class StackToItem {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("stacktoitem").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .then(ClientCommands.literal("stacktoitem").then(ClientCommands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         }))
-        .then(ClientCommandManager.literal("16s").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .then(ClientCommands.literal("16s").then(ClientCommands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(ClientCommandManager.literal("1s").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .then(ClientCommands.literal("1s").then(ClientCommands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
+        .then(ClientCommands.literal("help").executes(ctx -> {
             String[] message = Help.execute("stacktoitem");
             CalcCommand.sendMessage(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("stacktoitem").then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .then(Commands.literal("stacktoitem").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         }))
-        .then(CommandManager.literal("16s").then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .then(Commands.literal("16s").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.literal("1s").then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+        .then(Commands.literal("1s").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             String[] message = Help.execute("stacktoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String numberofstacks, int stackSize) {
-        double stacks = CalcCommand.getParsedExpression(player.getBlockPos(), numberofstacks, 1);
+    public static String[] execute(ServerPlayer player, String numberofstacks, int stackSize) {
+        double stacks = CalcCommand.getParsedExpression(player.getOnPos(), numberofstacks, 1);
         double items = stacks * stackSize;
         String[] message = {"Items: ", nf.format(items)};
         return message;

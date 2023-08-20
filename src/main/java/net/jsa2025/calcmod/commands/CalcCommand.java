@@ -2,24 +2,26 @@ package net.jsa2025.calcmod.commands;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import com.mojang.brigadier.CommandDispatcher;
 
+
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 
+import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
+
+import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,7 +30,7 @@ public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 //    public static LiteralArgumentBuilder<FabricClientCommandSource> register () {
-//        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
+//        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommands.literal("calc");
 //        command = Basic.register(command);
 //        command = Storage.register(command);
 //        command = Nether.register(command);
@@ -51,8 +53,8 @@ public class CalcCommand {
 //
 //    }
 
-    public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {
-        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
+    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
+        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
         command = Basic.registerServer(command);
         command = Storage.registerServer(command);
         command = Nether.registerServer(command);
@@ -76,7 +78,7 @@ public class CalcCommand {
 
    
 
-    public static double getParsedExpression(BlockPos playerPos, String in,Integer... nonstackable) {
+    public static double getParsedExpression(BlockPos playerPos, String in, Integer... nonstackable) {
         int stackSize;
         if (nonstackable.length == 0) stackSize = 64;
         else stackSize = nonstackable[0];
@@ -110,7 +112,7 @@ public class CalcCommand {
 //               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
 //            }
 //        }
-            return new Expression(withVars).calculate();
+        return new Expression().calculate();
         }
 
     public static String getParsedStack(double items, int stacksize) {
@@ -122,15 +124,16 @@ public class CalcCommand {
     }
 
 
-    public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        var messageText = new LiteralText("");
+    public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
+        CalcMod.LOGGER.log(Level.INFO, "Sending message...");
+        var messageText = Component.literal("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(new LiteralText(message[i]));
+            messageText.append(Component.literal(message[i]));
             m += message[i];
            } else {
-            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(Component.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
            
@@ -138,12 +141,12 @@ public class CalcCommand {
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
+                source.getPlayer().sendSystemMessage(messageText, false);
                 return;
             } 
         }
-        messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        messageText.append(Component.literal(" "));
+        source.getPlayer().sendSystemMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
     }
 
     

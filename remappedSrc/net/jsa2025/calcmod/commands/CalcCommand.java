@@ -5,7 +5,7 @@ import java.text.NumberFormat;
 import I;
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.subcommands.Basic;
 import net.jsa2025.calcmod.commands.subcommands.Craft;
@@ -33,9 +33,7 @@ import net.minecraft.util.math.BlockPos;
 
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;import net.minecraft.server.command.Commands.RegistrationEnvironment;
 
 
 import java.util.Locale;
@@ -44,7 +42,7 @@ public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
-        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
+        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommands.literal("calc");
         command = Basic.register(command);
         command = Storage.register(command);
         command = Nether.register(command);
@@ -66,8 +64,8 @@ public class CalcCommand {
 
     }
 
-    public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
-        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
+    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
+        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
         command = Basic.registerServer(command);
         command = Storage.registerServer(command);
         command = Nether.registerServer(command);
@@ -134,7 +132,7 @@ public class CalcCommand {
         source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
-    public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) {
+    public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) {
         var messageText = new LiteralText("");
         String m = "";
         for (var i = 0; i < message.length; i++) {

@@ -4,44 +4,42 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 
-import net.minecraft.command.arguments.BlockPosArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 public class Overworld {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
+        .then(Commands.literal("overworld").executes((ctx) -> {
+            String[] message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getOnPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
+            return 0;
+        }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
+            BlockPos pos = BlockPosArgument.getBlockPos(ctx, "pos");
             String[] message = execute(ctx.getSource().getPlayer(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
+            return 0;
+        })).then(Commands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("overworld");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, BlockPos... pos) {
+    public static String[] execute(ServerPlayer player, BlockPos... pos) {
         BlockPos position;
         position = pos[0];
         

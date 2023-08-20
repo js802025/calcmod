@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
@@ -13,71 +13,69 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 public class Storage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
+        .then(ClientCommands.literal("storage").then(ClientCommands.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         })
-        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
+            return 0;
         }))
-        .then(ClientCommandManager.literal("help").executes((ctx) -> {
+        .then(ClientCommands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("storage");
             CalcCommand.sendMessage(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("storage").then(CommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
+        .then(Commands.literal("storage").then(Commands.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })
-        .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(Commands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(Commands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         }))
-        .then(CommandManager.literal("help").executes((ctx) -> {
+        .then(Commands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("storage");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String itemsperhour, int timesHopperSpeed) {
-        double rates = CalcCommand.getParsedExpression(player.getBlockPos(), itemsperhour);
+    public static String[] execute(ServerPlayer player, String itemsperhour, int timesHopperSpeed) {
+        double rates = CalcCommand.getParsedExpression(player.getOnPos(), itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;

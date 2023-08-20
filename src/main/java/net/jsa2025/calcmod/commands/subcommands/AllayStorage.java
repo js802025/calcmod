@@ -10,32 +10,32 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 
 public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("allaystorage").then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(Commands.literal("allaystorage").then(Commands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
+            return 0;
+        })).then(Commands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("allaystorage");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
         return command;
     }
     
 
-    public static String[] execute(PlayerEntity player, String itemsperhour) {
-        double rates = CalcCommand.getParsedExpression(player.getBlockPos(), itemsperhour, 1);
+    public static String[] execute(ServerPlayer player, String itemsperhour) {
+        double rates = CalcCommand.getParsedExpression(player.getOnPos(), itemsperhour, 1);
         double ratesinsec = rates / 3600;
         double allaycooldown = 3;
         String allaystorage = nf.format(Math.ceil(ratesinsec/(1/allaycooldown)));

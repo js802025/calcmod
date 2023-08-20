@@ -10,36 +10,35 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
 public class Rates {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("rates").then(CommandManager.argument("numberofitems", StringArgumentType.string())
-        .then(CommandManager.argument("time", StringArgumentType.greedyString())
+        .then(Commands.literal("rates").then(Commands.argument("numberofitems", StringArgumentType.string())
+        .then(Commands.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
+            return 0;
         })))
-        .then(CommandManager.literal("help").executes(ctx ->{
+        .then(Commands.literal("help").executes(ctx ->{
             String[] message = Help.execute("rates");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 1;
+            return 0;
         })));
 
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getBlockPos(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getBlockPos(), time);
+    public static String[] execute(ServerPlayer player, String numberofitems, String time) {
+        double items = CalcCommand.getParsedExpression(player.getOnPos(), numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(player.getOnPos(), time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         String[] message = {"Rates: ", nf.format(rates)};
