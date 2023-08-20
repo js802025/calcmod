@@ -2,7 +2,9 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[5.0,6)'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
 }
 
 version = mod_version
@@ -17,7 +19,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
-jarJar.enable()
+//jarJar.enable()
 
 
 //// Configure the 'jarJar' task
@@ -148,7 +150,7 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    jarJar(group: 'org.mariuszgromada.math', name: 'MathParser.org-mXparser', version: '[5.0.0, 6.0.0)')
+  //  jarJar(group: 'org.mariuszgromada.math', name: 'MathParser.org-mXparser', version: '[5.0.0, 6.0.0)')
 
   //  modImplementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
     minecraftLibrary 'org.mariuszgromada.math:MathParser.org-mXparser:5.2.1'
@@ -168,6 +170,21 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+shadowJar {
+    dependencies {
+        dependencies {
+            include(dependency('org.mariuszgromada.math:MathParser.org-mXparser:5.2.1'))
+        }
+    }
+
+    relocate 'org.mariuszgromada.math.mxparser', 'net.jsa2025.calcmod.mxparser'
+
+}
+
+reobf {
+    shadowJar {} // Reobfuscate the shadowed JAR
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

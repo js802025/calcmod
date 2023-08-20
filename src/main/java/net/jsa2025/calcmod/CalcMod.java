@@ -6,7 +6,6 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.subcommands.Basic;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

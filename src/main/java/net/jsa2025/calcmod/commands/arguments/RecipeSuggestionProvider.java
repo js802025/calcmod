@@ -27,7 +27,7 @@ public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourc
 
         //     return item;
         // });
-        Stream<ResourceLocation> recipeStream = context.getSource().getRecipeManager().getRecipeIds();
+        Stream<ResourceLocation> recipeStream = context.getSource().getServer().getRecipeManager().getRecipeIds();
         recipeStream.forEach(recipe -> {
             String item = recipe.getPath();
             if (item == null) {

@@ -33,7 +33,7 @@ public class Craft {
         .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String item = StringArgumentType.getString(ctx, "item");
-            Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
+            Optional<? extends Recipe<?>> itemR = ctx.getSource().getServer().getRecipeManager().byKey(ResourceLocation.tryParse(item));
             String[] message = execute(ctx.getSource().getPlayerOrException(), itemR.get(), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
