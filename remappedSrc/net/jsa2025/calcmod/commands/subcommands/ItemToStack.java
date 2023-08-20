@@ -21,19 +21,19 @@ public class ItemToStack {
         command
         .then(ClientCommands.literal("itemtostack").then(ClientCommands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), 64);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         }))
         .then(ClientCommands.literal("16s").then(ClientCommands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 16);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), 16);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })))
         .then(ClientCommands.literal("1s").then(ClientCommands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })))
@@ -49,19 +49,19 @@ public class ItemToStack {
         command
         .then(Commands.literal("itemtostack").then(Commands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("16s").then(Commands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 16);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("1s").then(Commands.argument("numberofitems", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))

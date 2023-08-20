@@ -23,7 +23,7 @@ public class Rates {
         .then(Commands.literal("rates").then(Commands.argument("numberofitems", StringArgumentType.string())
         .then(Commands.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))

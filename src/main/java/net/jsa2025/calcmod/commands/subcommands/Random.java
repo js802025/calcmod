@@ -24,12 +24,12 @@ public class Random {
         command
         .then(Commands.literal("random")
         .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "max"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("minmax").then(Commands.argument("min", StringArgumentType.string()).then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))))

@@ -21,19 +21,19 @@ public class SbToItem {
         command
         .then(Commands.literal("sbtoitem").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("16s").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofsbs"), 16);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofsbs"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("1s").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofsbs"), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofsbs"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))

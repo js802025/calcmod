@@ -21,7 +21,7 @@ public class AllayStorage {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommands.literal("allaystorage").then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })).then(ClientCommands.literal("help").executes((ctx) -> {
@@ -35,7 +35,7 @@ public class AllayStorage {
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
         .then(Commands.literal("allaystorage").then(Commands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })).then(Commands.literal("help").executes((ctx) -> {

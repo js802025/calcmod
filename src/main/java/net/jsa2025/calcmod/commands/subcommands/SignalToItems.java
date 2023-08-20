@@ -33,7 +33,7 @@ public class SignalToItems {
         .then(Commands.literal("signaltoitems")
         .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
         .then(Commands.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))).then(Commands.literal("help").executes(ctx -> {

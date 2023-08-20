@@ -124,12 +124,12 @@ public class CalcCommand {
         
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
+                source.getPlayerOrException().sendMessage(messageText);
                 return;
             } 
         }
         messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        source.getPlayerOrException().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
     public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) {
@@ -148,12 +148,12 @@ public class CalcCommand {
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
+                source.getPlayerOrException().sendMessage(messageText);
                 return;
             } 
         }
         messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        source.getPlayerOrException().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
     

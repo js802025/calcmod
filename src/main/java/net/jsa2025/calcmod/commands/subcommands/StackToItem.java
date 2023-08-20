@@ -23,19 +23,19 @@ public class StackToItem {
         command
         .then(Commands.literal("stacktoitem").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("16s").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("1s").then(Commands.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))

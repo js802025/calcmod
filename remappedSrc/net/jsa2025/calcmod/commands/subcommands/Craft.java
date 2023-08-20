@@ -40,7 +40,7 @@ public class Craft {
         .then(ClientCommands.literal("craft").then(ClientCommands.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
         .then(ClientCommands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            String[] message = execute(ctx.getSource().getPlayerOrException(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })))
@@ -57,7 +57,7 @@ public class Craft {
         .then(Commands.literal("craft").then(Commands.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            String[] message = execute(ctx.getSource().getPlayerOrException(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))

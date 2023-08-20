@@ -14,9 +14,7 @@ import net.jsa2025.calcmod.commands.subcommands.*;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 
 
 import org.apache.logging.log4j.Level;
@@ -26,6 +24,7 @@ import org.mariuszgromada.math.mxparser.License;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.UUID;
 
 public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -113,7 +112,6 @@ public class CalcCommand {
 //               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
 //            }
 //        }
-        License.iConfirmNonCommercialUse("jsa");
         return new Expression(withVars).calculate();
         }
 
@@ -127,14 +125,14 @@ public class CalcCommand {
 
 
     public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        var messageText = Component.literal("");
+        var messageText = new TextComponent("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(Component.literal(message[i]));
+            messageText.append(new TextComponent(message[i]));
             m += message[i];
            } else {
-            messageText.append(Component.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(new TextComponent("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
            
@@ -142,12 +140,12 @@ public class CalcCommand {
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayer().sendSystemMessage(messageText, false);
+                source.getPlayerOrException().sendMessage(messageText, UUID.randomUUID());
                 return;
             } 
         }
-        messageText.append(Component.literal(" "));
-        source.getPlayer().sendSystemMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+        messageText.append(new TextComponent(" "));
+        source.getPlayerOrException().sendMessage(messageText.append(new TextComponent("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), UUID.randomUUID());
     }
 
     

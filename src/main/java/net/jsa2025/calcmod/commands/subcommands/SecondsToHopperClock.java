@@ -22,7 +22,7 @@ public class SecondsToHopperClock {
         command
         .then(Commands.literal("secondstohopperclock").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))

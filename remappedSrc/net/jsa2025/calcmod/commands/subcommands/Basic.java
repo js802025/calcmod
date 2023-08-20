@@ -23,7 +23,7 @@ public class Basic {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "expression"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         }));
@@ -33,7 +33,7 @@ public class Basic {
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
         .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "expression"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }));

@@ -34,7 +34,7 @@ public class Craft {
         .executes((ctx) -> {
             String item = StringArgumentType.getString(ctx, "item");
             Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
-            String[] message = execute(ctx.getSource().getPlayer(), itemR.get(), StringArgumentType.getString(ctx, "amount"), ctx.getSource().registryAccess());
+            String[] message = execute(ctx.getSource().getPlayerOrException(), itemR.get(), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -47,10 +47,10 @@ public class Craft {
     }
 
 
-    public static String[] execute(ServerPlayer player, Recipe item, String amount, RegistryAccess registryAccess) {
+    public static String[] execute(ServerPlayer player, Recipe item, String amount) {
 
         var is = item.getIngredients();
-        var outputSize = item.getResultItem(registryAccess).getCount();
+        var outputSize = item.getResultItem().getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getOnPos(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
@@ -94,7 +94,7 @@ public class Craft {
                 message.add("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getResultItem(registryAccess).getDisplayName().getString()+"s: \n"+message.get(0));
+        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getResultItem().getDisplayName().getString()+"s: \n"+message.get(0));
 
         
         return message.toArray(new String[message.size()]);

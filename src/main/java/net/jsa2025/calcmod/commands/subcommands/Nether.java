@@ -22,12 +22,12 @@ public class Nether {
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
         .then(Commands.literal("nether").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer().getOnPos());
+            String[] message = execute(ctx.getSource().getPlayerOrException().getOnPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgument.getBlockPos(ctx, "pos");
+            BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
             String[] message = execute(pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;

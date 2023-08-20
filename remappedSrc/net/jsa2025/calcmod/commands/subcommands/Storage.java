@@ -22,19 +22,19 @@ public class Storage {
         command
         .then(ClientCommands.literal("storage").then(ClientCommands.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })
         .then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         })))
         .then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 0;
         }))
@@ -50,19 +50,19 @@ public class Storage {
         command
         .then(Commands.literal("storage").then(Commands.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })
         .then(Commands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))

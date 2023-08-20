@@ -22,7 +22,7 @@ public class SecondsToRepeater {
         command
         .then(Commands.literal("secondstorepeater").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))

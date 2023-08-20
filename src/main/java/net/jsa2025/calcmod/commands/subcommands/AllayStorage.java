@@ -1,6 +1,7 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.jsa2025.calcmod.commands.CalcCommand;
@@ -22,7 +23,7 @@ public class AllayStorage {
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
         .then(Commands.literal("allaystorage").then(Commands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"));
+            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })).then(Commands.literal("help").executes((ctx) -> {

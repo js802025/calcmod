@@ -29,7 +29,7 @@ public class Piglin {
                         .executes((ctx) -> {
                             Integer gold = IntegerArgumentType.getInteger(ctx, "gold");
                             String item = StringArgumentType.getString(ctx, "item");
-                            String[] message = execute(ctx.getSource().getPlayer(), gold, item);
+                            String[] message = execute(ctx.getSource().getPlayerOrException(), gold, item);
                             CalcCommand.sendMessageServer(ctx.getSource(), message);
                             return 0;
                         }))).then(Commands.literal("help").executes((ctx) -> {

@@ -22,13 +22,13 @@ public class Overworld {
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
         .then(Commands.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getOnPos());
+            String[] message = execute(ctx.getSource().getPlayerOrException(), ctx.getSource().getPlayerOrException().getOnPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgument.getBlockPos(ctx, "pos");
-            String[] message = execute(ctx.getSource().getPlayer(), pos);
+            BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+            String[] message = execute(ctx.getSource().getPlayerOrException(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })).then(Commands.literal("help").executes((ctx) -> {
