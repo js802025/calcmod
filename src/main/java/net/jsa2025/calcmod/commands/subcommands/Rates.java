@@ -37,17 +37,13 @@ public class Rates {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), time);
+        double items = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         String[] message = {"Rates: ", nf.format(rates)};
         return message;
     }
 
-    public static String helpMessage = """
-        §LRates:§r
-            Given a number of items and afk time in seconds (can be in expression form), returns the number of items per hour
-            §cUsage: /calc rates <numberofitems> <time>§f
-                """;
+    public static String helpMessage = "§LRates:§r \nGiven a number of items and afk time in seconds (can be in expression form), returns the number of items per hour \n§cUsage: /calc rates <numberofitems> <time>§f";
 }

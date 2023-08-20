@@ -50,7 +50,7 @@ public class SecondsToRepeater {
     }
 
     public static String[] execute(ServerPlayerEntity player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), seconds);
+        double secondsDouble = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {

@@ -54,8 +54,8 @@ public class Rates {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), time);
+        double items = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         String[] message = {"Rates: ", nf.format(rates)};

@@ -48,16 +48,13 @@ public class StackToItem {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofstacks, int stackSize) {
-        double stacks = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofstacks, 1);
+        double stacks = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofstacks, 1);
         double items = stacks * stackSize;
         String[] message = {"Items: ", nf.format(items)};
         return message;
     }
 
-    public static String helpMessage = """
-        §LStack to Item:§r
-            Given a number of stacks (can be in expression form), returns the number of items
-            §cUsage: /calc stacktoitem <numberofstacks>§f
-                """;
+    public static String helpMessage = "§LStack to Item:§r \nGiven a number of stacks (can be in expression form), returns the number of items \n§cUsage: /calc stacktoitem <numberofstacks>§f";
+
     
 }

@@ -75,7 +75,7 @@ public class Storage {
     }
 
     public static String[] execute(ServerPlayerEntity player, String itemsperhour, int timesHopperSpeed) {
-        double rates = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), itemsperhour);
+        double rates = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;

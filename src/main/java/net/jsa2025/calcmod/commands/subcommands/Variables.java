@@ -28,23 +28,7 @@ public class Variables {
     }
 
     public static String[] execute() {
-        String message = """
-            Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64:
-                dub: 3456(dynamic)
-                dub64: 3456
-                dub16: 864
-                dub1: 54
-                sb: 1728(dynamic)
-                sb64: 1728
-                sb16: 432
-                sb1: 27
-                stack: 64(dynamic)
-                stack64: 64
-                stack16: 16
-                stack1: 1
-                min: 60
-                hour: 3600
-                """;
+        String message = "Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64: \ndub: 3456(dynamic) \ndub64: 3456 \ndub16: 864 \ndub1: 54 \nsb: 1728(dynamic) \nsb64: 1728 \nsb16: 432 \nsb1: 27 \nstack: 64(dynamic) \nstack64: 64 \nstack16: 16 \nstack1: 1 \nmin: 60 \nhour: 3600";
                 String[] m = {message};
         return m;
     }

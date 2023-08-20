@@ -36,7 +36,7 @@ public class AllayStorage {
     
 
     public static String[] execute(ServerPlayerEntity player, String itemsperhour) {
-        double rates = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), itemsperhour, 1);
+        double rates = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), itemsperhour, 1);
         double ratesinsec = rates / 3600;
         double allaycooldown = 3;
         String allaystorage = nf.format(Math.ceil(ratesinsec/(1/allaycooldown)));
@@ -45,11 +45,7 @@ public class AllayStorage {
         return message;
     }
 
-    public static String helpMessage = """
-        §LAllay Storage:§r
-            Given the number of items per hour of a non stackable item, returns allays needed to sort the item.
-            §cUsage: /calc allaystorage <numberofitems>§f
-            """;
+    public static String helpMessage = "§LAllay Storage:§r \nGiven the number of items per hour of a non stackable item, returns allays needed to sort the item. \n§cUsage: /calc allaystorage <numberofitems>§f";
 
 
 }

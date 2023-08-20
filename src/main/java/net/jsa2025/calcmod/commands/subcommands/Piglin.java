@@ -48,9 +48,5 @@ public class Piglin {
 
     }
 
-    public static String helpMessage = """
-        §LNether:§r
-            Given a block position in the overworld, returns the nether coordinates
-            §cUsage: /calc nether <x> <y> <z>§f
-                """;
+    public static String helpMessage = "§LNether:§r \nGiven a block position in the overworld, returns the nether coordinates \n§cUsage: /calc nether <x> <y> <z>§f";
 }

@@ -74,7 +74,7 @@ public class StackToItem {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofstacks, int stackSize) {
-        double stacks = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofstacks, 1);
+        double stacks = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofstacks, 1);
         double items = stacks * stackSize;
         String[] message = {"Items: ", nf.format(items)};
         return message;

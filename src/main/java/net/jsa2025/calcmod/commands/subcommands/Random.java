@@ -44,12 +44,12 @@ public class Random {
 
     public static String[] execute(ServerPlayerEntity player, String... range) {
         if (range.length == 1) {
-        double maxInt = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), range[0]);
+        double maxInt = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), range[0]);
         String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
         return new String[] { "Random number between 0 and " + range[0] + " is ", random };
         } else if (range.length == 2 ) {
-            double max = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), range[1]);
-            double min = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), range[0]);
+            double max = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), range[1]);
+            double min = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), range[0]);
             String random = nf.format(ThreadLocalRandom.current().nextInt((int) min, (int) max + 1));
             return new String[] { "Random number between "+range[0]+" and " + range[1] + " is ", random };
 
@@ -57,10 +57,6 @@ public class Random {
         return new String[] { "Invalid arguments" };
     }
 
-    public static String helpMessage = """
-        §LRandom:§r
-            Given a min & max value, returns a random number between 0 and the max value.
-            §cUsage: /calc random <max>§f
-            """;
+    public static String helpMessage = "§LRandom:§r \nGiven a min & max value, returns a random number between 0 and the max value. \n§cUsage: /calc random <max>§f";
     
 }

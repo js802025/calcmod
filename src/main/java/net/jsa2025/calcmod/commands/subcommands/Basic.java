@@ -29,7 +29,7 @@ public class Basic {
     }
 
     public static String[] execute(ServerPlayerEntity player, String expression) {
-        double result = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), expression);
+        double result = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), expression);
         String[] message = {expression+" = ", nf.format(result)};
         return message;
     }

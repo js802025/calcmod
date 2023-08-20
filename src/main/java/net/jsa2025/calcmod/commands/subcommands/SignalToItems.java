@@ -46,8 +46,8 @@ public class SignalToItems {
     }
 
     public static String[] execute(ServerPlayerEntity player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), signal);
-        var containers = ContainerSuggestionProvider.containers;
+        double strength = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), signal);
+        Map<String, Integer> containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;
         double item64 = Math.max(strength, Math.ceil(secondlevel*(strength-1)));
@@ -74,11 +74,7 @@ public class SignalToItems {
         return new String[] {"Items Required for 64 Stackable: ", CalcCommand.getParsedStack(item64, 64), "\nItems Required for 16 Stackable: ", stackable16, "\nItems Required for Non Stackable: ", stackable1};
     }
 
-    public static String helpMessage = """
-        §LSignal To Items:§r
-           Given a container and a desired signal strength from a comparator, returns the number of items needed to achieve that signal strength.
-            §cUsage: /calc signaltoitems <container> <signal>§f
-                """;
+    public static String helpMessage = "§LSignal To Items:§r \nGiven a container and a desired signal strength from a comparator, returns the number of items needed to achieve that signal strength. \n§cUsage: /calc signaltoitems <container> <signal>§f";
 
 }
 

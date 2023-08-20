@@ -51,7 +51,7 @@ public class Storage {
     }
 
     public static String[] execute(ServerPlayerEntity player, String itemsperhour, int timesHopperSpeed) {
-        double rates = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), itemsperhour);
+        double rates = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;
@@ -60,10 +60,5 @@ public class Storage {
         return message;
     }
 
-    public static String helpMessage = """
-        §LStorage:§r
-            Given rate in terms of items per hour(can be in expression form) and optionally hopper speed, returns the number of needed sorters and rates in terms of sbs per hour
-            §cUsage: /calc storage <itemsperhour>
-            Usage: /calc storage <timesHopperSpeed> <itemsperhour> §f
-                """;
+    public static String helpMessage = "§LStorage:§r \nGiven rate in terms of items per hour(can be in expression form) and optionally hopper speed, returns the number of needed sorters and rates in terms of sbs per hour \n§cUsage: /calc storage <itemsperhour> \nUsage: /calc storage <timesHopperSpeed> <itemsperhour> §f";
 }

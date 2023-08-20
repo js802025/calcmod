@@ -22,7 +22,7 @@ public class Overworld {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), ctx.getSource().getPlayerOrException().getEntity().blockPosition());
+            String[] message = execute(ctx.getSource().getPlayerOrException(), ctx.getSource().getPlayerOrException().getEntity().getCommandSenderBlockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -48,11 +48,7 @@ public class Overworld {
         return message;
     }
 
-    public static String helpMessage = """
-        §LOverworld:§r
-            Given a block position in the nether, returns the overworld coordinates
-            §cUsage: /calc overworld <x> <y> <z>§f
-                """;
+    public static String helpMessage = "§LOverworld:§r \nGiven a block position in the nether, returns the overworld coordinates \n§cUsage: /calc overworld <x> <y> <z>§f";
 
 
 }

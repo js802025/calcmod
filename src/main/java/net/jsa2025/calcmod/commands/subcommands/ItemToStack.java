@@ -47,16 +47,12 @@ public class ItemToStack {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofitems, stackSize);
+        double items = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofitems, stackSize);
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
         String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};      
         return message;
     }
 
-    public static String helpMessage = """
-        §LItem to Stack:§r
-            Given a number of items (can be in expression form), returns the number of stacks and leftover items
-            §cUsage: /calc itemtostack <numberofitems>§f
-                """;
+    public static String helpMessage = "§LItem to Stack:§r \nGiven a number of items (can be in expression form), returns the number of stacks and leftover items \n§cUsage: /calc itemtostack <numberofitems>§f";
 }

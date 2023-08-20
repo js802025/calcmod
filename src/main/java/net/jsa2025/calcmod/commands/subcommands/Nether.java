@@ -22,7 +22,7 @@ public class Nether {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("nether").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException().getEntity().blockPosition());
+            String[] message = execute(ctx.getSource().getPlayerOrException().getEntity().getCommandSenderBlockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -46,9 +46,5 @@ public class Nether {
         return message;
     }
 
-    public static String helpMessage = """
-        §LNether:§r
-            Given a block position in the overworld, returns the nether coordinates
-            §cUsage: /calc nether <x> <y> <z>§f
-                """;
+    public static String helpMessage = "§LNether:§r \nGiven a block position in the overworld, returns the nether coordinates \n§cUsage: /calc nether <x> <y> <z>§f";
 }

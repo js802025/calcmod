@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 
@@ -48,9 +49,9 @@ public class Craft {
 
     public static String[] execute(ServerPlayerEntity player, IRecipe item, String amount) {
 
-        var is = item.getIngredients();
-        var outputSize = item.getResultItem().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getEntity().blockPosition(), amount));
+        NonNullList<Ingredient> is = item.getIngredients();
+        int outputSize = item.getResultItem().getCount();
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
@@ -99,10 +100,6 @@ public class Craft {
         return message.toArray(new String[message.size()]);
     }
 
-    public static String helpMessage = """
-        §LCraft:§r
-        Given an item and the quanity you want to craft of it, returns the amounts of the ingredients needed to craft the quantity of the item.
-        §cUsage: /calc craft <item> <amount>§f
-            """;
+    public static String helpMessage = "§LCraft:§r \nGiven an item and the quanity you want to craft of it, returns the amounts of the ingredients needed to craft the quantity of the item. \n§cUsage: /calc craft <item> <amount>§f";
     
 }

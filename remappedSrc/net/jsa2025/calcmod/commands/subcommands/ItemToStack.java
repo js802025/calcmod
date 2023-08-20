@@ -74,7 +74,7 @@ public class ItemToStack {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofitems, stackSize);
+        double items = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofitems, stackSize);
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
         String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};      

@@ -35,7 +35,7 @@ public class SecondsToRepeater {
     }
 
     public static String[] execute(ServerPlayerEntity player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), seconds);
+        double secondsDouble = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {
@@ -47,9 +47,5 @@ public class SecondsToRepeater {
         }
     }
 
-    public static String helpMessage = """
-        §LSeconds to Repeater:§r
-            Given a number of seconds (can be in expression form), returns the number of repeaters and the last tick of the last repeater
-            §cUsage: /calc secondstorepeater <seconds>§f
-                """;
+    public static String helpMessage = "§LSeconds to Repeater:§r \nGiven a number of seconds (can be in expression form), returns the number of repeaters and the last tick of the last repeater \n§cUsage: /calc secondstorepeater <seconds>§f";
 }

@@ -63,7 +63,7 @@ public class SignalToItems {
     }
 
     public static String[] execute(ServerPlayerEntity player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), signal);
+        double strength = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), signal);
         var containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;

@@ -127,14 +127,14 @@ public class CalcCommand {
 
 
     public static void sendMessageServer(CommandSource source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        var messageText = new TranslationTextComponent("");
+        TranslationTextComponent messageText = new TranslationTextComponent("");
         String m = "";
-        for (var i = 0; i < message.length; i++) {
+        for (int i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
             messageText.append(new TranslationTextComponent(message[i]));
             m += message[i];
            } else {
-            messageText.append(new TranslationTextComponent("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(new TranslationTextComponent("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
            
@@ -142,12 +142,12 @@ public class CalcCommand {
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayerOrException().sendMessage(messageText, UUID.randomUUID());
+                source.getPlayerOrException().sendMessage(messageText);
                 return;
             } 
         }
         messageText.append(new TranslationTextComponent(" "));
-        source.getPlayerOrException().sendMessage(messageText.append(new TranslationTextComponent("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), UUID.randomUUID());
+        source.getPlayerOrException().sendMessage(messageText.append(new TranslationTextComponent("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
     

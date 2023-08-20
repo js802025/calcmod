@@ -46,16 +46,12 @@ public class SbToItem {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofsbs, int stackSize) {
-        double sbs = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofsbs, stackSize);
+        double sbs = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofsbs, stackSize);
         double items = sbs * stackSize * 27;
         String message[] = {"Items: ", nf.format(items)};
         return message;
     }
 
-    public static String helpMessage = """
-        §LSb to Item:§r
-            Given a number of sbs (can be in expression form), returns the number of items
-            §cUsage: /calc sbtoitem <numberofsbs>§f
-                """;
+    public static String helpMessage = "§LSb to Item:§r \nGiven a number of sbs (can be in expression form), returns the number of items \n§cUsage: /calc sbtoitem <numberofsbs>§f";
     
 }

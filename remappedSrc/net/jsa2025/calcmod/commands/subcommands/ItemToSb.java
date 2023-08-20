@@ -74,7 +74,7 @@ public class ItemToSb {
     }
 
     public static String[] execute(ServerPlayerEntity player, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofitems, stackSize);
+        double items = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofitems, stackSize);
         double sbs = items / (stackSize * 27);
         String[] message= {"Sbs: ", nf.format(sbs)};
 
