@@ -5,12 +5,14 @@ import java.text.NumberFormat;
 
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.math.BlockPos;
@@ -76,6 +78,15 @@ public class CalcCommand {
         command = Help.registerServer(command);
 
         dispatcher.register(command);
+
+        LiteralArgumentBuilder<CommandSource> copyCommand = Commands.literal("copy")
+                .then(Commands.argument("text", StringArgumentType.string())
+                        .executes(ctx -> {
+                            Minecraft.getInstance().keyboardHandler.setClipboard(StringArgumentType.getString(ctx, "text"));
+                            return 0;
+                        }));
+
+        dispatcher.register(copyCommand);
     }
 
    
@@ -134,7 +145,7 @@ public class CalcCommand {
             messageText.append(new TranslationTextComponent(message[i]));
             m += message[i];
            } else {
-            messageText.append(new TranslationTextComponent("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(new TranslationTextComponent("§a"+message[i]+"§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+message[i]+'"'))));
             m += message[i];
            }
            
@@ -147,7 +158,7 @@ public class CalcCommand {
             } 
         }
         messageText.append(new TranslationTextComponent(" "));
-        source.getPlayerOrException().sendMessage(messageText.append(new TranslationTextComponent("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        source.getPlayerOrException().sendMessage(messageText.append(new TranslationTextComponent("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))));
     }
 
     
