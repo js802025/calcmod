@@ -12,7 +12,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 
 public class SbToItem {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -46,7 +46,7 @@ public class SbToItem {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("sbtoitem").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
@@ -74,8 +74,8 @@ public class SbToItem {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String numberofsbs, int stackSize) {
-        double sbs = CalcCommand.getParsedExpression(player.getOnPos(), numberofsbs, stackSize);
+    public static String[] execute(ServerPlayerEntity player, String numberofsbs, int stackSize) {
+        double sbs = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofsbs, stackSize);
         double items = sbs * stackSize * 27;
         String message[] = {"Items: ", nf.format(items)};
         return message;

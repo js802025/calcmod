@@ -6,23 +6,23 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
-import net.minecraft.core.BlockPos;
+import net.minecraft.command.arguments.BlockPosArgument;
+import net.minecraft.util.math.BlockPos;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 public class Nether {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("nether").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException().getOnPos());
+            String[] message = execute(ctx.getSource().getPlayerOrException().getEntity().blockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())

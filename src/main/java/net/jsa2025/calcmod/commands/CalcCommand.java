@@ -11,12 +11,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.*;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.math.BlockPos;
 
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
 import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -53,8 +55,8 @@ public class CalcCommand {
 //
 //    }
 
-    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
-        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
+    public static void registerServer(CommandDispatcher<CommandSource> dispatcher, boolean dedicated) {
+        LiteralArgumentBuilder<CommandSource> command = Commands.literal("calc");
         command = Basic.registerServer(command);
         command = Storage.registerServer(command);
         command = Nether.registerServer(command);
@@ -124,15 +126,15 @@ public class CalcCommand {
     }
 
 
-    public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        var messageText = new TextComponent("");
+    public static void sendMessageServer(CommandSource source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
+        var messageText = new TranslationTextComponent("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(new TextComponent(message[i]));
+            messageText.append(new TranslationTextComponent(message[i]));
             m += message[i];
            } else {
-            messageText.append(new TextComponent("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(new TranslationTextComponent("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
            
@@ -144,8 +146,8 @@ public class CalcCommand {
                 return;
             } 
         }
-        messageText.append(new TextComponent(" "));
-        source.getPlayerOrException().sendMessage(messageText.append(new TextComponent("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), UUID.randomUUID());
+        messageText.append(new TranslationTextComponent(" "));
+        source.getPlayerOrException().sendMessage(messageText.append(new TranslationTextComponent("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), UUID.randomUUID());
     }
 
     

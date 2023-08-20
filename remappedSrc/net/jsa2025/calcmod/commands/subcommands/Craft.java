@@ -27,7 +27,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
 
@@ -52,7 +52,7 @@ public class Craft {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command, CommandRegistryAccess registry) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command, CommandRegistryAccess registry) {
         command
         .then(Commands.literal("craft").then(Commands.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(Commands.argument("amount", StringArgumentType.greedyString())
@@ -70,11 +70,11 @@ public class Craft {
     }
 
 
-    public static String[] execute(ServerPlayer player, Recipe item, String amount, DynamicRegistryManager registryManager) {
+    public static String[] execute(ServerPlayerEntity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
 
         var is = item.getIngredients();
         var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getOnPos(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getEntity().blockPosition(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();

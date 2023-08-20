@@ -8,14 +8,14 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.ResourceLocation;
 
-public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
+public class RecipeSuggestionProvider implements SuggestionProvider<CommandSource> {
     
     @Override
-    public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
+    public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) {
         // context.getSource().getWorld().getRecipeManager().keys().map(recipe -> {
         //     String item = recipe.getNamespace();
         //     if (item == null) {

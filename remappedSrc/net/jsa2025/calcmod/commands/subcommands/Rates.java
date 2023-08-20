@@ -12,7 +12,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 public class Rates {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -35,7 +35,7 @@ public class Rates {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("rates").then(Commands.argument("numberofitems", StringArgumentType.string())
         .then(Commands.argument("time", StringArgumentType.greedyString())
@@ -53,9 +53,9 @@ public class Rates {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getOnPos(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getOnPos(), time);
+    public static String[] execute(ServerPlayerEntity player, String numberofitems, String time) {
+        double items = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         String[] message = {"Rates: ", nf.format(rates)};

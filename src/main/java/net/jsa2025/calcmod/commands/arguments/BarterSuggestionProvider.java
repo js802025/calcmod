@@ -5,11 +5,11 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 //import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.CommandSource;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class BarterSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
+public class BarterSuggestionProvider implements SuggestionProvider<CommandSource> {
     public static final Map<String, Double> barter = Map.ofEntries(
             Map.entry("soul_speed_book", 91.8),
         Map.entry("soul_speed_boots", 57.375),
@@ -30,7 +30,7 @@ public class BarterSuggestionProvider implements SuggestionProvider<CommandSourc
         Map.entry("blackstone", 0.96));
     
     @Override
-    public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
+    public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) {
         for (String b : barter.keySet()) {
             if (builder.getRemaining().isEmpty() || b.startsWith(builder.getRemaining())) {
                 builder.suggest(b);

@@ -9,15 +9,15 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class ItemToSb {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("itemtosb").then(Commands.argument("numberofitems", StringArgumentType.greedyString())
         .executes((ctx) -> {
@@ -45,8 +45,8 @@ public class ItemToSb {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(player.getOnPos(), numberofitems, stackSize);
+    public static String[] execute(ServerPlayerEntity player, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), numberofitems, stackSize);
         double sbs = items / (stackSize * 27);
         String[] message= {"Sbs: ", nf.format(sbs)};
 

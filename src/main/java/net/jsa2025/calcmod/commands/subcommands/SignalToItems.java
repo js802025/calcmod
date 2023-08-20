@@ -9,8 +9,8 @@ import com.mojang.brigadier.tree.CommandNode;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -28,7 +28,7 @@ public class SignalToItems {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("signaltoitems")
         .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
@@ -45,8 +45,8 @@ public class SignalToItems {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getOnPos(), signal);
+    public static String[] execute(ServerPlayerEntity player, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), signal);
         var containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;

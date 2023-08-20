@@ -33,7 +33,7 @@ import net.minecraft.util.math.BlockPos;
 
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;import net.minecraft.server.command.Commands.RegistrationEnvironment;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;import net.minecraft.server.command.Commands.RegistrationEnvironment;
 
 
 import java.util.Locale;
@@ -64,8 +64,8 @@ public class CalcCommand {
 
     }
 
-    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
-        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
+    public static void registerServer(CommandDispatcher<CommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
+        LiteralArgumentBuilder<CommandSource> command = Commands.literal("calc");
         command = Basic.registerServer(command);
         command = Storage.registerServer(command);
         command = Nether.registerServer(command);
@@ -132,7 +132,7 @@ public class CalcCommand {
         source.getPlayerOrException().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
-    public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) {
+    public static void sendMessageServer(CommandSource source, String[] message, Boolean... isHelpMessage) {
         var messageText = new LiteralText("");
         String m = "";
         for (var i = 0; i < message.length; i++) {

@@ -12,7 +12,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 
 
 
@@ -30,7 +30,7 @@ public class Basic {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "expression"));
@@ -40,8 +40,8 @@ public class Basic {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String expression) {
-        double result = CalcCommand.getParsedExpression(player.getOnPos(), expression);
+    public static String[] execute(ServerPlayerEntity player, String expression) {
+        double result = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), expression);
         String[] message = {"Result: ", nf.format(result)};
         return message;
     }

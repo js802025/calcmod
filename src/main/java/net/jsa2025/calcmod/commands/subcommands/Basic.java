@@ -9,8 +9,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 
 public class Basic {
@@ -18,7 +18,7 @@ public class Basic {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US")); 
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "expression"));
@@ -28,8 +28,8 @@ public class Basic {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String expression) {
-        double result = CalcCommand.getParsedExpression(player.getOnPos(), expression);
+    public static String[] execute(ServerPlayerEntity player, String expression) {
+        double result = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), expression);
         String[] message = {expression+" = ", nf.format(result)};
         return message;
     }

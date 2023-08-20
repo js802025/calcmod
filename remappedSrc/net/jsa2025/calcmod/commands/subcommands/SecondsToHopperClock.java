@@ -12,7 +12,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 public class SecondsToHopperClock {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -33,7 +33,7 @@ public class SecondsToHopperClock {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("secondstohopperclock").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
@@ -49,8 +49,8 @@ public class SecondsToHopperClock {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getOnPos(), seconds);
+    public static String[] execute(ServerPlayerEntity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {
             String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64), " \n§cThis exceeds the maximum items of a hopper."};

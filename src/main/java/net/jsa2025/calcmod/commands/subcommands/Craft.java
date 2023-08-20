@@ -13,13 +13,12 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.ResourceLocation;
 
 
 public class Craft {
@@ -27,13 +26,13 @@ public class Craft {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("craft").then(Commands.argument("item", StringArgumentType.string()).suggests(new RecipeSuggestionProvider())
         .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String item = StringArgumentType.getString(ctx, "item");
-            Optional<? extends Recipe<?>> itemR = ctx.getSource().getServer().getRecipeManager().byKey(ResourceLocation.tryParse(item));
+            Optional<? extends IRecipe<?>> itemR = ctx.getSource().getServer().getRecipeManager().byKey(ResourceLocation.tryParse(item));
             String[] message = execute(ctx.getSource().getPlayerOrException(), itemR.get(), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
@@ -47,11 +46,11 @@ public class Craft {
     }
 
 
-    public static String[] execute(ServerPlayer player, Recipe item, String amount) {
+    public static String[] execute(ServerPlayerEntity player, IRecipe item, String amount) {
 
         var is = item.getIngredients();
         var outputSize = item.getResultItem().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getOnPos(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getEntity().blockPosition(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();

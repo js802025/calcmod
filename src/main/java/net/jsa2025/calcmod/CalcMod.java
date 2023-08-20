@@ -4,7 +4,7 @@ package net.jsa2025.calcmod;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.subcommands.Basic;
-import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.CommandSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;

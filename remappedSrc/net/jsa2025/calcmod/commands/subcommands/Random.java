@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 public class Random {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -40,7 +40,7 @@ public class Random {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("random")
         .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
@@ -62,14 +62,14 @@ public class Random {
     }
 
 
-    public static String[] execute(ServerPlayer player, String... range) {
+    public static String[] execute(ServerPlayerEntity player, String... range) {
         if (range.length == 1) {
-        double maxInt = CalcCommand.getParsedExpression(player.getOnPos(), range[0]);
+        double maxInt = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), range[0]);
         String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
         return new String[] { "Random number between 0 and " + range[0] + " is ", random };
         } else if (range.length == 2 ) {
-            double max = CalcCommand.getParsedExpression(player.getOnPos(), range[1]);
-            double min = CalcCommand.getParsedExpression(player.getOnPos(), range[0]);
+            double max = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), range[1]);
+            double min = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), range[0]);
             String random = nf.format(ThreadLocalRandom.current().nextInt((int) min, (int) max + 1));
             return new String[] { "Random number between "+range[0]+" and " + range[1] + " is ", random };
 

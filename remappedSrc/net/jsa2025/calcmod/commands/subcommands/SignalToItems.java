@@ -12,7 +12,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -45,7 +45,7 @@ public class SignalToItems {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("signaltoitems")
         .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
@@ -62,8 +62,8 @@ public class SignalToItems {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getOnPos(), signal);
+    public static String[] execute(ServerPlayerEntity player, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), signal);
         var containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;

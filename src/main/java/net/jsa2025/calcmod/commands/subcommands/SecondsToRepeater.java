@@ -10,15 +10,15 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class SecondsToRepeater {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("secondstorepeater").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
@@ -34,8 +34,8 @@ public class SecondsToRepeater {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getOnPos(), seconds);
+    public static String[] execute(ServerPlayerEntity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {

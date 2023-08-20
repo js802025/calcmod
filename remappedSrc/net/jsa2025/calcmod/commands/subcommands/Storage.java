@@ -13,7 +13,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 public class Storage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -46,7 +46,7 @@ public class Storage {
         return command;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("storage").then(Commands.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
@@ -74,8 +74,8 @@ public class Storage {
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String itemsperhour, int timesHopperSpeed) {
-        double rates = CalcCommand.getParsedExpression(player.getOnPos(), itemsperhour);
+    public static String[] execute(ServerPlayerEntity player, String itemsperhour, int timesHopperSpeed) {
+        double rates = CalcCommand.getParsedExpression(player.getEntity().blockPosition(), itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;
