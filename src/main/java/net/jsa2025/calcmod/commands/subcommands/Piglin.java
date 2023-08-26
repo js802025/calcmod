@@ -20,16 +20,28 @@ public class Piglin {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-                .then(ClientCommandManager.literal("piglin")
-                        .then(ClientCommandManager.argument("gold", IntegerArgumentType.integer())
+                .then(ClientCommandManager.literal("barter")
+                        .then(ClientCommandManager.literal("toitem")
+                        .then(ClientCommandManager.argument("gold", StringArgumentType.string())
                                 .then(ClientCommandManager.argument("item", StringArgumentType.string()).suggests(new CBarterSuggestionProvider())
                         .executes((ctx) -> {
-                            Integer gold = IntegerArgumentType.getInteger(ctx, "gold");
+                            String gold = StringArgumentType.getString(ctx, "gold");
                             String item = StringArgumentType.getString(ctx, "item");
-                            String[] message = execute(ctx.getSource().getPlayer(), gold, item);
+                            String[] message = executeToItems(ctx.getSource().getPlayer(), gold, item);
                             CalcCommand.sendMessage(ctx.getSource(), message);
                             return 1;
-                        }))).then(ClientCommandManager.literal("help").executes((ctx) -> {
+                        }))))
+                        .then(ClientCommandManager.literal("togold")
+                                .then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
+                                        .then(ClientCommandManager.argument("item", StringArgumentType.string()).suggests(new CBarterSuggestionProvider())
+                                                .executes((ctx) -> {
+                                                    String gold = StringArgumentType.getString(ctx, "numberofitems");
+                                                    String item = StringArgumentType.getString(ctx, "item");
+                                                    String[] message = executeToGold(ctx.getSource().getPlayer(), gold, item);
+                                                    CalcCommand.sendMessage(ctx.getSource(), message);
+                                                    return 1;
+                                                }))))
+                        .then(ClientCommandManager.literal("help").executes((ctx) -> {
                     String[] message = Help.execute("nether");
                     CalcCommand.sendMessage(ctx.getSource(), message, true);
                     return 1;
@@ -39,16 +51,28 @@ public class Piglin {
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
-                .then(CommandManager.literal("piglin")
-                        .then(CommandManager.argument("gold", IntegerArgumentType.integer())
+                .then(CommandManager.literal("barter")
+                        .then(CommandManager.literal("toitem")
+                        .then(CommandManager.argument("gold", StringArgumentType.string())
                                 .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
                                         .executes((ctx) -> {
-                                            Integer gold = IntegerArgumentType.getInteger(ctx, "gold");
+                                            String gold = StringArgumentType.getString(ctx, "gold");
                                             String item = StringArgumentType.getString(ctx, "item");
-                                            String[] message = execute(ctx.getSource().getPlayer(), gold, item);
+                                            String[] message = executeToItems(ctx.getSource().getPlayer(), gold, item);
                                             CalcCommand.sendMessageServer(ctx.getSource(), message);
                                             return 1;
-                                        }))).then(CommandManager.literal("help").executes((ctx) -> {
+                                        }))))
+                        .then(CommandManager.literal("togold")
+                                .then(CommandManager.argument("numberofitems", StringArgumentType.string())
+                                        .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
+                                                .executes((ctx) -> {
+                                                    String gold = StringArgumentType.getString(ctx, "numberofitems");
+                                                    String item = StringArgumentType.getString(ctx, "item");
+                                                    String[] message = executeToGold(ctx.getSource().getPlayer(), gold, item);
+                                                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+                                                    return 1;
+                                                }))))
+                        .then(CommandManager.literal("help").executes((ctx) -> {
                             String[] message = Help.execute("nether");
                             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
                             return 1;
@@ -56,9 +80,18 @@ public class Piglin {
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, Integer gold, String item) {
-        double amount_of_items = gold/CBarterSuggestionProvider.barter.get(item);
-        String[] message = {"Number of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(nf.format(amount_of_items))};
+    public static String[] executeToItems(PlayerEntity player, String gold, String item) {
+
+        double amount_of_items = CalcCommand.getParsedExpression(player.getBlockPos(), gold)/CBarterSuggestionProvider.barter.get(item);
+        String[] message = {"Amount of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(nf.format(amount_of_items))};
+        return message;
+
+
+    }
+    public static String[] executeToGold(PlayerEntity player, String numberofitems, String item) {
+
+        double amount_of_items = CalcCommand.getParsedExpression(player.getBlockPos(), numberofitems)*CBarterSuggestionProvider.barter.get(item);
+        String[] message = {"Amount of gold that you need to get "+numberofitems+": \nResult: ", String.valueOf(nf.format(amount_of_items))};
         return message;
 
 
