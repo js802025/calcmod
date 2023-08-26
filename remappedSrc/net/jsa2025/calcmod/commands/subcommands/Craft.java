@@ -70,11 +70,11 @@ public class Craft {
     }
 
 
-    public static String[] execute(Entity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
+    public static String[] execute(ICommandSender sender, Recipe item, String amount, DynamicRegistryManager registryManager) {
 
         var is = item.getIngredients();
         var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getPosition(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(sender.getPosition(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();

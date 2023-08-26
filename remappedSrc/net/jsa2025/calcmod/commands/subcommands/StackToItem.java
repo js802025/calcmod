@@ -73,8 +73,8 @@ public class StackToItem {
         return command;
     }
 
-    public static String[] execute(Entity player, String numberofstacks, int stackSize) {
-        double stacks = CalcCommand.getParsedExpression(player.getPosition(), numberofstacks, 1);
+    public static String[] execute(ICommandSender sender, String numberofstacks, int stackSize) {
+        double stacks = CalcCommand.getParsedExpression(sender.getPosition(), numberofstacks, 1);
         double items = stacks * stackSize;
         String[] message = {"Items: ", nf.format(items)};
         return message;

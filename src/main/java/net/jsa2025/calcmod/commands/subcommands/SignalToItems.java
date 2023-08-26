@@ -3,17 +3,14 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.CommandNode;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
-import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
-import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
+
+import net.minecraft.command.ICommandSender;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -28,26 +25,43 @@ public class SignalToItems {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
-        command
-        .then(Commands.literal("signaltoitems")
-        .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
-        .then(Commands.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 0;
-        }))).then(Commands.literal("help").executes(ctx -> {
-            String[] message = Help.execute("signaltoitems");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 0;
-        })
-        ));
-        return command;
+//    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
+//        command
+//        .then(Commands.literal("signaltoitems")
+//        .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
+//        .then(Commands.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
+//            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 0;
+//        }))).then(Commands.literal("help").executes(ctx -> {
+//            String[] message = Help.execute("signaltoitems");
+//            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+//            return 0;
+//        })
+//        ));
+//        return command;
+//    }
+public static Map<String, Integer> containers;
+
+    static {
+        containers = new HashMap<>();
+        containers.put("shulker_box", 27);
+        containers.put("chest", 27);
+        containers.put("barrel", 27);
+        containers.put("trapped_chest", 27);
+        containers.put("double_chest", 54);
+        containers.put("dropper", 9);
+        containers.put("dispenser", 9);
+        containers.put("hopper",5);
+        containers.put("hopper_minecart", 5);
+        containers.put("brewing_stand", 5);
+        containers.put("furnace", 3);
+        containers.put("blast_furnace", 3);
+        containers.put("smoker", 3);
     }
 
-    public static String[] execute(Entity player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getPosition(), signal);
-        Map<String, Integer> containers = ContainerSuggestionProvider.containers;
+    public static String[] execute(ICommandSender sender, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(sender.getPosition(), signal);
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;
         double item64 = Math.max(strength, Math.ceil(secondlevel*(strength-1)));

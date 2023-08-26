@@ -59,7 +59,7 @@ public class Overworld {
         return command;
     }
 
-    public static String[] execute(Entity player, BlockPos... pos) {
+    public static String[] execute(ICommandSender sender, BlockPos... pos) {
         BlockPos position;
         position = pos[0];
         

@@ -47,8 +47,8 @@ public class AllayStorage {
     }
     
 
-    public static String[] execute(Entity player, String itemsperhour) {
-        double rates = CalcCommand.getParsedExpression(player.getPosition(), itemsperhour, 1);
+    public static String[] execute(ICommandSender sender, String itemsperhour) {
+        double rates = CalcCommand.getParsedExpression(sender.getPosition(), itemsperhour, 1);
         double ratesinsec = rates / 3600;
         double allaycooldown = 3;
         String allaystorage = nf.format(Math.ceil(ratesinsec/(1/allaycooldown)));

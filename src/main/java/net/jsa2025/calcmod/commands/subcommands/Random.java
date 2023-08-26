@@ -1,11 +1,5 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
-
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-
-//import net.fabricmc.fabric.api.client.command.v1.ClientCommands;
-//import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
@@ -13,43 +7,42 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
-import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
+import net.minecraft.command.ICommandSender;
 
 public class Random {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
-        command
-        .then(Commands.literal("random")
-        .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 0;
-        }))
-        .then(Commands.literal("minmax").then(Commands.argument("min", StringArgumentType.string()).then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 0;
-        }))))
-        .then(Commands.literal("help").executes(ctx -> {
-            String[] message = Help.execute("random");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 0;
-        })));
-        return command;
-    }
+//    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
+//        command
+//        .then(Commands.literal("random")
+//        .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+//            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 0;
+//        }))
+//        .then(Commands.literal("minmax").then(Commands.argument("min", StringArgumentType.string()).then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+//            String[] message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 0;
+//        }))))
+//        .then(Commands.literal("help").executes(ctx -> {
+//            String[] message = Help.execute("random");
+//            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+//            return 0;
+//        })));
+//        return command;
+//    }
 
 
-    public static String[] execute(Entity player, String... range) {
+    public static String[] execute(ICommandSender sender, String... range) {
         if (range.length == 1) {
-        double maxInt = CalcCommand.getParsedExpression(player.getPosition(), range[0]);
+        double maxInt = CalcCommand.getParsedExpression(sender.getPosition(), range[0]);
         String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
         return new String[] { "Random number between 0 and " + range[0] + " is ", random };
         } else if (range.length == 2 ) {
-            double max = CalcCommand.getParsedExpression(player.getPosition(), range[1]);
-            double min = CalcCommand.getParsedExpression(player.getPosition(), range[0]);
+            double max = CalcCommand.getParsedExpression(sender.getPosition(), range[1]);
+            double min = CalcCommand.getParsedExpression(sender.getPosition(), range[0]);
             String random = nf.format(ThreadLocalRandom.current().nextInt((int) min, (int) max + 1));
             return new String[] { "Random number between "+range[0]+" and " + range[1] + " is ", random };
 
@@ -58,5 +51,5 @@ public class Random {
     }
 
     public static String helpMessage = "§LRandom:§r \nGiven a min & max value, returns a random number between 0 and the max value. \n§cUsage: /calc random <max>§f";
-    
+
 }

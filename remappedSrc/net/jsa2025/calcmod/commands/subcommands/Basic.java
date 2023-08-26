@@ -40,8 +40,8 @@ public class Basic {
         return command;
     }
 
-    public static String[] execute(Entity player, String expression) {
-        double result = CalcCommand.getParsedExpression(player.getPosition(), expression);
+    public static String[] execute(ICommandSender sender, String expression) {
+        double result = CalcCommand.getParsedExpression(sender.getPosition(), expression);
         String[] message = {"Result: ", nf.format(result)};
         return message;
     }

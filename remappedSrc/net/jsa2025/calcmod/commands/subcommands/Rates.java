@@ -53,9 +53,9 @@ public class Rates {
         return command;
     }
 
-    public static String[] execute(Entity player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getPosition(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getPosition(), time);
+    public static String[] execute(ICommandSender sender, String numberofitems, String time) {
+        double items = CalcCommand.getParsedExpression(sender.getPosition(), numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(sender.getPosition(), time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         String[] message = {"Rates: ", nf.format(rates)};

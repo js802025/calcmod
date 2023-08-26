@@ -73,8 +73,8 @@ public class ItemToSb {
         return command;
     }
 
-    public static String[] execute(Entity player, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(player.getPosition(), numberofitems, stackSize);
+    public static String[] execute(ICommandSender sender, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(sender.getPosition(), numberofitems, stackSize);
         double sbs = items / (stackSize * 27);
         String[] message= {"Sbs: ", nf.format(sbs)};
 

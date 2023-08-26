@@ -2,7 +2,6 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 
@@ -12,22 +11,21 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 public class Help {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
 
-    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
-        command
-        .then(Commands.literal("help")
-        .executes(ctx -> {
-            String[] message = execute();
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 0;
-        }));
-        return command;
-    }
+//    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
+//        command
+//        .then(Commands.literal("help")
+//        .executes(ctx -> {
+//            String[] message = execute();
+//            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+//            return 0;
+//        }));
+//        return command;
+//    }
 
     public static String[] execute(String... hterm) {
         Map<String, String> help = new LinkedHashMap<String, String>();
@@ -50,7 +48,7 @@ public class Help {
             for (Map.Entry<String, String> me :
              help.entrySet()) {
                 helpMenu += me.getValue() + "\n";
-  
+
               }
             String[] message = {helpMenu};
             return message;
@@ -60,5 +58,5 @@ public class Help {
         }
     }
 
-    
+
 }

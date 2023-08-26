@@ -49,8 +49,8 @@ public class SecondsToRepeater {
         return command;
     }
 
-    public static String[] execute(Entity player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getPosition(), seconds);
+    public static String[] execute(ICommandSender sender, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(sender.getPosition(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {

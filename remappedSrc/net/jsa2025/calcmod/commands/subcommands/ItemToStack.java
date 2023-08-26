@@ -73,8 +73,8 @@ public class ItemToStack {
         return command;
     }
 
-    public static String[] execute(Entity player, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(player.getPosition(), numberofitems, stackSize);
+    public static String[] execute(ICommandSender sender, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(sender.getPosition(), numberofitems, stackSize);
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
         String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};      
