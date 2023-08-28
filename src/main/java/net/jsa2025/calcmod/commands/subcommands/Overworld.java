@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 //import net.minecraft.core.BlockPos;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
@@ -17,6 +18,7 @@ import java.util.Locale;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import org.checkerframework.checker.units.qual.C;
 
 public class Overworld {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -25,18 +27,18 @@ public class Overworld {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommandManager.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
+            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }).then(ClientCommandManager.argument("pos", CBlockPosArgumentType.blockPos())
         .executes((ctx) -> {
             BlockPos pos = CBlockPosArgumentType.getCBlockPos(ctx, "pos");
-            String[] message = execute(ctx.getSource().getPlayer(), pos);
+            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), pos);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })).then(ClientCommandManager.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("overworld");
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("overworld");
+            CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })));
         return command;
@@ -45,29 +47,29 @@ public class Overworld {
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
         .then(CommandManager.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
+            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
         .executes((ctx) -> {
             BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
-            String[] message = execute(ctx.getSource().getPlayer(), pos);
+            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })).then(CommandManager.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("overworld");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("overworld");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, BlockPos... pos) {
+    public static CalcMessageBuilder execute(PlayerEntity player, BlockPos... pos) {
         BlockPos position;
         position = pos[0];
         
-
-        String[] message = {"Overworld Coords: ", "X: "+nf.format(position.getX()*8)+" Z: "+nf.format(position.getZ()*8)};
+        
+        CalcMessageBuilder message = new CalcMessageBuilder().addString("Overworld Coords: ").addResult("X: "+nf.format(position.getX()*8)+" Z: "+nf.format(position.getZ()*8));
         return message;
     }
 

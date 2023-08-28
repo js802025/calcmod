@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -22,7 +23,7 @@ public class Variables {
         command
         .then(ClientCommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute();
+            CalcMessageBuilder message = execute();
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -33,14 +34,14 @@ public class Variables {
         command
         .then(CommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute();
+            CalcMessageBuilder message = execute();
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute() {
+    public static CalcMessageBuilder execute() {
         String message = """
             Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64:
                 dub: 3456(dynamic)
@@ -58,7 +59,6 @@ public class Variables {
                 min: 60
                 hour: 3600
                 """;
-                String[] m = {message};
-        return m;
+        return new CalcMessageBuilder(message);
     }
 }

@@ -1,6 +1,5 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -8,6 +7,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.BarterSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.CBarterSuggestionProvider;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -27,7 +27,7 @@ public class Piglin {
                         .executes((ctx) -> {
                             String gold = StringArgumentType.getString(ctx, "gold");
                             String item = StringArgumentType.getString(ctx, "item");
-                            String[] message = executeToItems(ctx.getSource().getPlayer(), gold, item);
+                            CalcMessageBuilder message = executeToItems(ctx.getSource().getPlayer(), gold, item);
                             CalcCommand.sendMessage(ctx.getSource(), message);
                             return 1;
                         }))))
@@ -37,13 +37,13 @@ public class Piglin {
                                                 .executes((ctx) -> {
                                                     String gold = StringArgumentType.getString(ctx, "numberofitems");
                                                     String item = StringArgumentType.getString(ctx, "item");
-                                                    String[] message = executeToGold(ctx.getSource().getPlayer(), gold, item);
+                                                    CalcMessageBuilder message = executeToGold(ctx.getSource().getPlayer(), gold, item);
                                                     CalcCommand.sendMessage(ctx.getSource(), message);
                                                     return 1;
                                                 }))))
                         .then(ClientCommandManager.literal("help").executes((ctx) -> {
-                    String[] message = Help.execute("nether");
-                    CalcCommand.sendMessage(ctx.getSource(), message, true);
+                    CalcMessageBuilder message = Help.execute("nether");
+                    CalcCommand.sendMessage(ctx.getSource(), message);
                     return 1;
                 })));
         return command;
@@ -58,7 +58,7 @@ public class Piglin {
                                         .executes((ctx) -> {
                                             String gold = StringArgumentType.getString(ctx, "gold");
                                             String item = StringArgumentType.getString(ctx, "item");
-                                            String[] message = executeToItems(ctx.getSource().getPlayer(), gold, item);
+                                            CalcMessageBuilder message = executeToItems(ctx.getSource().getPlayer(), gold, item);
                                             CalcCommand.sendMessageServer(ctx.getSource(), message);
                                             return 1;
                                         }))))
@@ -68,30 +68,30 @@ public class Piglin {
                                                 .executes((ctx) -> {
                                                     String gold = StringArgumentType.getString(ctx, "numberofitems");
                                                     String item = StringArgumentType.getString(ctx, "item");
-                                                    String[] message = executeToGold(ctx.getSource().getPlayer(), gold, item);
+                                                    CalcMessageBuilder message = executeToGold(ctx.getSource().getPlayer(), gold, item);
                                                     CalcCommand.sendMessageServer(ctx.getSource(), message);
                                                     return 1;
                                                 }))))
                         .then(CommandManager.literal("help").executes((ctx) -> {
-                            String[] message = Help.execute("nether");
-                            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+                            CalcMessageBuilder message = Help.execute("nether");
+                            CalcCommand.sendMessageServer(ctx.getSource(), message);
                             return 1;
                         })));
         return command;
     }
 
-    public static String[] executeToItems(PlayerEntity player, String gold, String item) {
+    public static CalcMessageBuilder executeToItems(PlayerEntity player, String gold, String item) {
 
         double amount_of_items = CalcCommand.getParsedExpression(player.getBlockPos(), gold)/CBarterSuggestionProvider.barter.get(item);
-        String[] message = {"Amount of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(nf.format(amount_of_items))};
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Amount of ", "input", "s that ", "input"," gold will get: \nResult: ","result"}, new String[] {item, gold}, new String[] {nf.format(amount_of_items)});
         return message;
 
 
     }
-    public static String[] executeToGold(PlayerEntity player, String numberofitems, String item) {
+    public static CalcMessageBuilder executeToGold(PlayerEntity player, String numberofitems, String item) {
 
         double amount_of_items = CalcCommand.getParsedExpression(player.getBlockPos(), numberofitems)*CBarterSuggestionProvider.barter.get(item);
-        String[] message = {"Amount of gold that you need to get "+numberofitems+": \nResult: ", String.valueOf(nf.format(amount_of_items))};
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Amount of gold that you need to get ", "input",": \nResult: ", "result"}, new String[] {numberofitems}, new String[] {nf.format(amount_of_items)});
         return message;
 
 
