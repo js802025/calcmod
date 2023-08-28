@@ -89,9 +89,9 @@ public class Storage {
     }
 
     public static String helpMessage = """
-        §LStorage:§r
-            Given rate in terms of items per hour(can be in expression form) and optionally hopper speed, returns the number of needed sorters and rates in terms of sbs per hour
-            §cUsage: /calc storage <itemsperhour>
-            Usage: /calc storage <timesHopperSpeed> <itemsperhour> §f
+        §b§LStorage:§r§f
+        Calculates the number of needed item sorters given a rate of items per hour §7§o(can be in expression form)§r§f. Additional input for multiple times hopper speed sorters.
+                §eUsage: /calc storage <itemsperhour>
+                Usage: /calc storage <timesHopperSpeed> <itemsperhour>§f
                 """;
 }

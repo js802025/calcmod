@@ -67,8 +67,8 @@ public class Rates {
     }
 
     public static String helpMessage = """
-        §LRates:§r
-            Given a number of items and afk time in seconds (can be in expression form), returns the number of items per hour
-            §cUsage: /calc rates <numberofitems> <time>§f
+        §b§LRates:§r§f
+            Given a number of items and afk time in seconds §7§o(can be in expression form)§r§f, returns the number of items per hour.
+            §eUsage: /calc rates <numberofitems> <time>§f
                 """;
 }

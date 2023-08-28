@@ -61,9 +61,9 @@ public class AllayStorage {
     }
 
     public static String helpMessage = """
-        §LAllay Storage:§r
-            Given the number of items per hour of a non stackable item, returns allays needed to sort the item.
-            §cUsage: /calc allaystorage <numberofitems>§f
+        §b§LAllay Storage:§r§f
+            Given the number of items per hour of a non stackable item §7§o(can be in expression form)§r§f, returns allays needed to sort the item.
+            §eUsage: /calc allaystorage <numberofitems>§f
             """;
 
 

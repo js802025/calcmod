@@ -100,9 +100,9 @@ public class SignalToItems {
     }
 
     public static String helpMessage = """
-        §LSignal To Items:§r
-           Given a container and a desired signal strength from a comparator, returns the number of items needed to achieve that signal strength.
-            §cUsage: /calc signaltoitems <container> <signal>§f
+        §b§LSignal To Items:§r§f
+           Given a container and a desired comparator signal strength §7§o(can be in expression form)§r§f, returns the number of items needed to achieve that signal strength.
+            §eUsage: /calc signaltoitems <container> <signal>§f
                 """;
 
 }

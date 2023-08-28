@@ -84,9 +84,9 @@ public class StackToItem {
     }
 
     public static String helpMessage = """
-        §LStack to Item:§r
-            Given a number of stacks (can be in expression form), returns the number of items
-            §cUsage: /calc stacktoitem <numberofstacks>§f
+        §b§LStack to Item:§r§f
+            Given a number of stacks §7§o(can be in expression form)§r§f, returns the number of items.
+            §eUsage: /calc stacktoitem <numberofstacks>§f
                 """;
     
 }

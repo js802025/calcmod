@@ -70,8 +70,8 @@ public class Nether {
     }
 
     public static String helpMessage = """
-        §LNether:§r
-            Given a block position in the overworld, returns the nether coordinates
-            §cUsage: /calc nether <x> <y> <z>§f
+        §b§LNether:§r§f
+            Given a block position in the Overworld, returns the Nether's corresponding coordinates. If no coordinates are given, command assumes current player position.
+            §eUsage: /calc nether <x> <y> <z>§f
                 """;
 }
