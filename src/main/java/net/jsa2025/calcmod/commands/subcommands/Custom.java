@@ -52,8 +52,16 @@ public class Custom {
                                 .executes((ctx) -> {
                                     String function = StringArgumentType.getString(ctx, "function");
                                     String name = StringArgumentType.getString(ctx, "name");
-                                   saveNewCommand(name, function);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+                                    CalcMessageBuilder messageBuilder;
+                                    if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
+                                        saveNewCommand(name, function);
+                                        messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+                                    } else if (parseEquationVariables(function).isEmpty()) {
+                                        messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
+                                    }else {
+                                        messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
+                                    }
+
                                     CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
 
                                     return 0;
@@ -104,8 +112,17 @@ public class Custom {
                                         .executes((ctx) -> {
                                             String function = StringArgumentType.getString(ctx, "function");
                                             String name = StringArgumentType.getString(ctx, "name");
-                                            saveNewCommand(name, function);
-                                            CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+                                            CalcMessageBuilder messageBuilder;
+                                            if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
+                                                saveNewCommand(name, function);
+                                                messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+                                            } else if (parseEquationVariables(function).isEmpty()) {
+                                                messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
+                                            }else {
+                                                messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
+                                            }
+
+
                                             CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
 
                                             return 0;
@@ -148,16 +165,6 @@ public class Custom {
 
 
         return command;
-    }
-
-    public static String evaluateFunction(String eqn, Map<String, String> variables) {
-        
-        for (var eqnVar : variables.keySet()) {
-            if (variables.containsKey(eqnVar)) {
-                eqn = eqn.replace("["+eqnVar+"]", variables.get(eqnVar));
-            }
-        }
-        return eqn;
     }
 
 
@@ -210,13 +217,13 @@ public class Custom {
         for (String f : funcs.keySet()) {
             String func = funcs.get(f).getAsString();
             ArrayList<String> vars = parseEquationVariables(func);
-            if (vars.size() > 0) {
+            if (!vars.isEmpty()) {
                 String combinedVars = String.join(", ", vars);
                 parsedFuncs.add(f + "(" + combinedVars + ") = " + func.replace("[", "").replace("]", ""));
             } else {
                 parsedFuncs.add(f+"() = " + func);
             }
-          //  CalcMod.LOGGER.info("Parsed Func "+f+"("+combinedVars+") = "+func.replace("[", "").replace("]", ""));
+            CalcMod.LOGGER.info("Parsed Func "+parsedFuncs);
         }
         return parsedFuncs;
     }
