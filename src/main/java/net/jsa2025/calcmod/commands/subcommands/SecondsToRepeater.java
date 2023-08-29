@@ -13,7 +13,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -25,7 +25,7 @@ public class SecondsToRepeater {
         command
         .then(ClientCommandManager.literal("secondstorepeater").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
@@ -41,7 +41,7 @@ public class SecondsToRepeater {
         command
         .then(CommandManager.literal("secondstorepeater").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
@@ -53,15 +53,15 @@ public class SecondsToRepeater {
         return command;
     }
 
-    public static CalcMessageBuilder execute(PlayerEntity player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getBlockPos(), seconds);
+    public static CalcMessageBuilder execute(Entity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player, seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {
-            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Repeaters Required for ", "input", " seconds: ", "result", " \nLast Repeater Tick: ", "result"}, new String[] {seconds}, new String[] {nf.format(repeaters), nf.format(ticks % 4)});
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Repeaters required for ", "input", " seconds = ", "result", " \nLast repeater tick = ", "result"}, new String[] {seconds}, new String[] {nf.format(repeaters), nf.format(ticks % 4)});
             return message;
         } else {
-            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Repeaters Required for ", "input", " seconds: ", "result"}, new String[] {seconds}, new String[] {nf.format(repeaters)});
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Repeaters required for ", "input", " seconds = ", "result"}, new String[] {seconds}, new String[] {nf.format(repeaters)});
             return message;
         }
     }

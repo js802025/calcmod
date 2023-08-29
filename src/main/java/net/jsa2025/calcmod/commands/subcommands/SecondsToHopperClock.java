@@ -13,7 +13,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -25,7 +25,7 @@ public class SecondsToHopperClock {
         command
         .then(ClientCommandManager.literal("secondstohopperclock").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
@@ -41,7 +41,7 @@ public class SecondsToHopperClock {
         command
         .then(CommandManager.literal("secondstohopperclock").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
@@ -53,14 +53,14 @@ public class SecondsToHopperClock {
         return command;
     }
 
-    public static CalcMessageBuilder execute(PlayerEntity player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getBlockPos(), seconds);
+    public static CalcMessageBuilder execute(Entity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player, seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {
-            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Hopper Clock Total Items for ", "input"," seconds: ", "result", "result", " \n§cThis exceeds the maximum items of a hopper."}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result", " \n§cThis exceeds the maximum number of items in a hopper."}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
             return message;
         } else {
-            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Hopper Clock Total Items for ", "input"," seconds: ", "result", "result"}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result"}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
         return message;
         }
     }

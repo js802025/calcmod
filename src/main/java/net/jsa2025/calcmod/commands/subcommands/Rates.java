@@ -13,7 +13,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -26,7 +26,7 @@ public class Rates {
         .then(ClientCommandManager.literal("rates").then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
         .then(ClientCommandManager.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
@@ -44,7 +44,7 @@ public class Rates {
         .then(CommandManager.literal("rates").then(CommandManager.argument("numberofitems", StringArgumentType.string())
         .then(CommandManager.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
@@ -57,12 +57,12 @@ public class Rates {
         return command;
     }
 
-    public static CalcMessageBuilder execute(PlayerEntity player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getBlockPos(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getBlockPos(), time);
+    public static CalcMessageBuilder execute(Entity player, String numberofitems, String time) {
+        double items = CalcCommand.getParsedExpression(player, numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(player, time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
-        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " in ", "input", "= ", "result", "/hr"}, new String[] {numberofitems, time}, new String[] {nf.format(rates)});
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " Items in ", "input", " Seconds = ", "result", "/hr"}, new String[] {numberofitems, time}, new String[] {nf.format(rates)});
         return message;
     }
 

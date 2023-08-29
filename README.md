@@ -1,13 +1,18 @@
+![CalcMod Logo](https://i.ibb.co/gWjwWXv/calcmodsmall.png)  [![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/github_vector.svg)](https://github.com/js802025/calcmod)  [![curseforge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/curseforge_vector.svg)
+](https://www.curseforge.com/minecraft/mc-mods/calcmod)  
+<br>
 
-![CalcMod Logo](https://i.ibb.co/d4SNFmx/calcss.png)
+A calculator in your Minecraft chat with extra features to determine farm rates, generate random numbers, convert between Overworld and Nether coordinates, and a bunch of other nerdy things.
 
 
-A handy calculator in your Minecraft chat with features to determine farm rates, generate random numbers, convert between Overworld and Nether coordinates, and a bunch of other nerdy things.
+<br>  
 
 
-Example: ```/calc craft piston 3 sb```  
-![Craft feature example](https://i.ibb.co/2yyZT55/final.png)
+|/calc craft piston 3 sb|  
+|:-:| 
+|![Craft feature example](https://i.ibb.co/sQ0S9rP/Calc-Craft.png)|
 
+<i>Click <font color=#55ff55>any</font> green text to copy it to your clipboard!</i>
 
 ___
 
@@ -87,6 +92,43 @@ Given a container and a desired comparator signal strength, returns the number o
 </details> 
 
 
+
+<details>
+<summary>Piglin Bartering Utils <font color=#ff5555>(New)</font></summary>
+
+Calculates the average amount of gold ingots to barter to get a number of a desired item *(togold)*, or the average amount of an item that will be recieved when bartering a number of gold ingots *(toitem)*.
+
+>Usage: ```/calc barter togold <numberofitems> <item>```  
+>Usage: ```/calc barter toitem <amountofgold> <item>```
+</details>
+
+
+
+<details>
+<summary>Custom Functions <font color=#ff5555>(New)</font></summary>
+
+Custom functions are reusable commands that perform a specific computation. Custom functions can be run in any number field formatted with the function name and the parameters in perenthases ```customfunction(param1, paramN)```.  
+Custom functions can have any number of parameters, specified in [square] brackets when adding a function.
+
+* **Create your function:**  
+  ```/calc custom add blockstoingots [num-blocks]*9```
+
+* **Run your function with an input:**  
+  ```/calc blockstoingots(72)```
+
+* **Output:**  
+  ```blockstoingots(72) = 648```
+
+
+>Usage: ```/calc custom add <name> <function>```  
+>Usage: ```/calc custom run <name> <input>```
+>Usage: ```/calc <name>(<parameters>)```
+>Usage: ```/calc custom list```  
+>Usage: ```/calc custom remove <name>```
+
+</details>  
+
+
 ### ➡️ Converters:
 
 <details>
@@ -125,19 +167,21 @@ Given a number of seconds *(can be in expression form)*, returns the number of i
 
 Given a number of seconds *(can be in expression form)*, returns the number of repeaters and their delay.
 
-> Usage: ```/calc secondstorepeter <seconds>```
-</details>
+> Usage: ```/calc secondstorepeater <seconds>```
+</details>  
+
+> Aside from the Minecrafty functions, CalcMod also features a gratuitous amount of more advanced functions and variables linked in a spreadsheet [here](https://docs.google.com/spreadsheets/d/1L3jCFO6ZiUymXbRJKOJIWGpcOQjfvU3TpCcFPeUJDNA/edit?usp=sharing) (in case you need to calculate an inverse hyperbolic cotangent to play Minecraft).
 
 ---
 
 ### ❎ Variables
 
-Variables can be used inside equations in any number field. They act as shortcuts instead of having to remember that "a double chest full of 16 stackable items is 864."   
-If no stack size is given, variables default to the stack size of each command
+Variables can be used inside equations in any number field. They act as shortcuts instead of having to remember that "a double chest full of 16 stackable items is 864."
+If no stack size is given, variables default to the stack size in each command.
 
 
 <details>
-<summary>List of all variables</summary>
+<summary>Constant Variables</summary>
 
 | **Name** | **Value**     |
 |----------|---------------|
@@ -155,6 +199,18 @@ If no stack size is given, variables default to the stack size of each command
 | stack1   | 1             |
 | min      | 60            |
 | hour     | 3600          |
+</details>  
+
+Dynamic variables change depending on an in-game status. These are particularly useful inside custom functions.
+<details>
+<summary>Dynamic Variables</summary>
+
+| **Name** | **Value**      |
+|----------|----------------|
+| x        | player x coord |
+| y        | player y coord |
+| z        | player z coord |
+
 </details>
 
-</br>
+<br>

@@ -61,6 +61,8 @@ public class Help {
         help.put("craft", Craft.helpMessage);
         help.put("random", Random.helpMessage);
         help.put("signaltoitems", SignalToItems.helpMessage);
+        help.put("barter", Piglin.helpMessage);
+        help.put("custom", Custom.helpMessage);
         if (hterm.length == 0) {
             String helpMenu = "";
             for (Map.Entry<String, String> me :

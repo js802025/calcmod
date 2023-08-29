@@ -85,7 +85,7 @@ public class CalcMessageBuilder {
             return Text.literal(helpMessage);
         }
         messageText.append(" ");
-        messageText.append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§a", "").replaceAll("§b", "").replaceAll("§f", "")))));
+        messageText.append(Text.literal("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
         return messageText;
     }
 

@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 //import net.minecraft.core.BlockPos;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
 import java.text.DecimalFormat;
@@ -25,7 +26,7 @@ public class Nether {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommandManager.literal("nether").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer().getBlockPos());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }).then(ClientCommandManager.argument("pos", CBlockPosArgumentType.blockPos())
@@ -45,7 +46,7 @@ public class Nether {
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
         .then(CommandManager.literal("nether").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer().getBlockPos());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
@@ -65,7 +66,7 @@ public class Nether {
     public static CalcMessageBuilder execute(BlockPos... pos) {
         BlockPos position;
         position = pos[0];
-        CalcMessageBuilder message = new CalcMessageBuilder().addString("Nether Coords: ").addResult("X: "+nf.format(position.getX()/8)+" Z: "+nf.format(position.getZ()/8));
+        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.getX())+" Z: "+nf.format(position.getZ())).addString(" §7>>§f Nether = ").addResult("X: "+nf.format(position.getX()/8)+" Z: "+nf.format(position.getZ()/8));
         return message;
     }
 

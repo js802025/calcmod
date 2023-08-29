@@ -4,14 +4,21 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import com.mojang.brigadier.CommandDispatcher;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+
+
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
+import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -30,11 +37,14 @@ import org.mariuszgromada.math.mxparser.PrimitiveElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
+    
     public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
         LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
         command = Basic.register(command);
@@ -59,10 +69,10 @@ public class CalcCommand {
         dispatcher.register(command);
 
     }
-
+    
     public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
-        command = Basic.registerServer(command);
+        Basic.registerServer(command);
         command = Storage.registerServer(command);
         command = Nether.registerServer(command);
         command = Overworld.registerServer(command);
@@ -85,7 +95,7 @@ public class CalcCommand {
 
    
 
-    public static double getParsedExpression(BlockPos playerPos, String in,Integer... nonstackable) {
+    public static double getParsedExpression(Entity player, String in, Integer... nonstackable) {
         int stackSize;
         if (nonstackable.length == 0) stackSize = 64;
         else stackSize = nonstackable[0];
@@ -101,17 +111,24 @@ public class CalcCommand {
         vars.put("stack1", 1.0);
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
-        vars.put("x", (double)playerPos.getX());
-        vars.put("y", (double) playerPos.getX());
-        vars.put("z", (double) playerPos.getZ());
+        if (Objects.nonNull(player)) {
+            vars.put("x", (double) player.getBlockPos().getX());
+            vars.put("y", (double) player.getBlockPos().getX());
+            vars.put("z", (double) player.getBlockPos().getZ());
+            vars.put("health", (double) ((PlayerEntity) player).getHealth());
+        }
+       //
         vars.put("dub", vars.get("dub"+ stackSize));
         vars.put("sb", vars.get("sb"+stackSize));
         vars.put("stack", vars.get("stack"+stackSize));
         String withVars = in;
 
+
         for (String key : vars.keySet()) {
             withVars = withVars.replaceAll(key, "("+vars.get(key)+")");
         }
+
+        withVars = withVars.replaceAll("(\\d*),(\\d+)", "$1$2");
         ArrayList<String> parsedCustomFunctions = Custom.getParsedFunctions();
         PrimitiveElement[] primitiveElements = new PrimitiveElement[parsedCustomFunctions.size()];
         for (int f = 0; f < parsedCustomFunctions.size(); f++) {
@@ -124,6 +141,7 @@ public class CalcCommand {
 //               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
 //            }
 //        }
+        CalcMod.LOGGER.info("Parsed "+withVars);
             return new Expression(withVars, primitiveElements).calculate();
         }
 
@@ -134,7 +152,7 @@ public class CalcCommand {
             return nf.format(items);
         }
     }
-
+    
     public static void sendMessage(FabricClientCommandSource source, String[] message, Boolean... isHelpMessage) {
         var messageText = Text.literal("");
         String m = "";
@@ -157,12 +175,14 @@ public class CalcCommand {
             } 
         }
         messageText.append(Text.literal(" "));
-        source.getPlayer().sendMessage(messageText.append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        source.getPlayer().sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
+    
     public static void sendMessage(FabricClientCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.getPlayer().sendMessage(messageBuilder.generateStyledText());
+        source.sendFeedback(messageBuilder.generateStyledText());
 
     }
+    
     public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) {
         var messageText = Text.literal("");
         String m = "";
@@ -174,8 +194,9 @@ public class CalcCommand {
             messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
-           
+
         }
+
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
@@ -184,11 +205,17 @@ public class CalcCommand {
             } 
         }
         messageText.append(Text.literal(" "));
-        source.getPlayer().sendMessage(messageText.append(Text.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
-    }
 
+        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+    }
+    
     public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.getPlayer().sendMessage(messageBuilder.generateStyledText());
+        source.sendFeedback(new Supplier<Text>() {
+            @Override
+            public Text get() {
+                return messageBuilder.generateStyledText();
+            }
+        }, Objects.isNull(source.getPlayer()));
 
     }
 

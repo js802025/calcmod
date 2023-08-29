@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 //import net.minecraft.core.BlockPos;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
 import java.text.DecimalFormat;
@@ -27,13 +27,13 @@ public class Overworld {
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommandManager.literal("overworld").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }).then(ClientCommandManager.argument("pos", CBlockPosArgumentType.blockPos())
         .executes((ctx) -> {
             BlockPos pos = CBlockPosArgumentType.getCBlockPos(ctx, "pos");
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), pos);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), pos);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })).then(ClientCommandManager.literal("help").executes((ctx) -> {
@@ -47,13 +47,13 @@ public class Overworld {
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
         .then(CommandManager.literal("overworld").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getBlockPos());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
         .executes((ctx) -> {
             BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), pos);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })).then(CommandManager.literal("help").executes((ctx) -> {
@@ -64,12 +64,12 @@ public class Overworld {
         return command;
     }
 
-    public static CalcMessageBuilder execute(PlayerEntity player, BlockPos... pos) {
+    public static CalcMessageBuilder execute(Entity player, BlockPos... pos) {
         BlockPos position;
         position = pos[0];
-        
-        
-        CalcMessageBuilder message = new CalcMessageBuilder().addString("Overworld Coords: ").addResult("X: "+nf.format(position.getX()*8)+" Z: "+nf.format(position.getZ()*8));
+
+
+        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.getX())+" Z: "+nf.format(position.getZ())).addString(" §7>>§f Overworld = ").addResult("X: "+nf.format(position.getX()*8)+" Z: "+nf.format(position.getZ()*8));
         return message;
     }
 

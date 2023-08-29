@@ -6,6 +6,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.serialization.Dynamic;
 
 import dev.xpple.clientarguments.arguments.CIdentifierArgumentType;
+
+
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -24,7 +26,7 @@ import java.util.Map;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
@@ -37,12 +39,13 @@ public class Craft {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
+    
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command, CommandRegistryAccess registry) {
         command
         .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
         .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
@@ -54,12 +57,13 @@ public class Craft {
         return command;
     }
 
+    
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command, CommandRegistryAccess registry) {
         command
         .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(CommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
@@ -72,11 +76,11 @@ public class Craft {
     }
 
 
-    public static CalcMessageBuilder execute(PlayerEntity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
+    public static CalcMessageBuilder execute(Entity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
 
         var is = item.getIngredients();
         var outputSize = item.getOutput(registryManager).getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getBlockPos(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
@@ -96,7 +100,7 @@ public class Craft {
             }
         }
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients needed for crafting ", "input", " ", "input", "(s): \n"}, new String[] {nf.format(inputAmount), item.getOutput(registryManager).getName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getOutput(registryManager).getName().getString()}, new String[] {});
         
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();
@@ -120,7 +124,7 @@ public class Craft {
                 messageBuilder.addResult("Items: "+items+"\n");
             }
         }
-        
+
    //     message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
         
         return messageBuilder;

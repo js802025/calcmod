@@ -11,9 +11,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
+import net.jsa2025.calcmod.commands.arguments.CContainerSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -30,13 +31,13 @@ import java.util.Locale;
 public class SignalToItems {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    
+
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
         .then(ClientCommandManager.literal("signaltoitems")
-        .then(ClientCommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
+        .then(ClientCommandManager.argument("container", StringArgumentType.string()).suggests(new CContainerSuggestionProvider())
         .then(ClientCommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))).then(ClientCommandManager.literal("help").executes(ctx -> {
@@ -53,20 +54,20 @@ public class SignalToItems {
         .then(CommandManager.literal("signaltoitems")
         .then(CommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
         .then(CommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }))).then(ClientCommandManager.literal("help").executes(ctx -> {
+        }))).then(CommandManager.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("signaltoitems");
-            CalcCommand.sendMessage(ctx.getSource(), message);
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })
         ));
         return command;
     }
 
-    public static CalcMessageBuilder execute(PlayerEntity player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getBlockPos(), signal);
+    public static CalcMessageBuilder execute(Entity player, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(player, signal);
         var containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;
@@ -90,7 +91,7 @@ public class SignalToItems {
         if (item1nextstrength > item1) {
             stackable1 = nf.format(item1);
         }
-        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items Required for 64 Stackable: ", "result", "\nItems Required for 16 Stackable: ", "result", "\nItems Required for Non Stackable: ", "result"}, new String[] {}, new String[] {CalcCommand.getParsedStack(item64, 64), stackable16, stackable1});
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items required for 64 stackable: ", "result", "\nItems required for 16 stackable: ", "result", "\nItems required for non-stackable: ", "result"}, new String[] {}, new String[] {CalcCommand.getParsedStack(item64, 64), stackable16, stackable1});
         
         if (strength > 15) {
             message.addString("\n§cError: Signal Strength out of range (0, 15)");

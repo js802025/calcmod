@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -27,12 +27,12 @@ public class Random {
         command
         .then(ClientCommandManager.literal("random")
         .then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "max"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
         .then(ClientCommandManager.literal("minmax").then(ClientCommandManager.argument("min", StringArgumentType.string()).then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))))
@@ -48,12 +48,12 @@ public class Random {
         command
         .then(CommandManager.literal("random")
         .then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "max"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
         .then(CommandManager.literal("minmax").then(CommandManager.argument("min", StringArgumentType.string()).then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))))
@@ -66,16 +66,16 @@ public class Random {
     }
 
 
-    public static CalcMessageBuilder execute(PlayerEntity player, String... range) {
+    public static CalcMessageBuilder execute(Entity player, String... range) {
         if (range.length == 1) {
-        double maxInt = CalcCommand.getParsedExpression(player.getBlockPos(), range[0]);
+        double maxInt = CalcCommand.getParsedExpression(player, range[0]);
         String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
-        return new CalcMessageBuilder().addFromArray(new String[] { "Random number between 0 and ", "input", " is ", "result" }, range, new String[] {random});
+        return new CalcMessageBuilder().addFromArray(new String[] { "Random number between 0 and ", "input", " §7(inclusive)§f = ", "result" }, range, new String[] {random});
         } else if (range.length == 2 ) {
-            double max = CalcCommand.getParsedExpression(player.getBlockPos(), range[1]);
-            double min = CalcCommand.getParsedExpression(player.getBlockPos(), range[0]);
+            double max = CalcCommand.getParsedExpression(player, range[1]);
+            double min = CalcCommand.getParsedExpression(player, range[0]);
             String random = nf.format(ThreadLocalRandom.current().nextInt((int) min, (int) max + 1));
-            return new CalcMessageBuilder().addFromArray(new String[] { "Random number between ", "input", " and ", "input", " is ", "result" }, range, new String[] {random});
+            return new CalcMessageBuilder().addFromArray(new String[] { "Random number between ", "input", " and ", "input", " §7(inclusive)§f = ", "result" }, range, new String[] {random});
 
         }
         return new CalcMessageBuilder("Invalid Arguments");

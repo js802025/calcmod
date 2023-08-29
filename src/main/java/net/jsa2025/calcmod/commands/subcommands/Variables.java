@@ -60,6 +60,9 @@ public class Variables {
                 stack1: 1
                 min: 60
                 hour: 3600
+                x: player x coord
+                y: player y coord
+                z: player z coord
                 """;
         return new CalcMessageBuilder(message);
     }
