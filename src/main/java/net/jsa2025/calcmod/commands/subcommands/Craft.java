@@ -17,6 +17,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -27,15 +28,9 @@ import java.util.Locale;
 import java.util.Map;
 
 
-import net.minecraft.command.arguments.IdentifierArgumentType;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+
+
 
 
 
@@ -51,7 +46,7 @@ public class Craft {
         .executes((ctx) -> {
             String item = StringArgumentType.getString(ctx, "item");
             Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
-            String[] message = execute(ctx.getSource().getEntity(), itemR.get(), StringArgumentType.getString(ctx, "amount"), ctx.getSource().registryAccess());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemR.get(), StringArgumentType.getString(ctx, "amount"), ctx.getSource().registryAccess());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -64,11 +59,11 @@ public class Craft {
     }
 
 
-    public static CalcMessageBuilder execute(ServerPlayer player, Recipe item, String amount, RegistryAccess registryAccess) {
+    public static CalcMessageBuilder execute(Entity player, Recipe item, String amount, RegistryAccess registryAccess) {
 
         var is = item.getIngredients();
         var outputSize = item.getResultItem(registryAccess).getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getOnPos(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
@@ -88,7 +83,7 @@ public class Craft {
             }
         }
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getOutput().getName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getResultItem(registryAccess).getDisplayName().getString()}, new String[] {});
 
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();

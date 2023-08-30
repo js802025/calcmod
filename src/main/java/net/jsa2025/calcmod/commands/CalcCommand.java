@@ -22,24 +22,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import org.mariuszgromada.math.mxparser.License;
 import net.jsa2025.calcmod.commands.subcommands.Random;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.*;
-import net.minecraft.util.math.BlockPos;
 
-import org.mariuszgromada.math.mxparser.Constant;
-import org.mariuszgromada.math.mxparser.Expression;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
 import org.mariuszgromada.math.mxparser.Function;
 import org.mariuszgromada.math.mxparser.PrimitiveElement;
 
@@ -116,10 +107,10 @@ public class CalcCommand {
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
-            vars.put("x", (double) player.getBlockPos().getX());
-            vars.put("y", (double) player.getBlockPos().getX());
-            vars.put("z", (double) player.getBlockPos().getZ());
-            vars.put("health", (double) ((PlayerEntity) player).getHealth());
+            vars.put("x", (double) player.blockPosition().getX());
+            vars.put("y", (double) player.blockPosition().getX());
+            vars.put("z", (double) player.blockPosition().getZ());
+            //health missing
         }
        //
         vars.put("dub", vars.get("dub"+ stackSize));
@@ -189,13 +180,24 @@ public class CalcCommand {
         }
         messageText.append(Component.literal(" "));
         source.getPlayer().sendSystemMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
-        messageText.append(new LiteralText(" "));
+        messageText.append(Component.literal(" "));
 
-        source.sendFeedback(messageText.append(new LiteralText("§7[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+        String finalM = m;
+        source.sendSuccess(new Supplier<Component>() {
+            @Override
+            public Component get() {
+                return messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", "")))));
+            }
+        }, false);
     }
     
-    public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
+    public static void sendMessageServer(CommandSourceStack source, CalcMessageBuilder messageBuilder) {
+        source.sendSuccess(new Supplier<Component>() {
+            @Override
+            public Component get() {
+                return messageBuilder.generateStyledText();
+            }
+        }, Objects.isNull(source.getEntity()));
 
     }
 

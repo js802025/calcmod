@@ -13,10 +13,8 @@ import java.util.Locale;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
+
 
 public class ItemToStack {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -45,7 +43,7 @@ public class ItemToStack {
         })))
         .then(Commands.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("itemtostack");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })));
         return command;

@@ -17,9 +17,8 @@ import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSour
 import net.minecraft.server.level.ServerPlayer;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
+
 
 public class Random {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -27,18 +26,18 @@ public class Random {
 
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("random")
-        .then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+        .then(Commands.literal("random")
+        .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
-        .then(CommandManager.literal("minmax").then(CommandManager.argument("min", StringArgumentType.string()).then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+        .then(Commands.literal("minmax").then(Commands.argument("min", StringArgumentType.string()).then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("random");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

@@ -11,9 +11,8 @@ import net.jsa2025.calcmod.commands.arguments.BarterSuggestionProvider;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
+
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -22,12 +21,12 @@ public class Piglin {
 
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-                .then(CommandManager.literal("barter")
-                        .then(CommandManager.literal("toitem")
-                        .then(CommandManager.argument("gold", StringArgumentType.string())
-                                .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
+                .then(Commands.literal("barter")
+                        .then(Commands.literal("toitem")
+                        .then(Commands.argument("gold", StringArgumentType.string())
+                                .then(Commands.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
                                         .executes((ctx) -> {
                                             String gold = StringArgumentType.getString(ctx, "gold");
                                             String item = StringArgumentType.getString(ctx, "item");
@@ -35,9 +34,9 @@ public class Piglin {
                                             CalcCommand.sendMessageServer(ctx.getSource(), message);
                                             return 1;
                                         }))))
-                        .then(CommandManager.literal("togold")
-                                .then(CommandManager.argument("numberofitems", StringArgumentType.string())
-                                        .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
+                        .then(Commands.literal("togold")
+                                .then(Commands.argument("numberofitems", StringArgumentType.string())
+                                        .then(Commands.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
                                                 .executes((ctx) -> {
                                                     String gold = StringArgumentType.getString(ctx, "numberofitems");
                                                     String item = StringArgumentType.getString(ctx, "item");
@@ -45,7 +44,7 @@ public class Piglin {
                                                     CalcCommand.sendMessageServer(ctx.getSource(), message);
                                                     return 1;
                                                 }))))
-                        .then(CommandManager.literal("help").executes((ctx) -> {
+                        .then(Commands.literal("help").executes((ctx) -> {
                             CalcMessageBuilder message = Help.execute("barter");
                             CalcCommand.sendMessageServer(ctx.getSource(), message);
                             return 1;

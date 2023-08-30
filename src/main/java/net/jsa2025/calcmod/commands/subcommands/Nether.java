@@ -8,10 +8,7 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.command.arguments.BlockPosArgumentType;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -25,17 +22,17 @@ public class Nether {
 
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("nether").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
+        .then(Commands.literal("nether").executes((ctx) -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity().blockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
+            BlockPos pos = BlockPosArgument.getBlockPos(ctx, "pos");
             CalcMessageBuilder message = execute(pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
+        })).then(Commands.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("nether");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

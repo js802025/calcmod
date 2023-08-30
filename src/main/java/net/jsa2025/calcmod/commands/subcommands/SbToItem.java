@@ -13,9 +13,7 @@ import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSour
 import net.minecraft.server.level.ServerPlayer;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
 
 
 public class SbToItem {
@@ -45,13 +43,14 @@ public class SbToItem {
         })))
         .then(Commands.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("sbtoitem");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })));
         return command;
     }
 
-    public static CalcMessageBuilder execute(Entity player, String numberofsbs, int stackSize) {
+    public static CalcMessageBuilder execute(
+            net.minecraft.world.entity.Entity player, String numberofsbs, int stackSize) {
         double sbs = CalcCommand.getParsedExpression(player, numberofsbs, stackSize);
         double items = sbs * stackSize * 27;
         CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " SBs = ", "result", " Items"}, new String [] {numberofsbs}, new String[] {nf.format(items)});

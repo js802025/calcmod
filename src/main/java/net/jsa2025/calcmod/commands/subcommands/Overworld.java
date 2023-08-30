@@ -7,35 +7,32 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.command.arguments.BlockPosArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+
 public class Overworld {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("overworld").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getBlockPos());
+        .then(Commands.literal("overworld").executes((ctx) -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().blockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
+            BlockPos pos = BlockPosArgument.getBlockPos(ctx, "pos");
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
+        })).then(Commands.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("overworld");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

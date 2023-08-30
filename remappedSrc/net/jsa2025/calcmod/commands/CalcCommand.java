@@ -109,14 +109,14 @@ public class CalcCommand {
     }
 
     public static void sendMessage(FabricClientCommandSource source, String[] message, Boolean... isHelpMessage) {
-        var messageText = new LiteralText("");
+        var messageText = Component.literal("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(new LiteralText(message[i]));
+            messageText.append(Component.literal(message[i]));
             m += message[i];
            } else {
-            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(Component.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
            
@@ -128,19 +128,19 @@ public class CalcCommand {
                 return;
             } 
         }
-        messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        messageText.append(Component.literal(" "));
+        source.getPlayer().sendMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
     public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) {
-        var messageText = new LiteralText("");
+        var messageText = Component.literal("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(new LiteralText(message[i]));
+            messageText.append(Component.literal(message[i]));
             m += message[i];
            } else {
-            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(Component.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
            
@@ -152,8 +152,8 @@ public class CalcCommand {
                 return;
             } 
         }
-        messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        messageText.append(Component.literal(" "));
+        source.getPlayer().sendMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
     }
 
     

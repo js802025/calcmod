@@ -12,9 +12,8 @@ import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
+
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -34,13 +33,13 @@ public class SignalToItems {
 
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("signaltoitems")
-        .then(CommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
-        .then(CommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(Commands.literal("signaltoitems")
+        .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
+        .then(Commands.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }))).then(CommandManager.literal("help").executes(ctx -> {
+        }))).then(Commands.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("signaltoitems");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

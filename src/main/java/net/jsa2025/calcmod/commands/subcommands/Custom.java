@@ -9,8 +9,9 @@ import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.CustomFunctionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,11 +31,11 @@ public class Custom {
     public static final File commandFile = new File(".", "config/calcmod.json");
 
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command = command.then(CommandManager.literal("custom")
-                .then(CommandManager.literal("add")
-                        .then(CommandManager.argument("name", StringArgumentType.string())
-                                .then(CommandManager.argument("function", StringArgumentType.greedyString())
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+        command = command.then(Commands.literal("custom")
+                .then(Commands.literal("add")
+                        .then(Commands.argument("name", StringArgumentType.string())
+                                .then(Commands.argument("function", StringArgumentType.greedyString())
                                         .executes((ctx) -> {
                                             String function = StringArgumentType.getString(ctx, "function");
                                             String name = StringArgumentType.getString(ctx, "name");
@@ -53,15 +54,15 @@ public class Custom {
 
                                             return 0;
                                         }))))
-                .then(CommandManager.literal("list").executes(ctx -> {
+                .then(Commands.literal("list").executes(ctx -> {
                     JsonObject fs = getFunctions();
                     String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
                     CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
                     CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
                     return 0;
                 }))
-                .then(CommandManager.literal("remove")
-                        .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new CustomFunctionProvider())
+                .then(Commands.literal("remove")
+                        .then(Commands.argument("name", StringArgumentType.greedyString()).suggests(new CustomFunctionProvider())
                                 .executes(ctx -> {
                                     String name = StringArgumentType.getString(ctx, "name");
                                     deleteCommand(name);
@@ -69,8 +70,8 @@ public class Custom {
                                     CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
                                     return 0;
                                 })))
-                .then(CommandManager.literal("run")
-                        .then(CommandManager.argument("function", StringArgumentType.greedyString())
+                .then(Commands.literal("run")
+                        .then(Commands.argument("function", StringArgumentType.greedyString())
                                 .suggests(new CustomFunctionProvider())
                                 .executes((ctx) -> {
                                     String eqn = StringArgumentType.getString(ctx, "function");
@@ -82,7 +83,7 @@ public class Custom {
 
 
 
-        ).then(CommandManager.literal("help").executes(ctx -> {
+        ).then(Commands.literal("help").executes(ctx -> {
                             CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
                             return 0;
                         }))
