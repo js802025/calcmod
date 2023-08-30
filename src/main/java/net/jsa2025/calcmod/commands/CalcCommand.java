@@ -216,12 +216,7 @@ public class CalcCommand {
     }
     
     public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(new Supplier<Text>() {
-            @Override
-            public Text get() {
-                return messageBuilder.generateStyledText();
-            }
-        }, Objects.isNull(source.getPlayer()));
+        source.sendFeedback(messageBuilder.generateStyledText(), Objects.isNull(source.getPlayer()));
 
     }
 
