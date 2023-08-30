@@ -7,8 +7,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
@@ -16,14 +17,10 @@ import net.jsa2025.calcmod.commands.subcommands.*;
 import net.jsa2025.calcmod.commands.subcommands.Random;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.math.BlockPos;
 
 import org.checkerframework.checker.units.qual.A;
@@ -44,7 +41,7 @@ public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> register () {
         LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
         command = Basic.register(command);
         command = Storage.register(command);
@@ -59,17 +56,18 @@ public class CalcCommand {
         command = Rates.register(command);
         command = AllayStorage.register(command);
         command = Random.register(command);
-        command = Craft.register(command, registry);
+        command = Craft.register(command);
         command = SignalToItems.register(command);
         command = Piglin.register(command);
         command = Custom.register(command);
         command = Variables.register(command);
         command = Help.register(command);
-        dispatcher.register(command);
+        return command;
+
 
     }
     
-    public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
+    public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher,boolean env) {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
         Basic.registerServer(command);
         command = Storage.registerServer(command);
@@ -84,7 +82,7 @@ public class CalcCommand {
         command = Rates.registerServer(command);
         command = AllayStorage.registerServer(command);
         command = Random.registerServer(command);
-        command = Craft.registerServer(command, registry);
+        command = Craft.registerServer(command);
         command = SignalToItems.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
@@ -160,14 +158,14 @@ public class CalcCommand {
     }
     
     public static void sendMessage(FabricClientCommandSource source, String[] message, Boolean... isHelpMessage) {
-        var messageText = Text.literal("");
+        var messageText = new LiteralText("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(Text.literal(message[i]));
+            messageText.append(new LiteralText(message[i]));
             m += message[i];
            } else {
-            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
            
@@ -176,12 +174,12 @@ public class CalcCommand {
         
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
+                source.getPlayer().sendMessage(messageText, false);
                 return;
             } 
         }
-        messageText.append(Text.literal(" "));
-        source.getPlayer().sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        messageText.append(new LiteralText(" "));
+        source.getPlayer().sendMessage(messageText.append(new LiteralText("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
     }
     
     public static void sendMessage(FabricClientCommandSource source, CalcMessageBuilder messageBuilder) {
@@ -189,15 +187,15 @@ public class CalcCommand {
 
     }
     
-    public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) {
-        var messageText = Text.literal("");
+    public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
+        var messageText = new LiteralText("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(Text.literal(message[i]));
+            messageText.append(new LiteralText(message[i]));
             m += message[i];
            } else {
-            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
 
@@ -206,17 +204,17 @@ public class CalcCommand {
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
+                source.getPlayer().sendMessage(messageText, false);
                 return;
             } 
         }
-        messageText.append(Text.literal(" "));
+        messageText.append(new LiteralText(" "));
 
-        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+        source.sendFeedback(messageText.append(new LiteralText("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
     }
     
     public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(messageBuilder.generateStyledText(), Objects.isNull(source.getPlayer()));
+        source.sendFeedback(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
 
     }
 

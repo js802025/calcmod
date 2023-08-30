@@ -1,9 +1,6 @@
 package net.jsa2025.calcmod.utils;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 
 import java.util.Objects;
 
@@ -26,7 +23,7 @@ public class CalcMessageBuilder {
     MessageType messageType;
     String helpMessage;
 
-    MutableText messageText = Text.literal("");
+    MutableText messageText = new LiteralText("");
 
     public CalcMessageBuilder() {
         this.messageType = MessageType.NONE;
@@ -58,7 +55,7 @@ public class CalcMessageBuilder {
         return this;
     }
     public CalcMessageBuilder addResult(String text) {
-        messageText.append(Text.literal("§a" + text + "§f")
+        messageText.append(new LiteralText("§a" + text + "§f")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
         return this;
     }
@@ -82,10 +79,10 @@ public class CalcMessageBuilder {
 
     public Text generateStyledText() {
         if (Objects.requireNonNull(this.messageType) == MessageType.HELP) {
-            return Text.literal(helpMessage);
+            return new LiteralText(helpMessage);
         }
         messageText.append(" ");
-        messageText.append(Text.literal("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+        messageText.append(new LiteralText("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
         return messageText;
     }
 
