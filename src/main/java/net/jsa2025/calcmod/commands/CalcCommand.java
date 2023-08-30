@@ -164,9 +164,8 @@ public class CalcCommand {
             } 
         }
         messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))));
 
-        source.sendFeedback(messageText.append(new LiteralText("§7[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+        source.sendFeedback(messageText.append(messageText.append(new LiteralText("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"'))))), false);
     }
     
     public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {

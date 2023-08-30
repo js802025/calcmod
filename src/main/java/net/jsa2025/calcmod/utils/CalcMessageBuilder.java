@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.utils;
 
+import net.jsa2025.calcmod.CalcMod;
 import net.minecraft.text.*;
 
 import java.util.Objects;
@@ -56,7 +57,7 @@ public class CalcMessageBuilder {
     }
     public CalcMessageBuilder addResult(String text) {
         messageText.append(new LiteralText("§a" + text + "§f")
-                .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
+                .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+text+'"'))));
         return this;
     }
 
@@ -82,7 +83,8 @@ public class CalcMessageBuilder {
             return new LiteralText(helpMessage);
         }
         messageText.append(" ");
-        messageText.append(new LiteralText("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+        CalcMod.LOGGER.info(messageText.getString());
+        messageText.append(new LiteralText("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+messageText.getString().replaceAll("§.", "")+'"'))));
         return messageText;
     }
 
