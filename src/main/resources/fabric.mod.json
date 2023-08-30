@@ -6,7 +6,7 @@
   "name": "CalcMod",
   "description": "A calculator in your chat with shortcuts designed for Minecraft.",
   "authors": [
-    "js802025"
+    "js802025", "shadeydo"
   ],
   "contact": {
     "homepage": "https://github.com/js802025/calcmod",
@@ -17,7 +17,7 @@
 
   "environment": "*",
   "entrypoints": {
-    "client": [
+    "client":[
       "net.jsa2025.calcmod.CalcMod"
     ],
     "server": [
