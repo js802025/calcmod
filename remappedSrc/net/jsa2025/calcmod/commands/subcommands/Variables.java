@@ -3,8 +3,9 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -21,7 +22,7 @@ public class Variables {
         command
         .then(ClientCommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute();
+            String[] message = execute(ctx.getSource().getEntity(), );
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -32,14 +33,14 @@ public class Variables {
         command
         .then(CommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute();
+            String[] message = execute(ctx.getSource().getEntity(), );
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute() {
+    public static String[] execute(Entity player, ) {
         String message = """
             Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64:
                 dub: 3456(dynamic)
