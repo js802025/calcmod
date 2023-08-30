@@ -13,37 +13,40 @@ import java.util.Locale;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 
 public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    
+
 
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(Commands.literal("allaystorage").then(Commands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"));
+        .then(CommandManager.literal("allaystorage").then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 0;
-        })).then(Commands.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("allaystorage");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 0;
+            return 1;
+        })).then(CommandManager.literal("help").executes((ctx) -> {
+            CalcMessageBuilder message = Help.execute("allaystorage");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
         })));
         return command;
     }
-    
 
-    public static String[] execute(ServerPlayer player, String itemsperhour) {
-        double rates = CalcCommand.getParsedExpression(player.getOnPos(), itemsperhour, 1);
+
+    public static CalcMessageBuilder execute(Entity player, String itemsperhour) {
+        double rates = CalcCommand.getParsedExpression(player, itemsperhour, 1);
         double ratesinsec = rates / 3600;
         double allaycooldown = 3;
         String allaystorage = nf.format(Math.ceil(ratesinsec/(1/allaycooldown)));
 
-        String[] message = {"Allays Needed: ", allaystorage};
-        return message;
+        return new CalcMessageBuilder().addString("Allays needed to sort ").addInput(itemsperhour).addString(" items/hr = ").addResult(allaystorage);
     }
-
     public static String helpMessage = """
         §LAllay Storage:§r
             Given the number of items per hour of a non stackable item, returns allays needed to sort the item.
