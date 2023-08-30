@@ -19,20 +19,7 @@ import net.minecraft.server.command.ServerCommandSource;
 public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("allaystorage").then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })).then(ClientCommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("allaystorage");
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })));
-        return command;
-    }
+
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command

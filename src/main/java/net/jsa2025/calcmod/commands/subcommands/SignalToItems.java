@@ -8,7 +8,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
-import net.jsa2025.calcmod.commands.arguments.CContainerSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;

@@ -3,21 +3,12 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.google.gson.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-
-
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.CalcCommand;
-import net.jsa2025.calcmod.commands.arguments.CCustomFunctionProvider;
 import net.jsa2025.calcmod.commands.arguments.CustomFunctionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -37,66 +28,7 @@ public class Custom {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     public static final File commandFile = new File(".", "config/calcmod.json");
-    
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command = command.then(ClientCommandManager.literal("custom")
-                .then(ClientCommandManager.literal("add")
-                .then(ClientCommandManager.argument("name", StringArgumentType.string())
-                        .then(ClientCommandManager.argument("function", StringArgumentType.greedyString())
-                                .executes((ctx) -> {
-                                    String function = StringArgumentType.getString(ctx, "function");
-                                    String name = StringArgumentType.getString(ctx, "name");
-                                    CalcMessageBuilder messageBuilder;
-                                    if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
-                                        saveNewCommand(name, function);
-                                        messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
-                                    } else if (parseEquationVariables(function).isEmpty()) {
-                                        messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
-                                    }else {
-                                        messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
-                                    }
 
-                                    CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
-
-                                    return 0;
-                                }))))
-                                .then(ClientCommandManager.literal("list").executes(ctx -> {
-                                    JsonObject fs = getFunctions();
-                                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
-                                    CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                }))
-                        .then(ClientCommandManager.literal("remove")
-                                .then(ClientCommandManager.argument("name", StringArgumentType.greedyString()).suggests(new CCustomFunctionProvider())
-                                .executes(ctx -> {
-                                    String name = StringArgumentType.getString(ctx, "name");
-                                    deleteCommand(name);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
-                                    CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                })))
-                                .then(ClientCommandManager.literal("run")
-                                        .then(ClientCommandManager.argument("function", StringArgumentType.greedyString())
-                                                .suggests(new CCustomFunctionProvider())
-                                                .executes((ctx) -> {
-                                                    String eqn = StringArgumentType.getString(ctx, "function");
-                                                    double result = CalcCommand.getParsedExpression(ctx.getSource().getEntity(), eqn);
-                                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
-                                                    CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
-                                                    return 0;
-                                                })))
-                        .then(ClientCommandManager.literal("help").executes(ctx -> {
-                            CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
-                            return 0;
-                        }))
-
-                                
-                                );
-
-        
-        return command;
-    }
     
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command = command.then(CommandManager.literal("custom")

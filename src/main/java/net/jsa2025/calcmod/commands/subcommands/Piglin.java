@@ -9,11 +9,6 @@ import net.jsa2025.calcmod.commands.arguments.BarterSuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;
 
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.jsa2025.calcmod.commands.CalcCommand;
-import net.jsa2025.calcmod.commands.arguments.BarterSuggestionProvider;
-import net.jsa2025.calcmod.commands.arguments.CBarterSuggestionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
@@ -59,7 +54,7 @@ public class Piglin {
 
     public static CalcMessageBuilder executeToItems(Entity player, String gold, String item) {
 
-        double amount_of_items = CalcCommand.getParsedExpression(player, gold)/CBarterSuggestionProvider.barter.get(item);
+        double amount_of_items = CalcCommand.getParsedExpression(player, gold)/BarterSuggestionProvider.barter.get(item);
         CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Avg amount of ", "input", " that ", "input"," gold ingots will get = ","result"}, new String[] {item, gold}, new String[] {nf.format(amount_of_items)});
         return message;
 
@@ -67,7 +62,7 @@ public class Piglin {
     }
     public static CalcMessageBuilder executeToGold(Entity player, String numberofitems, String item) {
 
-        double amount_of_items = CalcCommand.getParsedExpression(player, numberofitems)*CBarterSuggestionProvider.barter.get(item);
+        double amount_of_items = CalcCommand.getParsedExpression(player, numberofitems)*BarterSuggestionProvider.barter.get(item);
         CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Avg gold ingots to get ", "input"," ","input"," = ", "result"}, new String[] {numberofitems, item}, new String[] {nf.format(amount_of_items)});
         return message;
 

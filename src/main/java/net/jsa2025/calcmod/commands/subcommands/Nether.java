@@ -7,10 +7,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import net.minecraft.command.arguments.BlockPosArgumentType;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
-//import net.minecraft.core.BlockPos;
-import net.jsa2025.calcmod.commands.arguments.clientarguments.CBlockPosArgumentType;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -25,26 +21,7 @@ import net.minecraft.server.command.ServerCommandSource;
 public class Nether {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("nether").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }).then(ClientCommandManager.argument("pos", CBlockPosArgumentType.blockPos())
-        .executes((ctx) -> {
-            BlockPos pos = CBlockPosArgumentType.getCBlockPos(ctx, "pos");
-            CalcMessageBuilder message = execute(pos);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })).then(ClientCommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("nether");
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })));
-        return command;
-    }
+
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command

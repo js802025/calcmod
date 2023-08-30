@@ -23,7 +23,7 @@ public class CalcMessageBuilder {
     MessageType messageType;
     String helpMessage;
 
-    MutableText messageText = new LiteralText("");
+    LiteralText messageText = new LiteralText("");
 
     public CalcMessageBuilder() {
         this.messageType = MessageType.NONE;
@@ -56,7 +56,7 @@ public class CalcMessageBuilder {
     }
     public CalcMessageBuilder addResult(String text) {
         messageText.append(new LiteralText("§a" + text + "§f")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
+                .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
         return this;
     }
 
@@ -82,7 +82,7 @@ public class CalcMessageBuilder {
             return new LiteralText(helpMessage);
         }
         messageText.append(" ");
-        messageText.append(new LiteralText("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+        messageText.append(new LiteralText("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
         return messageText;
     }
 

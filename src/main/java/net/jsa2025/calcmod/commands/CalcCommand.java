@@ -27,7 +27,6 @@ import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import org.mariuszgromada.math.mxparser.Function;
 import org.mariuszgromada.math.mxparser.PrimitiveElement;
 
@@ -39,31 +38,6 @@ public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register () {
-        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
-        command = Basic.register(command);
-        command = Storage.register(command);
-        command = Nether.register(command);
-        command = Overworld.register(command);
-        command = SbToItem.register(command);
-        command = ItemToSb.register(command);
-        command = SecondsToHopperClock.register(command);
-        command = SecondsToRepeater.register(command);
-        command = ItemToStack.register(command);
-        command = StackToItem.register(command);
-        command = Rates.register(command);
-        command = AllayStorage.register(command);
-        command = Random.register(command);
-        command = Craft.register(command);
-        command = SignalToItems.register(command);
-        command = Piglin.register(command);
-        command = Custom.register(command);
-        command = Variables.register(command);
-        command = Help.register(command);
-        return command;
-
-
-    }
     
     public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher,boolean env) {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
@@ -155,35 +129,7 @@ public class CalcCommand {
         }
     }
     
-    public static void sendMessage(FabricClientCommandSource source, String[] message, Boolean... isHelpMessage) {
-        var messageText = new LiteralText("");
-        String m = "";
-        for (var i = 0; i < message.length; i++) {
-           if (i % 2 == 0) {
-            messageText.append(new LiteralText(message[i]));
-            m += message[i];
-           } else {
-            messageText.append(new LiteralText("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
-            m += message[i];
-           }
-           
-        }
 
-        
-        if (isHelpMessage.length > 0) {
-            if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText, false);
-                return;
-            } 
-        }
-        messageText.append(new LiteralText(" "));
-        source.getPlayer().sendMessage(messageText.append(new LiteralText("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
-    }
-    
-    public static void sendMessage(FabricClientCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(messageBuilder.generateStyledText());
-
-    }
     
     public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
         var messageText = new LiteralText("");
@@ -208,7 +154,7 @@ public class CalcCommand {
         }
         messageText.append(new LiteralText(" "));
 
-        source.sendFeedback(messageText.append(new LiteralText("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+        source.sendFeedback(messageText.append(new LiteralText("§7[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
     }
     
     public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
