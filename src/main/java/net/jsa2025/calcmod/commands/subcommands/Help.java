@@ -14,8 +14,10 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import org.checkerframework.checker.units.qual.C;
 
 public class Help {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -25,8 +27,8 @@ public class Help {
         command
         .then(ClientCommandManager.literal("help")
         .executes(ctx -> {
-            String[] message = execute();
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
+            CalcMessageBuilder message = execute();
+            CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
         return command;
@@ -36,14 +38,14 @@ public class Help {
         command
         .then(CommandManager.literal("help")
         .executes(ctx -> {
-            String[] message = execute();
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = execute();
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute(String... hterm) {
+    public static CalcMessageBuilder execute(String... hterm) {
         Map<String, String> help = new LinkedHashMap<String, String>();
         help.put("storage", Storage.helpMessage);
         help.put("nether", Nether.helpMessage);
@@ -59,6 +61,8 @@ public class Help {
         help.put("craft", Craft.helpMessage);
         help.put("random", Random.helpMessage);
         help.put("signaltoitems", SignalToItems.helpMessage);
+        help.put("barter", Piglin.helpMessage);
+        help.put("custom", Custom.helpMessage);
         if (hterm.length == 0) {
             String helpMenu = "";
             for (Map.Entry<String, String> me :
@@ -66,11 +70,11 @@ public class Help {
                 helpMenu += me.getValue() + "\n";
   
               }
-            String[] message = {helpMenu};
-            return message;
+            CalcMessageBuilder messageBuilder = new CalcMessageBuilder(helpMenu);
+            return messageBuilder;
         } else {
-            String[] message = {help.get(hterm[0])};
-            return message;
+            CalcMessageBuilder messageBuilder = new CalcMessageBuilder(help.get(hterm[0]));
+            return messageBuilder;
         }
     }
 

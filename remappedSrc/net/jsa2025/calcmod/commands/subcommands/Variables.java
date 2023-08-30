@@ -22,7 +22,7 @@ public class Variables {
         command
         .then(ClientCommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), );
+            String[] message = execute(ctx.getSource().getEntity(), );
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -33,14 +33,14 @@ public class Variables {
         command
         .then(CommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), );
+            String[] message = execute(ctx.getSource().getEntity(), );
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, ) {
+    public static String[] execute(Entity player, ) {
         String message = """
             Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64:
                 dub: 3456(dynamic)
