@@ -16,7 +16,6 @@ import java.util.Map;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import org.checkerframework.checker.units.qual.C;
 
 public class Help {
     static DecimalFormat df = new DecimalFormat("#.##");

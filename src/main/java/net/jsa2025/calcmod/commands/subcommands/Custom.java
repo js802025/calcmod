@@ -1,9 +1,6 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -23,7 +20,6 @@ import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,10 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -192,7 +185,7 @@ public class Custom {
          try (BufferedReader reader = new BufferedReader(new FileReader(commandFile))) {
             JsonObject tempJson;
             try {
-                tempJson = JsonParser.parseString(reader.lines().collect(Collectors.joining("\n"))).getAsJsonObject();
+                tempJson = new JsonParser().parse(reader.lines().collect(Collectors.joining("\n"))).getAsJsonObject();
             } catch (Exception ignored) {
                 tempJson = new JsonObject();
             }
@@ -215,14 +208,14 @@ public class Custom {
     public static ArrayList<String> getParsedFunctions() {
         ArrayList<String> parsedFuncs = new ArrayList<>();
         JsonObject funcs = getFunctions();
-        for (String f : funcs.keySet()) {
-            String func = funcs.get(f).getAsString();
+        for (Map.Entry<String, JsonElement> f : funcs.entrySet()) {
+            String func = f.getValue().getAsString();
             ArrayList<String> vars = parseEquationVariables(func);
             if (!vars.isEmpty()) {
                 String combinedVars = String.join(", ", vars);
-                parsedFuncs.add(f + "(" + combinedVars + ") = " + func.replace("[", "").replace("]", ""));
+                parsedFuncs.add(f.getKey() + "(" + combinedVars + ") = " + func.replace("[", "").replace("]", ""));
             } else {
-                parsedFuncs.add(f+"() = " + func);
+                parsedFuncs.add(f.getKey()+"() = " + func);
             }
             CalcMod.LOGGER.info("Parsed Func "+parsedFuncs);
         }
