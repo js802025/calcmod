@@ -12,6 +12,9 @@ import java.util.Locale;
 
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.world.entity.Entity;
+
 
 public class SecondsToRepeater {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -22,34 +25,34 @@ public class SecondsToRepeater {
         command
         .then(Commands.literal("secondstorepeater").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "seconds"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("help").executes(ctx -> {
-            String[] message = Help.execute("secondstorepeater");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("secondstorepeater");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })));
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getOnPos(), seconds);
+    public static CalcMessageBuilder execute(Entity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player, seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {
-            String[] message = {"Repeaters Required: ", nf.format(repeaters), " \nLast Repeater Tick: ", nf.format(ticks % 4)} ;
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Repeaters required for ", "input", " seconds = ", "result", " \nLast repeater tick = ", "result"}, new String[] {seconds}, new String[] {nf.format(repeaters), nf.format(ticks % 4)});
             return message;
         } else {
-            String[] message = {"Repeaters Required: ", nf.format(Math.ceil(ticks/4))};
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Repeaters required for ", "input", " seconds = ", "result"}, new String[] {seconds}, new String[] {nf.format(repeaters)});
             return message;
         }
     }
 
     public static String helpMessage = """
-        §LSeconds to Repeater:§r
-            Given a number of seconds (can be in expression form), returns the number of repeaters and the last tick of the last repeater
-            §cUsage: /calc secondstorepeater <seconds>§f
+        §b§LSeconds to Repeater:§r§f
+            Given a number of seconds §7§o(can be in expression form)§r§f, returns the number of repeaters and their delay.
+            §eUsage: /calc secondstorepeater <seconds>§f
                 """;
 }

@@ -12,6 +12,10 @@ import java.util.Locale;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.world.entity.Entity;
+
+
 public class SbToItem {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -21,41 +25,42 @@ public class SbToItem {
         command
         .then(Commands.literal("sbtoitem").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("16s").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofsbs"), 16);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 16);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("1s").then(Commands.argument("numberofsbs", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "numberofsbs"), 1);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("help").executes(ctx -> {
-            String[] message = Help.execute("sbtoitem");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("sbtoitem");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })));
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String numberofsbs, int stackSize) {
-        double sbs = CalcCommand.getParsedExpression(player.getOnPos(), numberofsbs, stackSize);
+    public static CalcMessageBuilder execute(
+            net.minecraft.world.entity.Entity player, String numberofsbs, int stackSize) {
+        double sbs = CalcCommand.getParsedExpression(player, numberofsbs, stackSize);
         double items = sbs * stackSize * 27;
-        String message[] = {"Items: ", nf.format(items)};
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " SBs = ", "result", " Items"}, new String [] {numberofsbs}, new String[] {nf.format(items)});
         return message;
     }
 
     public static String helpMessage = """
-        §LSb to Item:§r
-            Given a number of sbs (can be in expression form), returns the number of items
-            §cUsage: /calc sbtoitem <numberofsbs>§f
+        §b§LSb to Item:§r§f
+            Given a number of full Shulker Boxes §7§o(can be in expression form)§r§f, returns the number of items.
+            §eUsage: /calc sbtoitem <numberofsbs>§f
                 """;
     
 }
