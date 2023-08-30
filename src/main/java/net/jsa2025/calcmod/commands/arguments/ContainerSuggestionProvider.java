@@ -10,7 +10,9 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-public class ContainerSuggestionProvider implements SuggestionProvider {
+import net.minecraft.server.command.ServerCommandSource;
+
+public class ContainerSuggestionProvider implements SuggestionProvider<ServerCommandSource> {
     public static final Map<String, Integer> containers = Map.ofEntries(Map.entry("shulker_box", 27),
     Map.entry("chest", 27),
     Map.entry("barrel", 27),

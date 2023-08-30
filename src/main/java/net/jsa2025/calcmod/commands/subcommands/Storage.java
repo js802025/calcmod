@@ -12,7 +12,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -24,25 +25,25 @@ public class Storage {
         command
         .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })
         .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
         .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
         .then(ClientCommandManager.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("storage");
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("storage");
+            CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })));
         return command;
@@ -52,44 +53,44 @@ public class Storage {
         command
         .then(CommandManager.literal("storage").then(CommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })
         .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
         .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
         .then(CommandManager.literal("help").executes((ctx) -> {
-            String[] message = Help.execute("storage");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("storage");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })));
         return command;
     }
 
-    public static String[] execute(PlayerEntity player, String itemsperhour, int timesHopperSpeed) {
-        double rates = CalcCommand.getParsedExpression(player.getBlockPos(), itemsperhour);
+    public static CalcMessageBuilder execute(Entity player, String itemsperhour, int timesHopperSpeed) {
+        double rates = CalcCommand.getParsedExpression(player, itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;
-        String[] message = {"Required Sorters at "+timesHopperSpeed+"xHopper Speed(9000/h): ", nf.format(sorters), " \nSbs per hour: ", nf.format(sbsperhour)};
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Required ","input","xHopper speed §7(9,000/hr)§f sorters for ", "input"," items/hr = ", "result", " \nSBs/hr = ", "result"}, new String[] {nf.format(timesHopperSpeed), itemsperhour}, new String[] {nf.format(sorters), nf.format(sbsperhour)});
         
         return message;
     }
 
     public static String helpMessage = """
-        §LStorage:§r
-            Given rate in terms of items per hour(can be in expression form) and optionally hopper speed, returns the number of needed sorters and rates in terms of sbs per hour
-            §cUsage: /calc storage <itemsperhour>
-            Usage: /calc storage <timesHopperSpeed> <itemsperhour> §f
+        §b§LStorage:§r§f
+        Calculates the number of needed item sorters given a rate of items per hour §7§o(can be in expression form)§r§f. Additional input for multiple times hopper speed sorters.
+                §eUsage: /calc storage <itemsperhour>
+                Usage: /calc storage <timesHopperSpeed> <itemsperhour>§f
                 """;
 }

@@ -21,8 +21,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.jsa2025.calcmod.commands.arguments.clientarguments.CIdentifierArgumentType;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.IdentifierArgumentType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -43,13 +45,13 @@ public class Craft {
         .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
         .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
         .then(ClientCommandManager.literal("help").executes(ctx -> {
-            String[] message = Help.execute("craft");
-            CalcCommand.sendMessage(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("craft");
+            CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })));
         return command;
@@ -60,24 +62,24 @@ public class Craft {
         .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(CommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), ctx.getSource().getRegistryManager());
+            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
         .then(CommandManager.literal("help").executes(ctx -> {
-            String[] message = Help.execute("craft");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("craft");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })));
         return command;
     }
 
 
-    public static String[] execute(PlayerEntity player, Recipe item, String amount, DynamicRegistryManager registryManager) {
+    public static CalcMessageBuilder execute(Entity player, Recipe item, String amount) {
 
         var is = item.getIngredients();
         var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player.getBlockPos(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
@@ -85,19 +87,20 @@ public class Craft {
             Ingredient ingredient = (Ingredient) i;
             if (ingredient.getMatchingStacks().length > 0) {
                 if (ingredients.containsKey(ingredient.getMatchingStacks()[0].getName().getString())) {
-                    
+
 
                     ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), ingredients.get(ingredient.getMatchingStacks()[0].getName().getString()) + a );
                 } else {
                     ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), a);
                     ingredientsStacks.put(ingredient.getMatchingStacks()[0].getName().getString(), ingredient.getMatchingStacks()[0]);
                 }
-                
-            //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
+
+                //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
             }
         }
-       List<String> message = new ArrayList<String>();
-        
+        CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getOutput().getName().getString()}, new String[] {});
+
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
@@ -110,20 +113,20 @@ public class Craft {
             remainder = remainder % stackSize;
             String items = nf.format(remainder);
             if (sb > 0) {
-                message.add(key+": ");
-                message.add("SBs: "+sbString + ", Stacks: "+stacksString+", Items: "+items+"\n");
+                messageBuilder.addString(key+": ");
+                messageBuilder.addResult("SBs: "+sbString + ", Stacks: "+stacksString+", Items: "+items+"\n");
             } else if (stacks > 0) {
-                message.add(key + ": " );
-                message.add("Stacks: "+stacksString+", Items: "+items+"\n");
+                messageBuilder.addString(key + ": " );
+                messageBuilder.addResult("Stacks: "+stacksString+", Items: "+items+"\n");
             } else {
-                message.add(key + ": " );
-                message.add("Items: "+items+"\n");
+                messageBuilder.addString(key + ": " );
+                messageBuilder.addResult("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput().getName().getString()+"s: \n"+message.get(0));
 
-        
-        return message.toArray(new String[message.size()]);
+        //     message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
+
+        return messageBuilder;
     }
 
     public static String helpMessage = """

@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -21,7 +22,7 @@ public class Variables {
         command
         .then(ClientCommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute();
+            CalcMessageBuilder message = execute();
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -32,32 +33,36 @@ public class Variables {
         command
         .then(CommandManager.literal("variables")
         .executes(ctx -> {
-            String[] message = execute();
+            CalcMessageBuilder message = execute();
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
         return command;
     }
 
-    public static String[] execute() {
+    public static CalcMessageBuilder execute() {
         String message = """
-            Dynamic variables will default to the stack size of each command. Here are the variables for the majority of commands which use a stack size of 64:
-                dub: 3456(dynamic)
+            §bVariables§f can be used inside equations in any number field. They act as shortcuts instead of having to remember that “a double chest full of 16 stackable items is 864.”
+            If no stack size is given, variables default to the stack size of each command.
+            
+                dub: 3456 (default)
                 dub64: 3456
                 dub16: 864
                 dub1: 54
-                sb: 1728(dynamic)
+                sb: 1728 (default)
                 sb64: 1728
                 sb16: 432
                 sb1: 27
-                stack: 64(dynamic)
+                stack: 64 (default)
                 stack64: 64
                 stack16: 16
                 stack1: 1
                 min: 60
                 hour: 3600
+                x: player x coord
+                y: player y coord
+                z: player z coord
                 """;
-                String[] m = {message};
-        return m;
+        return new CalcMessageBuilder(message);
     }
 }
