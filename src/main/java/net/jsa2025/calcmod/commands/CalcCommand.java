@@ -9,6 +9,7 @@ import net.jsa2025.calcmod.commands.subcommands.*;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -239,7 +240,7 @@ public class CalcCommand  extends CommandBase {
             vars.put("x", (double) player.getPosition().getX());
             vars.put("y", (double) player.getPosition().getX());
             vars.put("z", (double) player.getPosition().getZ());
-            //health missing
+            vars.put("health", (double) ((EntityPlayer) player).getHealth());
         }
        //
         vars.put("dub", vars.get("dub"+ stackSize));
