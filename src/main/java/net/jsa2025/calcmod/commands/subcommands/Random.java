@@ -16,6 +16,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
+
 public class Random {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -24,39 +28,39 @@ public class Random {
         command
         .then(Commands.literal("random")
         .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("minmax").then(Commands.argument("min", StringArgumentType.string()).then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            String[] message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))))
         .then(Commands.literal("help").executes(ctx -> {
-            String[] message = Help.execute("random");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 0;
+            CalcMessageBuilder message = Help.execute("random");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
         })));
         return command;
     }
 
 
-    public static String[] execute(Entity player, String... range) {
+    public static CalcMessageBuilder execute(Entity player, String... range) {
         if (range.length == 1) {
-        double maxInt = CalcCommand.getParsedExpression(player.getPosition(), range[0]);
+        double maxInt = CalcCommand.getParsedExpression(player, range[0]);
         String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
-        return new String[] { "Random number between 0 and " + range[0] + " is ", random };
+        return new CalcMessageBuilder().addFromArray(new String[] { "Random number between 0 and ", "input", " §7(inclusive)§f = ", "result" }, range, new String[] {random});
         } else if (range.length == 2 ) {
-            double max = CalcCommand.getParsedExpression(player.getPosition(), range[1]);
-            double min = CalcCommand.getParsedExpression(player.getPosition(), range[0]);
+            double max = CalcCommand.getParsedExpression(player, range[1]);
+            double min = CalcCommand.getParsedExpression(player, range[0]);
             String random = nf.format(ThreadLocalRandom.current().nextInt((int) min, (int) max + 1));
-            return new String[] { "Random number between "+range[0]+" and " + range[1] + " is ", random };
+            return new CalcMessageBuilder().addFromArray(new String[] { "Random number between ", "input", " and ", "input", " §7(inclusive)§f = ", "result" }, range, new String[] {random});
 
         }
-        return new String[] { "Invalid arguments" };
+        return new CalcMessageBuilder("Invalid Arguments");
     }
 
-    public static String helpMessage = "§LRandom:§r \nGiven a min & max value, returns a random number between 0 and the max value. \n§cUsage: /calc random <max>§f";
+    public static String helpMessage = "§b§LRandom:§r§f \nGiven a maximum and/or minimum value, returns a random number between those values §7(inclusive)§r. If just a maximum value is entered, picks a random number from 0 to the max value §7(inclusive)§r. \n§eUsage: /calc random <max>§f";
     
 }
