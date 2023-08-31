@@ -56,6 +56,8 @@ public class CalcCommand {
         command = Random.registerServer(command);
         command = Craft.registerServer(command);
         command = SignalToItems.registerServer(command);
+        command = Piglin.registerServer(command);
+        command = Custom.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
 
