@@ -6,7 +6,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;import net.jsa2025.calcmod.commands.CalcCommand;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.jsa2025.calcmod.CalcMod;
+import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -35,7 +37,7 @@ public class Storage {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
-        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.string())
         .executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
