@@ -1,3 +1,5 @@
+
+
 plugins {
     id 'eclipse'
     id 'idea'
@@ -7,7 +9,7 @@ plugins {
     id 'java'
 }
 
-version = mod_version
+version = "forge-"+minecraft_version+"-"+mod_version
 group = mod_group_id
 
 base {
@@ -150,7 +152,7 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-  //  jarJar(group: 'org.mariuszgromada.math', name: 'MathParser.org-mXparser', version: '[5.0.0, 6.0.0)')
+   // jarJar(group: 'org.mariuszgromada.math', name: 'MathParser.org-mXparser', version: '[5.0.0, 6.0.0)')
 
   //  modImplementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
     minecraftLibrary 'org.mariuszgromada.math:MathParser.org-mXparser:5.2.1'
@@ -192,7 +194,21 @@ reobf {
 // When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
 // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
 
+shadowJar {
+    dependencies {
+        dependencies {
+            include(dependency('org.mariuszgromada.math:MathParser.org-mXparser:5.2.1'))
+        }
+    }
+    archiveClassifier.set('')
 
+    relocate 'org.mariuszgromada.math.mxparser', 'net.jsa2025.calcmod.mxparser'
+
+}
+
+reobf {
+    shadowJar {} // Reobfuscate the shadowed JAR
+}
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
@@ -213,6 +229,8 @@ tasks.named('processResources', ProcessResources).configure {
 
 // Example for how to get properties into the manifest for reading at runtime.
 tasks.named('jar', Jar).configure {
+    archiveClassifier.set("slim")
+
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,

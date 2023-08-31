@@ -12,6 +12,9 @@ import java.util.Locale;
 
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.world.entity.Entity;
+
 
 public class SecondsToHopperClock {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -22,34 +25,34 @@ public class SecondsToHopperClock {
         command
         .then(Commands.literal("secondstohopperclock").then(Commands.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "seconds"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }))
         .then(Commands.literal("help").executes(ctx -> {
-            String[] message = Help.execute("secondstohopperclock");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })));
         return command;
     }
 
-    public static String[] execute(ServerPlayer player, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(player.getOnPos(), seconds);
+    public static CalcMessageBuilder execute(Entity player, String seconds) {
+        double secondsDouble = CalcCommand.getParsedExpression(player, seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {
-            String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64), " \n§cThis exceeds the maximum items of a hopper."};
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result", " \n§cThis exceeds the maximum number of items in a hopper."}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
             return message;
         } else {
-        String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)};
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result"}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
         return message;
         }
     }
 
     public static String helpMessage = """
-        §LSeconds to Hopper Clock:§r
-            Given a number of seconds (can be in expression form), returns the number of ticks in a hopper clock
-            §cUsage: /calc secondstohopperclock <seconds>§f
+        §b§LSeconds to Hopper Clock:§r§f
+            Given a number of seconds §7§o(can be in expression form)§r§f, returns the number of items needed in a hopper clock to achieve that time.
+            §eUsage: /calc secondstohopperclock <seconds>§f
                 """;
 
 }
