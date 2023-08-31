@@ -149,13 +149,13 @@ public class CalcCommand  extends CommandBase {
                 if (args[1].contains("help")) message = Help.execute("itemtosb");
                 else if (args[1].contains("16s")) message = ItemToSb.execute(sender, parseExpressionText(args, 2), 16);
                 else if (args[1].contains("1s")) message = ItemToSb.execute(sender, parseExpressionText(args, 2), 1);
-                else message = ItemToSb.execute(sender, parseExpressionText(args, 2), 64);
+                else message = ItemToSb.execute(sender, parseExpressionText(args, 1), 64);
             } else if (args[0].contains("itemtostack")) {
                 if (args[1].contains("help")) message = Help.execute("itemtostack");
                 else if (args[1].contains("16s"))
                     message = ItemToStack.execute(sender, parseExpressionText(args, 2), 16);
                 else if (args[1].contains("1s")) message = ItemToStack.execute(sender, parseExpressionText(args, 2), 1);
-                else message = ItemToStack.execute(sender, parseExpressionText(args, 2), 64);
+                else message = ItemToStack.execute(sender, parseExpressionText(args, 1), 64);
             } else if (args[0].contains("barter")) {
                 if (args[1].contains("help")) message = Help.execute("barter");
                 else if (args[1].contains("toitem")) message = Piglin.executeToItems(sender, args[2], args[3]);
@@ -163,7 +163,7 @@ public class CalcCommand  extends CommandBase {
             } else if (args[0].contains("random")) {
                 if (args[1].contains("help")) message = Help.execute("random");
                 else if (args[1].contains("minmax")) message = Random.execute(sender, args[2], args[3]);
-                else if (args[1].contains("max")) message = Random.execute(sender, args[2]);
+                else if (args[1].contains("max")) message = Random.execute(sender, args[1]);
             } else if (args[0].contains("rates")) {
                 if (args[1].contains("help")) message = Help.execute("rates");
                 else message = Rates.execute(sender, args[1], parseExpressionText(args, 2));
@@ -171,7 +171,7 @@ public class CalcCommand  extends CommandBase {
                 if (args[1].contains("help")) message = Help.execute("sbtoitem");
                 else if (args[1].contains("16s")) message = SbToItem.execute(sender, parseExpressionText(args, 2), 16);
                 else if (args[1].contains("1s")) message = SbToItem.execute(sender, parseExpressionText(args, 2), 1);
-                else message = SbToItem.execute(sender, parseExpressionText(args, 2), 64);
+                else message = SbToItem.execute(sender, parseExpressionText(args, 1), 64);
             } else if (args[0].contains("secondstohopperclock")) {
                 if (args[1].contains("help")) message = Help.execute("secondstohopperclock");
                 else message = SecondsToHopperClock.execute(sender, parseExpressionText(args, 1));
@@ -181,26 +181,28 @@ public class CalcCommand  extends CommandBase {
             } else if (args[0].contains("signaltoitems")) {
                 if (args[1].contains("help")) message = Help.execute("signaltoitems");
                 else message = SignalToItems.execute(sender, args[1], parseExpressionText(args, 2));
-            } else if (args[0].contains("stacktoitems")) {
+            } else if (args[0].contains("stacktoitem")) {
                 if (args[1].contains("help")) message = Help.execute("stacktoitems");
                 else if (args[1].contains("16s"))
                     message = StackToItem.execute(sender, parseExpressionText(args, 2), 16);
                 else if (args[1].contains("1s")) message = StackToItem.execute(sender, parseExpressionText(args, 2), 1);
-                else message = StackToItem.execute(sender, parseExpressionText(args, 2), 64);
+                else message = StackToItem.execute(sender, parseExpressionText(args, 1), 64);
             } else if (args[0].contains("storage")) {
                 if (args[1].contains("help")) message = Help.execute("storage");
-                else if (args.length > 2) message = Storage.execute(sender, args[1], parseInt(args[2]));
+                else if (args.length > 2) message = Storage.execute(sender, parseExpressionText(args,2), parseInt(args[1]));
                 else message = Storage.execute(sender, parseExpressionText(args, 1), 1);
             } else if (args[0].contains("custom")) {
                 if (args[1].contains("help")) message = Help.execute("custom");
-                else if (args[1].contains("add")) message = Custom.executeAdd(sender, args[2], parseExpressionText(args, 3));
+                else if (args[1].contains("add"))
+                    message = Custom.executeAdd(sender, args[2], parseExpressionText(args, 3));
                 else if (args[1].contains("list")) message = Custom.executeList(sender);
                 else if (args[1].contains("remove")) message = Custom.executeRemove(sender, args[2]);
                 else if (args[1].contains("run")) message = Custom.executeRun(sender, parseExpressionText(args, 2));
             } else if (args[0].contains("variables")) {
                 message = Variables.execute();
+            } else if (args[0].contains("help")) message = Help.execute();
 
-        }else {
+        else {
                 message = Basic.execute(sender, parseExpressionText(args, 0));
             }
             sendMessageServer(sender, message);
@@ -214,7 +216,11 @@ public class CalcCommand  extends CommandBase {
         String expression = "";
         for (int i = 0; i < args.length; i++) {
             if (i >= startIndex) {
-                expression += args[i] + " ";
+                if (i != args.length -1) {
+                    expression += args[i] + " ";
+                } else {
+                expression += args[i];
+                }
             }
         }
         return expression;
