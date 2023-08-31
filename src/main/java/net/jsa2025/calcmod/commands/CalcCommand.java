@@ -17,6 +17,7 @@ import net.jsa2025.calcmod.commands.subcommands.*;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 
@@ -117,7 +118,7 @@ public class CalcCommand {
             vars.put("x", (double) player.blockPosition().getX());
             vars.put("y", (double) player.blockPosition().getX());
             vars.put("z", (double) player.blockPosition().getZ());
-            //health missing
+            vars.put("health", (double) ((PlayerEntity) player).getHealth());
         }
        //
         vars.put("dub", vars.get("dub"+ stackSize));
