@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 
 
@@ -126,7 +127,7 @@ public class CalcCommand {
             vars.put("x", (double) player.getPosition().getX());
             vars.put("y", (double) player.getPosition().getX());
             vars.put("z", (double) player.getPosition().getZ());
-            //health missing
+            vars.put("health", (double) ((EntityPlayer) player).getHealth());
         }
        //
         vars.put("dub", vars.get("dub"+ stackSize));

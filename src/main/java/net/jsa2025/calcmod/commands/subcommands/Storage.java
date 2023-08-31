@@ -43,7 +43,7 @@ public class Storage {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
-        .then(Commands.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(Commands.argument("itemsperhour", StringArgumentType.string())
         .executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
