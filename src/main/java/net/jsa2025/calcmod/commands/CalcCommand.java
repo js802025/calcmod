@@ -146,7 +146,7 @@ public class CalcCommand {
             for (int f = 0; f< parsedCustomFunctions.size(); f++) {
                 String func = parsedCustomFunctions.get(f);
                 String expression = func.split("= ")[1].replaceAll(key, "("+vars.get(key)+")");
-                if (contains(func.split(" =")[0].split("[(]")[1].replace("[)]", "").split(","), key)) {
+                if (!contains(func.split(" =")[0].split("[(]")[1].replace("[)]", "").split(","), key)) {
                     parsedCustomFunctions.set(f, func.split("= ")[0] + "= " + expression);
                 }
             }
