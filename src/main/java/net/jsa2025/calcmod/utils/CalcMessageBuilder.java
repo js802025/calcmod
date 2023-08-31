@@ -59,7 +59,7 @@ public class CalcMessageBuilder {
     }
     public CalcMessageBuilder addResult(String text) {
         messageText.append(new TranslationTextComponent("§a" + text + "§f")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
+                .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
         return this;
     }
 
@@ -85,7 +85,7 @@ public class CalcMessageBuilder {
             return new TranslationTextComponent(helpMessage);
         }
         messageText.append(" ");
-        messageText.append(new TranslationTextComponent("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+        messageText.append(new TranslationTextComponent("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
         return messageText;
     }
 

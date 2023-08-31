@@ -24,7 +24,7 @@ public class Nether {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("nether").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity().blockPosition());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity().getCommandSenderBlockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -48,9 +48,5 @@ public class Nether {
         return message;
     }
 
-    public static String helpMessage = """
-        §b§LNether:§r§f
-            Given a block position in the Overworld, returns the Nether's corresponding coordinates. If no coordinates are given, command assumes current player position.
-            §eUsage: /calc nether <x> <y> <z>§f
-                """;
+    public static String helpMessage = "§b§LNether:§r§f \nGiven a block position in the Overworld, returns the Nether's corresponding coordinates. If no coordinates are given, command assumes current player position. \n§eUsage: /calc nether <x> <y> <z>§f";
 }

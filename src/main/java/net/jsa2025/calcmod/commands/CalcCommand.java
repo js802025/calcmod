@@ -114,9 +114,9 @@ public class CalcCommand {
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
-            vars.put("x", (double) player.blockPosition().getX());
-            vars.put("y", (double) player.blockPosition().getX());
-            vars.put("z", (double) player.blockPosition().getZ());
+            vars.put("x", (double) player.getCommandSenderBlockPosition().getX());
+            vars.put("y", (double) player.getCommandSenderBlockPosition().getX());
+            vars.put("z", (double) player.getCommandSenderBlockPosition().getZ());
             //health missing
         }
        //

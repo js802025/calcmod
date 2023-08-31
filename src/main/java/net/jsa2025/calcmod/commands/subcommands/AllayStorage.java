@@ -48,11 +48,7 @@ public class AllayStorage {
 
         return new CalcMessageBuilder().addString("Allays needed to sort ").addInput(itemsperhour).addString(" items/hr = ").addResult(allaystorage);
     }
-    public static String helpMessage = """
-        §LAllay Storage:§r
-            Given the number of items per hour of a non stackable item, returns allays needed to sort the item.
-            §cUsage: /calc allaystorage <numberofitems>§f
-            """;
+    public static String helpMessage = "§LAllay Storage:§r \nGiven the number of items per hour of a non stackable item, returns allays needed to sort the item \n§cUsage: /calc allaystorage <numberofitems>§f";
 
 
 }

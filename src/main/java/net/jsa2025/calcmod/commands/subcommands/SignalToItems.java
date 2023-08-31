@@ -5,13 +5,10 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.CommandNode;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.command.Commands;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
@@ -52,7 +49,7 @@ public class SignalToItems {
 
     public static CalcMessageBuilder execute(Entity player, String container, String signal) {
         double strength = CalcCommand.getParsedExpression(player, signal);
-        var containers = ContainerSuggestionProvider.containers;
+        Map<String, Integer> containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;
         double item64 = Math.max(strength, Math.ceil(secondlevel*(strength-1)));
@@ -84,11 +81,7 @@ public class SignalToItems {
        // return new String[] {"Items Required for 64 Stackable: ", CalcCommand.getParsedStack(item64, 64), "\nItems Required for 16 Stackable: ", stackable16, "\nItems Required for Non Stackable: ", stackable1};
     }
 
-    public static String helpMessage = """
-        §b§LSignal To Items:§r§f
-           Given a container and a desired comparator signal strength §7§o(can be in expression form)§r§f, returns the number of items needed to achieve that signal strength.
-            §eUsage: /calc signaltoitems <container> <signal>§f
-                """;
+    public static String helpMessage = "§b§LSignal To Items:§r§f \nGiven a container and a desired comparator signal strength §7§o(can be in expression form)§r§f, returns the number of items needed to achieve that signal strength. \n§eUsage: /calc signaltoitems <container> <signal>§f";
 
 }
 
