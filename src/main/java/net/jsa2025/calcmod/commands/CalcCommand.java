@@ -5,26 +5,40 @@ import java.text.NumberFormat;
 
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+
+
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.*;
 
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import org.mariuszgromada.math.mxparser.License;
+import net.jsa2025.calcmod.commands.subcommands.Random;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
+import org.mariuszgromada.math.mxparser.Function;
+import org.mariuszgromada.math.mxparser.PrimitiveElement;
+
+
+import java.util.*;
+import java.util.function.Supplier;
 
 public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -53,7 +67,7 @@ public class CalcCommand {
 //
 //    }
 
-    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
+    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
         command = Basic.registerServer(command);
         command = Storage.registerServer(command);
@@ -73,12 +87,13 @@ public class CalcCommand {
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
 
+
         dispatcher.register(command);
     }
 
    
 
-    public static double getParsedExpression(BlockPos playerPos, String in, Integer... nonstackable) {
+    public static double getParsedExpression(Entity player, String in, Integer... nonstackable) {
         int stackSize;
         if (nonstackable.length == 0) stackSize = 64;
         else stackSize = nonstackable[0];
@@ -94,25 +109,45 @@ public class CalcCommand {
         vars.put("stack1", 1.0);
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
-        vars.put("x", (double)playerPos.getX());
-        vars.put("y", (double) playerPos.getX());
-        vars.put("z", (double) playerPos.getZ());
+        if (Objects.nonNull(player)) {
+            vars.put("x", (double) player.blockPosition().getX());
+            vars.put("y", (double) player.blockPosition().getX());
+            vars.put("z", (double) player.blockPosition().getZ());
+            //health missing
+        }
+       //
         vars.put("dub", vars.get("dub"+ stackSize));
         vars.put("sb", vars.get("sb"+stackSize));
         vars.put("stack", vars.get("stack"+stackSize));
         String withVars = in;
-
+        ArrayList<String> parsedCustomFunctions = Custom.getParsedFunctions();
+        parsedCustomFunctions.sort((s1, s2) -> (s2.length() - s1.length()));
+        //hide funcs from replace
+        for (int f = 0; f< parsedCustomFunctions.size(); f++) {
+            String func = parsedCustomFunctions.get(f);
+            withVars = withVars.replaceAll(func.split("[(]")[0], "{"+f+"}");
+        }
+        ArrayList<PrimitiveElement> primitiveElements = new ArrayList<>();
         for (String key : vars.keySet()) {
+            //switch out variables in func unless override by local
+            for (int f = 0; f< parsedCustomFunctions.size(); f++) {
+                String func = parsedCustomFunctions.get(f);
+                String expression = func.split("= ")[1].replaceAll(key, "("+vars.get(key)+")");
+                if (!Custom.parseEquationVariables(func).contains(key)) {
+                    parsedCustomFunctions.set(f, func.split("= ")[0] + "= " + expression);
+                }
+            }
             withVars = withVars.replaceAll(key, "("+vars.get(key)+")");
         }
-//        if (nonstackable.length > 0) {
-//            if (nonstackable[0] == 1) {
-//            return new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(54)").replaceAll("sb", "(27)").replaceAll("stack", "(1)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
-//            } else if (nonstackable[0] == 16) {
-//               return  new Expression(in.replaceAll("dub64", "(3456)").replaceAll("dub16", "(864)").replaceAll("dub1", "(54)").replaceAll("sb64", "(1728)").replaceAll("sb16", "(432)").replaceAll("sb1", "(27)").replaceAll("stack64", "(64)").replaceAll("stack16", "(16)").replaceAll("stack1", "(1)").replaceAll("dub", "(864)").replaceAll("sb", "(432)").replaceAll("stack", "(16)").replaceAll("min", "(60)").replaceAll("hour", "(3600)").replaceAll("x", "("+String.valueOf(playerPos.getX())+")").replaceAll("y", "("+String.valueOf(playerPos.getY())+")").replaceAll("z", "("+String.valueOf(playerPos.getZ())+")").replaceAll(",", "")).calculate();
-//            }
-//        }
-        return new Expression(withVars).calculate();
+        withVars = withVars.replaceAll("(\\d*),(\\d+)", "$1$2");
+
+
+        for (int f = 0; f < parsedCustomFunctions.size(); f++) {
+            withVars = withVars.replaceAll("[{]"+f+"[}]", parsedCustomFunctions.get(f).split("[(]")[0]);
+            primitiveElements.add(new Function(parsedCustomFunctions.get(f)));
+        }
+        CalcMod.LOGGER.info("Parsed "+withVars);
+            return new Expression(withVars, primitiveElements.toArray(new PrimitiveElement[0] )).calculate();
         }
 
     public static String getParsedStack(double items, int stacksize) {
@@ -122,6 +157,7 @@ public class CalcCommand {
             return nf.format(items);
         }
     }
+    
 
 
     public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
@@ -135,8 +171,9 @@ public class CalcCommand {
             messageText.append(new TextComponent("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
             m += message[i];
            }
-           
+
         }
+
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
@@ -144,8 +181,16 @@ public class CalcCommand {
                 return;
             } 
         }
-        messageText.append(new TextComponent(" "));
-        source.getPlayerOrException().sendMessage(messageText.append(new TextComponent("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), UUID.randomUUID());
+        messageText.append(Component.literal(" "));
+        source.getPlayer().sendSystemMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+        messageText.append(Component.literal(" "));
+
+        String finalM = m;
+        source.sendSuccess(messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+    }
+    
+    public static void sendMessageServer(CommandSourceStack source, CalcMessageBuilder messageBuilder) {
+        source.sendSuccess(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
     }
 
     
