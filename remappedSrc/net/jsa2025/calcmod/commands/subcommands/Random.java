@@ -64,12 +64,12 @@ public class Random {
 
     public static String[] execute(ICommandSender sender, String... range) {
         if (range.length == 1) {
-        double maxInt = CalcCommand.getParsedExpression(sender.getPosition(), range[0]);
+        double maxInt = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), range[0]);
         String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
         return new String[] { "Random number between 0 and " + range[0] + " is ", random };
         } else if (range.length == 2 ) {
-            double max = CalcCommand.getParsedExpression(sender.getPosition(), range[1]);
-            double min = CalcCommand.getParsedExpression(sender.getPosition(), range[0]);
+            double max = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), range[1]);
+            double min = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), range[0]);
             String random = nf.format(ThreadLocalRandom.current().nextInt((int) min, (int) max + 1));
             return new String[] { "Random number between "+range[0]+" and " + range[1] + " is ", random };
 

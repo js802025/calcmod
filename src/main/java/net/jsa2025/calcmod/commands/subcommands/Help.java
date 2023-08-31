@@ -4,6 +4,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 
 import net.jsa2025.calcmod.commands.CalcCommand;
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -48,10 +49,10 @@ public class Help {
         if (hterm.length == 0) {
             String helpMenu = "";
             for (Map.Entry<String, String> me :
-             help.entrySet()) {
+                    help.entrySet()) {
                 helpMenu += me.getValue() + "\n";
 
-              }
+            }
             CalcMessageBuilder messageBuilder = new CalcMessageBuilder(helpMenu);
             return messageBuilder;
         } else {

@@ -33,8 +33,8 @@ public class Rates {
 //    }
 
     public static String[] execute(ICommandSender sender, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(sender.getPosition(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(sender.getPosition(), time);
+        double items = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
         CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " Items in ", "input", " Seconds = ", "result", "/hr"}, new String[] {numberofitems, time}, new String[] {nf.format(rates)});

@@ -85,7 +85,7 @@ public class CalcMessageBuilder {
             return new TextComponentString(helpMessage);
         }
         messageText.appendText(" ");
-        messageText.appendSibling(new TextComponentString("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")+'"'))));
+        messageText.appendSibling(new TextComponentString("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+messageText.getText().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")+'"'))));
         return messageText;
     }
 

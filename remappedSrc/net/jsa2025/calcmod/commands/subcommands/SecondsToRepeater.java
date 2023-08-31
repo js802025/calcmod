@@ -50,7 +50,7 @@ public class SecondsToRepeater {
     }
 
     public static String[] execute(ICommandSender sender, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(sender.getPosition(), seconds);
+        double secondsDouble = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);
         if (ticks % 4 != 0) {

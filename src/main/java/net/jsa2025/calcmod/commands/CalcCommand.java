@@ -21,7 +21,6 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.entity.Entity;
 import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import org.mariuszgromada.math.mxparser.License;
 import net.jsa2025.calcmod.commands.subcommands.Random;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
@@ -111,13 +110,13 @@ public class CalcCommand  extends CommandBase {
 //        for (String i :args) {
 //            expression += i+" ";
 //        }
-//        double answer = getParsedExpression(sender.getPosition(), expression);
+//        double answer = getParsedExpression(sender.getCommandSenderEntity(), expression);
 //        String[] message = {expression+" = ", nf.format(answer)};
 //        CalcCommand.sendMessageServer(sender, message);
         CalcMod.LOGGER.log(Level.INFO, "Expression: "+parseExpressionText(args, 0));
 
         CalcMod.LOGGER.log(Level.INFO, args.length);
-        String[] message = {};
+        CalcMessageBuilder message;
         if (args.length > 0) {
 
             if (args[0].contains("nether")) {
@@ -158,7 +157,7 @@ public class CalcCommand  extends CommandBase {
                 else message = ItemToStack.execute(sender, parseExpressionText(args, 2), 64);
             } else if (args[0].contains("piglin")) {
                 if (args[1].contains("help")) message = Help.execute("piglin");
-                else message = Piglin.execute(sender, parseInt(args[1]), args[2]);
+                else message = Piglin.executeToItems(sender, parseInt(args[1]), args[2]);
             } else if (args[0].contains("random")) {
                 if (args[1].contains("help")) message = Help.execute("random");
                 else if (args[1].contains("minmax")) message = Random.execute(sender, args[2], args[3]);
@@ -311,11 +310,11 @@ public class CalcCommand  extends CommandBase {
             } 
         }
         messageText.appendSibling(new TextComponentString(" "));
-        source.sendFeedback(messageText.appendSibling(new TextComponentString("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))), true);
+        source.sendMessage(messageText.appendSibling(new TextComponentString("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))));
     }
 
-    public static void sendMessageServer(CommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
+    public static void sendMessageServer(ICommandSender source, CalcMessageBuilder messageBuilder) {
+        source.sendMessage(messageBuilder.generateStyledText());
     }
 
     

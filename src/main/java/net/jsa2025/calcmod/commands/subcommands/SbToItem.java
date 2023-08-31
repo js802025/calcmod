@@ -47,7 +47,7 @@ public class SbToItem {
 //    }
 
     public static String[] execute(ICommandSender sender, String numberofsbs, int stackSize) {
-        double sbs = CalcCommand.getParsedExpression(sender.getPosition(), numberofsbs, stackSize);
+        double sbs = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofsbs, stackSize);
         double items = sbs * stackSize * 27;
         CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " SBs = ", "result", " Items"}, new String [] {numberofsbs}, new String[] {nf.format(items)});
         return message;

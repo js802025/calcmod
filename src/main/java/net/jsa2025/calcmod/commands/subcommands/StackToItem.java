@@ -51,7 +51,7 @@ public class StackToItem {
 //    }
 
     public static String[] execute(ICommandSender sender, String numberofstacks, int stackSize) {
-        double stacks = CalcCommand.getParsedExpression(sender.getPosition(), numberofstacks, 1);
+        double stacks = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofstacks, 1);
         double items = stacks * stackSize;
         return new CalcMessageBuilder().addInput(numberofstacks).addString(" ").addInput(nf.format(stackSize)).addString(" Stacks = ").addResult(nf.format(items)).addString(" Items");
     }

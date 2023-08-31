@@ -65,7 +65,7 @@ public static Map<String, Integer> containers;
     }
 
     public static String[] execute(ICommandSender sender, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(sender.getPosition(), signal);
+        double strength = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), signal);
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;
         double item64 = Math.max(strength, Math.ceil(secondlevel*(strength-1)));

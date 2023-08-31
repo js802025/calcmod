@@ -50,7 +50,7 @@ public class SecondsToHopperClock {
     }
 
     public static String[] execute(ICommandSender sender, String seconds) {
-        double secondsDouble = CalcCommand.getParsedExpression(sender.getPosition(), seconds);
+        double secondsDouble = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {
             String[] message = {"Hopper Clock Total Items: ", nf.format(hopperclock), "", " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64), " \n§cThis exceeds the maximum items of a hopper."};

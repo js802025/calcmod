@@ -44,7 +44,7 @@ public class Storage {
 //    }
 
     public static String[] execute(ICommandSender sender, String itemsperhour, int timesHopperSpeed) {
-        double rates = CalcCommand.getParsedExpression(sender.getPosition(), itemsperhour);
+        double rates = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;

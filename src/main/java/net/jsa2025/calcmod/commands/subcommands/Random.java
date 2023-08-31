@@ -41,9 +41,9 @@ public class Random {
 
     public static CalcMessageBuilder execute(ICommandSender sender, String... range) {
         if (range.length == 1) {
-            double maxInt = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), range[0]);
-            String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
-            return new CalcMessageBuilder().addFromArray(new String[] { "Random number between 0 and ", "input", " §7(inclusive)§f = ", "result" }, range, new String[] {random});
+        double maxInt = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), range[0]);
+        String random = nf.format(ThreadLocalRandom.current().nextInt(0, (int) maxInt + 1));
+        return new CalcMessageBuilder().addFromArray(new String[] { "Random number between 0 and ", "input", " §7(inclusive)§f = ", "result" }, range, new String[] {random});
         } else if (range.length == 2 ) {
             double max = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), range[1]);
             double min = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), range[0]);

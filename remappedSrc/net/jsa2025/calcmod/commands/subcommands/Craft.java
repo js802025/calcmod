@@ -74,7 +74,7 @@ public class Craft {
 
         var is = item.getIngredients();
         var outputSize = item.getOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(sender.getPosition(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();

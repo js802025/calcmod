@@ -41,7 +41,7 @@ public class Basic {
     }
 
     public static String[] execute(ICommandSender sender, String expression) {
-        double result = CalcCommand.getParsedExpression(sender.getPosition(), expression);
+        double result = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), expression);
         String[] message = {"Result: ", nf.format(result)};
         return message;
     }

@@ -1,9 +1,6 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
-
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
@@ -15,7 +12,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 
@@ -37,10 +33,10 @@ public class Basic {
 //        return command;
 //    }
 //
-    public static String[] execute(ICommandSender sender, String expression) {
-        double result = CalcCommand.getParsedExpression(sender.getPosition(), expression);
-        String[] message = {expression+" = ", nf.format(result)};
-        return message;
+    public static CalcMessageBuilder execute(ICommandSender sender, String expression) {
+        CalcMod.LOGGER.info("Entity Name: "+expression);
+        double result = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), expression);
+        return new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {expression}, new String[] {nf.format(result)});
     }
 
 

@@ -33,11 +33,11 @@ public class Craft {
     
 
 
-    public static String[] execute(ICommandSender sender, IRecipe item, String amount) {
+    public static CalcMessageBuilder execute(ICommandSender sender, IRecipe item, String amount) {
 
         NonNullList<Ingredient> is = item.getIngredients();
         int outputSize = item.getRecipeOutput().getCount();
-        double inputAmount = Math.floor(CalcCommand.getParsedExpression(sender.getPosition(), amount));
+        double inputAmount = Math.floor(CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
         Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
