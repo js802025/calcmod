@@ -14,6 +14,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
+import net.minecraft.client.gui.screens.social.PlayerEntry;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -24,6 +25,7 @@ import net.minecraft.network.chat.Style;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -112,7 +114,7 @@ public class CalcCommand {
             vars.put("x", (double) player.blockPosition().getX());
             vars.put("y", (double) player.blockPosition().getX());
             vars.put("z", (double) player.blockPosition().getZ());
-            //health missing
+            vars.put("health", (double) ((Player) player).getHealth());
         }
        //
         vars.put("dub", vars.get("dub"+ stackSize));
