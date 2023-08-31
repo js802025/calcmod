@@ -133,7 +133,7 @@ public class CalcCommand {
             for (int f = 0; f< parsedCustomFunctions.size(); f++) {
                 String func = parsedCustomFunctions.get(f);
                 String expression = func.split("= ")[1].replaceAll(key, "("+vars.get(key)+")");
-                if (!Custom.parseEquationVariables(func).contains(key)) {
+                if (!contains(func.split(" =")[0].split("[(]")[1].replace("[)]", "").split(","), key)) {
                     parsedCustomFunctions.set(f, func.split("= ")[0] + "= " + expression);
                 }
             }
@@ -149,7 +149,14 @@ public class CalcCommand {
         CalcMod.LOGGER.info("Parsed "+withVars);
             return new Expression(withVars, primitiveElements.toArray(new PrimitiveElement[0] )).calculate();
         }
-
+    static boolean contains(String[] array, String value) {
+        for (String str : array) {
+            if (str.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public static String getParsedStack(double items, int stacksize) {
         if (items >= 64) {
             return "Stacks: "+nf.format(Math.floor(items / stacksize))+", Items: "+ nf.format(items % stacksize);
