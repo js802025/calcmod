@@ -13,6 +13,8 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
+
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
@@ -41,12 +43,11 @@ public class Craft {
 
     public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(Commands.literal("craft").then(Commands.argument("item", StringArgumentType.string()).suggests(new RecipeSuggestionProvider())
+        .then(Commands.literal("craft").then(Commands.argument("item", ResourceLocationArgument.id()).suggests(new RecipeSuggestionProvider())
         .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            String item = StringArgumentType.getString(ctx, "item");
-            Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemR.get(), StringArgumentType.getString(ctx, "amount"), ctx.getSource().registryAccess());
+            Recipe<?> item = ResourceLocationArgument.getRecipe(ctx, "item");
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), item, StringArgumentType.getString(ctx, "amount"), ctx.getSource().registryAccess());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
