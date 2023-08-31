@@ -1,7 +1,10 @@
 package net.jsa2025.calcmod.utils;
 
-import net.minecraft.network.chat.*;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 
+import java.awt.*;
 import java.util.Objects;
 
 public class CalcMessageBuilder {
@@ -23,7 +26,7 @@ public class CalcMessageBuilder {
     MessageType messageType;
     String helpMessage;
 
-    MutableComponent messageText = new TextComponent("");
+    TranslationTextComponent messageText = new TranslationTextComponent("");
 
     public CalcMessageBuilder() {
         this.messageType = MessageType.NONE;
@@ -55,7 +58,7 @@ public class CalcMessageBuilder {
         return this;
     }
     public CalcMessageBuilder addResult(String text) {
-        messageText.append(new TextComponent("§a" + text + "§f")
+        messageText.append(new TranslationTextComponent("§a" + text + "§f")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
         return this;
     }
@@ -77,12 +80,12 @@ public class CalcMessageBuilder {
         return this;
     }
 
-    public Component generateStyledText() {
+    public TranslationTextComponent generateStyledText() {
         if (Objects.requireNonNull(this.messageType) == MessageType.HELP) {
-            return new TextComponent(helpMessage);
+            return new TranslationTextComponent(helpMessage);
         }
         messageText.append(" ");
-        messageText.append(new TextComponent("§3[Click to Copy]§f").setStyle(net.minecraft.network.chat.Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+        messageText.append(new TranslationTextComponent("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
         return messageText;
     }
 

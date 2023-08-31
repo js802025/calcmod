@@ -14,18 +14,16 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
+import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
+
+import net.minecraft.command.Commands;
+import net.minecraft.entity.Entity;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -47,7 +45,7 @@ public class Craft {
         .executes((ctx) -> {
 //            String item = StringArgumentType.getString(ctx, "item");
 //==            Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
-            Recipe<?> itemR = ResourceLocationArgument.getRecipe(ctx, "item");
+            IRecipe<?> itemR = ResourceLocationArgument.getRecipe(ctx, "item");
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemR, StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
@@ -61,7 +59,7 @@ public class Craft {
     }
 
 
-    public static CalcMessageBuilder execute(Entity player, Recipe<?> item, String amount) {
+    public static CalcMessageBuilder execute(Entity player, IRecipe<?> item, String amount) {
 
         var is = item.getIngredients();
         var outputSize = item.getResultItem().getCount();

@@ -35,7 +35,7 @@ public class CalcMod  {
 		public static void onRegisterCommandsEvent(RegisterCommandsEvent event)
 		{
 			LOGGER.debug("Registering CalcMod");
-			CalcCommand.registerServer(event.getDispatcher());
+			CalcCommand.registerServer(event.getDispatcher(), false);
 		}
 	}
 

@@ -16,14 +16,15 @@ import net.jsa2025.calcmod.commands.subcommands.*;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
+
+import net.minecraft.entity.Entity;
 import org.apache.logging.log4j.Level;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -195,6 +196,10 @@ public class CalcCommand {
         }
         messageText.append(new TranslationTextComponent(" "));
         source.getPlayerOrException().sendMessage(messageText.append(new TranslationTextComponent("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), UUID.randomUUID());
+    }
+
+    public static void sendMessageServer(CommandSource source, CalcMessageBuilder messageBuilder) {
+        source.sendSuccess(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
     }
 
     

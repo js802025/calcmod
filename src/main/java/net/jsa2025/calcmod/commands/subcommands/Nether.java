@@ -8,8 +8,7 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
-import net.minecraft.core.BlockPos;
+
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 
 import java.text.DecimalFormat;

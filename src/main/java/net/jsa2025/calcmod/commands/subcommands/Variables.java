@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.Commands;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 
 

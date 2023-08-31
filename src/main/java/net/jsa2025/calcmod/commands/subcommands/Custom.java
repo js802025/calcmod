@@ -9,8 +9,9 @@ import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.CustomFunctionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
+
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 
 
 import java.io.BufferedReader;
@@ -31,7 +32,7 @@ public class Custom {
     public static final File commandFile = new File(".", "config/calcmod.json");
 
     
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
+    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command = command.then(Commands.literal("custom")
                 .then(Commands.literal("add")
                         .then(Commands.argument("name", StringArgumentType.string())

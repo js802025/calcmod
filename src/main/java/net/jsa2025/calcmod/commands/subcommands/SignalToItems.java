@@ -11,10 +11,10 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.command.Commands;
+
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.entity.Entity;
 
 
 import java.text.DecimalFormat;
