@@ -12,6 +12,11 @@ import java.util.Locale;
 
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.command.Commands;
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
 
 public class Rates {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -23,27 +28,27 @@ public class Rates {
         .then(Commands.literal("rates").then(Commands.argument("numberofitems", StringArgumentType.string())
         .then(Commands.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
         .then(Commands.literal("help").executes(ctx ->{
-            String[] message = Help.execute("rates");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
+            CalcMessageBuilder message = Help.execute("rates");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })));
 
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String numberofitems, String time) {
-        double items = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), numberofitems);
-        double timeDouble = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), time);
+    public static CalcMessageBuilder execute(Entity player, String numberofitems, String time) {
+        double items = CalcCommand.getParsedExpression(player, numberofitems);
+        double timeDouble = CalcCommand.getParsedExpression(player, time);
         double itemspersecond = items / timeDouble;
         double rates = itemspersecond * 3600;
-        String[] message = {"Rates: ", nf.format(rates)};
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " Items in ", "input", " Seconds = ", "result", "/hr"}, new String[] {numberofitems, time}, new String[] {nf.format(rates)});
         return message;
     }
 
-    public static String helpMessage = "§LRates:§r \nGiven a number of items and afk time in seconds (can be in expression form), returns the number of items per hour \n§cUsage: /calc rates <numberofitems> <time>§f";
+    public static String helpMessage = "§b§LRates:§r§f \nGiven a number of items and afk time in seconds §7§o(can be in expression form)§r§f, returns the number of items per hour. \n§eUsage: /calc rates <numberofitems> <time>§f ";
 }

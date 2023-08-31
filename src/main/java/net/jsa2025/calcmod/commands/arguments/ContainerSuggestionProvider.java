@@ -10,8 +10,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.command.CommandSource;
 
-public class ContainerSuggestionProvider implements SuggestionProvider {
+public class ContainerSuggestionProvider implements SuggestionProvider<CommandSource> {
 //    public static final Map<String, Integer> containers = Map.ofEntries(Map.entry("shulker_box", 27);
 //    Map.entry("chest", 27);
 //    Map.entry("barrel", 27);
