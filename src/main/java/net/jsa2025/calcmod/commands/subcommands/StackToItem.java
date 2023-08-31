@@ -11,6 +11,12 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
+import net.minecraft.command.Commands;
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
+
 public class StackToItem {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -47,11 +53,9 @@ public class StackToItem {
     public static String[] execute(ICommandSender sender, String numberofstacks, int stackSize) {
         double stacks = CalcCommand.getParsedExpression(sender.getPosition(), numberofstacks, 1);
         double items = stacks * stackSize;
-        String[] message = {"Items: ", nf.format(items)};
-        return message;
+        return new CalcMessageBuilder().addInput(numberofstacks).addString(" ").addInput(nf.format(stackSize)).addString(" Stacks = ").addResult(nf.format(items)).addString(" Items");
     }
 
-    public static String helpMessage = "§LStack to Item:§r \nGiven a number of stacks (can be in expression form), returns the number of items \n§cUsage: /calc stacktoitem <numberofstacks>§f";
-
-
+    public static String helpMessage = "§b§LStack to Item:§r§f \nGiven a number of stacks §7§o(can be in expression form)§r§f, returns the number of items. \n§eUsage: /calc stacktoitem <numberofstacks>§f";
+    
 }

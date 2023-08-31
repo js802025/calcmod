@@ -8,6 +8,10 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import net.minecraft.command.ICommandSender;
 
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
+
 public class ItemToSb {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -44,10 +48,10 @@ public class ItemToSb {
     public static String[] execute(ICommandSender sender, String numberofitems, int stackSize) {
         double items = CalcCommand.getParsedExpression(sender.getPosition(), numberofitems, stackSize);
         double sbs = items / (stackSize * 27);
-        String[] message= {"Sbs: ", nf.format(sbs)};
+        CalcMessageBuilder message= new CalcMessageBuilder().addInput(numberofitems).addString(" Items = ").addResult(nf.format(sbs)).addString(" SBs");
 
         return message;
     }
 
-    public static String helpMessage = "§LItem to Sb:§r \nGiven a number of items (can be in expression form), returns the number of sbs \n§cUsage: /calc itemtosb <numberofitems>§f";
+    public static String helpMessage = "§b§LItem to Sb:§r§f \nGiven a number of items §7§o(can be in expression form)§r§f, returns the number of Shulker Boxes. \n§eUsage: /calc itemtosb <numberofitems>§f";
 }

@@ -9,6 +9,11 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
+import net.minecraft.command.Commands;
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
 public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -22,11 +27,9 @@ public class AllayStorage {
         double allaycooldown = 3;
         String allaystorage = nf.format(Math.ceil(ratesinsec/(1/allaycooldown)));
 
-        String[] message = {"Allays Needed: ", allaystorage};
-        return message;
+        return new CalcMessageBuilder().addString("Allays needed to sort ").addInput(itemsperhour).addString(" items/hr = ").addResult(allaystorage);
     }
-
-    public static String helpMessage = "§LAllay Storage:§r \nGiven the number of items per hour of a non stackable item, returns allays needed to sort the item. \n§cUsage: /calc allaystorage <numberofitems>§f";
+    public static String helpMessage = "§LAllay Storage:§r \nGiven the number of items per hour of a non stackable item, returns allays needed to sort the item \n§cUsage: /calc allaystorage <numberofitems>§f";
 
 
 }

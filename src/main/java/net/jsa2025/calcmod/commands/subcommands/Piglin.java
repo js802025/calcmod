@@ -3,11 +3,16 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import net.minecraft.command.ICommandSender;
 
+import net.minecraft.command.Commands;
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
+
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 
 public class Piglin {
 
@@ -62,5 +67,5 @@ public class Piglin {
 
     }
 
-    public static String helpMessage = "§LNether:§r \nGiven a block position in the overworld, returns the nether coordinates \n§cUsage: /calc nether <x> <y> <z>§f";
+    public static String helpMessage = "§b§LBarter:§r§f \nCalculates the average amount of gold ingots to barter to get a number of a desired item §7§o(togold)§r§f, or the average amount of an item that will be recieved when bartering a number of gold ingots §7§o(toitem)§r§f. \n§eUsage: /calc barter togold <numberofitems> <item>§f \n§eUsage: /calc barter toitem <amountofgold> <item>§f";
 }

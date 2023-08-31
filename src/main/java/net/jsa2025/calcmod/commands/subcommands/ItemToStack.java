@@ -10,6 +10,12 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
+import net.minecraft.command.Commands;
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
+
 public class ItemToStack {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -51,5 +57,5 @@ public class ItemToStack {
         return message;
     }
 
-    public static String helpMessage = "§LItem to Stack:§r \nGiven a number of items (can be in expression form), returns the number of stacks and leftover items \n§cUsage: /calc itemtostack <numberofitems>§f";
+    public static String helpMessage = "§b§LItem to Stack:§r§f \nGiven a number of items §7§o(can be in expression form)§r§f, returns the number of stacks and remainder items. \n§eUsage: /calc itemtostack <numberofitems>§f";
 }

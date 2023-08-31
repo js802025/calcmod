@@ -27,7 +27,7 @@ public class Help {
 //        return command;
 //    }
 
-    public static String[] execute(String... hterm) {
+    public static CalcMessageBuilder execute(String... hterm) {
         Map<String, String> help = new LinkedHashMap<String, String>();
         help.put("storage", Storage.helpMessage);
         help.put("nether", Nether.helpMessage);
@@ -43,6 +43,8 @@ public class Help {
         help.put("craft", Craft.helpMessage);
         help.put("random", Random.helpMessage);
         help.put("signaltoitems", SignalToItems.helpMessage);
+        help.put("barter", Piglin.helpMessage);
+        help.put("custom", Custom.helpMessage);
         if (hterm.length == 0) {
             String helpMenu = "";
             for (Map.Entry<String, String> me :
@@ -50,11 +52,11 @@ public class Help {
                 helpMenu += me.getValue() + "\n";
 
               }
-            String[] message = {helpMenu};
-            return message;
+            CalcMessageBuilder messageBuilder = new CalcMessageBuilder(helpMenu);
+            return messageBuilder;
         } else {
-            String[] message = {help.get(hterm[0])};
-            return message;
+            CalcMessageBuilder messageBuilder = new CalcMessageBuilder(help.get(hterm[0]));
+            return messageBuilder;
         }
     }
 

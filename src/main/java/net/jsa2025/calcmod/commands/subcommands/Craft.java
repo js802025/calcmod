@@ -16,6 +16,17 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 
+import net.minecraft.command.Commands;
+import net.minecraft.entity.Entity;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+
+
 public class Craft {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
@@ -42,10 +53,11 @@ public class Craft {
                     ingredientsStacks.put(ingredient.getMatchingStacks()[0].getDisplayName(), ingredient.getMatchingStacks()[0]);
                 }
 
-            //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
+                //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
             }
         }
-       List<String> message = new ArrayList<String>();
+        CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getRecipeOutput().getDisplayName().getString()}, new String[] {});
 
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();
@@ -59,20 +71,20 @@ public class Craft {
             remainder = remainder % stackSize;
             String items = nf.format(remainder);
             if (sb > 0) {
-                message.add(key+": ");
-                message.add("SBs: "+sbString + ", Stacks: "+stacksString+", Items: "+items+"\n");
+                messageBuilder.addString(key+": ");
+                messageBuilder.addResult("SBs: "+sbString + ", Stacks: "+stacksString+", Items: "+items+"\n");
             } else if (stacks > 0) {
-                message.add(key + ": " );
-                message.add("Stacks: "+stacksString+", Items: "+items+"\n");
+                messageBuilder.addString(key + ": " );
+                messageBuilder.addResult("Stacks: "+stacksString+", Items: "+items+"\n");
             } else {
-                message.add(key + ": " );
-                message.add("Items: "+items+"\n");
+                messageBuilder.addString(key + ": " );
+                messageBuilder.addResult("Items: "+items+"\n");
             }
         }
-        message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getRecipeOutput().getDisplayName()+"s: \n"+message.get(0));
 
+        //     message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
 
-        return message.toArray(new String[message.size()]);
+        return messageBuilder;
     }
 
     public static String helpMessage = "§LCraft:§r \nGiven an item and the quanity you want to craft of it, returns the amounts of the ingredients needed to craft the quantity of the item. \n§cUsage: /calc craft <item> <amount>§f";
