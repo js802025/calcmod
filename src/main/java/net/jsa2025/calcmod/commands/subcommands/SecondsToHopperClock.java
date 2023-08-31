@@ -9,7 +9,6 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
-import net.minecraft.command.Commands;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
@@ -36,7 +35,7 @@ public class SecondsToHopperClock {
 //        return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, String seconds) {
+    public static CalcMessageBuilder execute(ICommandSender sender, String seconds) {
         double secondsDouble = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {

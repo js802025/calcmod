@@ -116,7 +116,7 @@ public class CalcCommand  extends CommandBase {
         CalcMod.LOGGER.log(Level.INFO, "Expression: "+parseExpressionText(args, 0));
 
         CalcMod.LOGGER.log(Level.INFO, args.length);
-        CalcMessageBuilder message;
+        CalcMessageBuilder message = new CalcMessageBuilder("");
         if (args.length > 0) {
 
             if (args[0].contains("nether")) {
@@ -155,9 +155,10 @@ public class CalcCommand  extends CommandBase {
                     message = ItemToStack.execute(sender, parseExpressionText(args, 2), 16);
                 else if (args[1].contains("1s")) message = ItemToStack.execute(sender, parseExpressionText(args, 2), 1);
                 else message = ItemToStack.execute(sender, parseExpressionText(args, 2), 64);
-            } else if (args[0].contains("piglin")) {
-                if (args[1].contains("help")) message = Help.execute("piglin");
-                else message = Piglin.executeToItems(sender, parseInt(args[1]), args[2]);
+            } else if (args[0].contains("barter")) {
+                if (args[1].contains("help")) message = Help.execute("barter");
+                else if (args[1].contains("toitem")) message = Piglin.executeToItems(sender, args[2], args[3]);
+                else message = Piglin.executeToGold(sender, args[2], args[3]);
             } else if (args[0].contains("random")) {
                 if (args[1].contains("help")) message = Help.execute("random");
                 else if (args[1].contains("minmax")) message = Random.execute(sender, args[2], args[3]);
@@ -189,6 +190,12 @@ public class CalcCommand  extends CommandBase {
                 if (args[1].contains("help")) message = Help.execute("storage");
                 else if (args.length > 2) message = Storage.execute(sender, args[1], parseInt(args[2]));
                 else message = Storage.execute(sender, parseExpressionText(args, 1), 1);
+            } else if (args[0].contains("custom")) {
+                if (args[1].contains("help")) message = Help.execute("custom");
+                else if (args[1].contains("add")) message = Custom.executeAdd(sender, args[2], parseExpressionText(args, 3));
+                else if (args[1].contains("list")) message = Custom.executeList(sender);
+                else if (args[1].contains("remove")) message = Custom.executeRemove(sender, args[2]);
+                else if (args[1].contains("run")) message = Custom.executeRun(sender, parseExpressionText(args, 2));
             } else if (args[0].contains("variables")) {
                 message = Variables.execute();
 

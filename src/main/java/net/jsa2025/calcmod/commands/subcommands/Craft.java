@@ -16,7 +16,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 
-import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 
 import java.util.HashMap;
@@ -57,7 +56,7 @@ public class Craft {
             }
         }
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getRecipeOutput().getDisplayName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getRecipeOutput().getDisplayName()}, new String[] {});
 
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();

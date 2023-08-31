@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.command.ICommandSender;
 
 public class Storage {
@@ -43,12 +44,12 @@ public class Storage {
 //        return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, String itemsperhour, int timesHopperSpeed) {
+    public static CalcMessageBuilder execute(ICommandSender sender, String itemsperhour, int timesHopperSpeed) {
         double rates = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), itemsperhour);
         double hopperSpeed = (9000*timesHopperSpeed);
         double sorters = Math.ceil(rates/hopperSpeed);
         double sbsperhour = rates * 1.0 / 1728;
-        String[] message = {"Required Sorters at "+timesHopperSpeed+"xHopper Speed(9000/h): ", nf.format(sorters), " \nSbs per hour: ", nf.format(sbsperhour)};
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Required ","input","xHopper speed §7(9,000/hr)§f sorters for ", "input"," items/hr = ", "result", " \nSBs/hr = ", "result"}, new String[] {nf.format(timesHopperSpeed), itemsperhour}, new String[] {nf.format(sorters), nf.format(sbsperhour)});
 
         return message;
     }

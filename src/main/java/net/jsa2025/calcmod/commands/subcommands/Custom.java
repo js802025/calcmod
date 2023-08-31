@@ -1,17 +1,13 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 import com.google.gson.*;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+
 
 
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.CalcCommand;
-import net.jsa2025.calcmod.commands.arguments.CustomFunctionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.command.ICommandSender;
 
 
 import java.io.BufferedReader;
@@ -32,14 +28,71 @@ public class Custom {
     public static final File commandFile = new File(".", "config/calcmod.json");
 
     
-    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
-        command = command.then(Commands.literal("custom")
-                .then(Commands.literal("add")
-                        .then(Commands.argument("name", StringArgumentType.string())
-                                .then(Commands.argument("function", StringArgumentType.greedyString())
-                                        .executes((ctx) -> {
-                                            String function = StringArgumentType.getString(ctx, "function");
-                                            String name = StringArgumentType.getString(ctx, "name");
+//    public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
+//        command = command.then(Commands.literal("custom")
+//                .then(Commands.literal("add")
+//                        .then(Commands.argument("name", StringArgumentType.string())
+//                                .then(Commands.argument("function", StringArgumentType.greedyString())
+//                                        .executes((ctx) -> {
+//                                            String function = StringArgumentType.getString(ctx, "function");
+//                                            String name = StringArgumentType.getString(ctx, "name");
+//                                            CalcMessageBuilder messageBuilder;
+//                                            if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
+//                                                saveNewCommand(name, function);
+//                                                messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+//                                            } else if (parseEquationVariables(function).isEmpty()) {
+//                                                messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
+//                                            }else {
+//                                                messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
+//                                            }
+//
+//
+//                                            CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
+//
+//                                            return 0;
+//                                        }))))
+//                .then(Commands.literal("list").executes(ctx -> {
+//                    JsonObject fs = getFunctions();
+//                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
+//                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
+//                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
+//                    return 0;
+//                }))
+//                .then(Commands.literal("remove")
+//                        .then(Commands.argument("name", StringArgumentType.greedyString()).suggests(new CustomFunctionProvider())
+//                                .executes(ctx -> {
+//                                    String name = StringArgumentType.getString(ctx, "name");
+//                                    deleteCommand(name);
+//                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
+//                                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
+//                                    return 0;
+//                                })))
+//                .then(Commands.literal("run")
+//                        .then(Commands.argument("function", StringArgumentType.greedyString())
+//                                .suggests(new CustomFunctionProvider())
+//                                .executes((ctx) -> {
+//                                    String eqn = StringArgumentType.getString(ctx, "function");
+//                                    double result = CalcCommand.getParsedExpression(ctx.getSource().getEntity(), eqn);
+//                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
+//                                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
+//                                    return 0;
+//                                }))
+//
+//
+//
+//        ).then(Commands.literal("help").executes(ctx -> {
+//                            CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
+//                            return 0;
+//                        }))
+//
+//        );
+//
+//
+//        return command;
+//    }
+
+
+    public static CalcMessageBuilder executeAdd(ICommandSender sender, String name, String function){
                                             CalcMessageBuilder messageBuilder;
                                             if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
                                                 saveNewCommand(name, function);
@@ -49,52 +102,26 @@ public class Custom {
                                             }else {
                                                 messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
                                             }
-
-
-                                            CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
-
-                                            return 0;
-                                        }))))
-                .then(Commands.literal("list").executes(ctx -> {
-                    JsonObject fs = getFunctions();
-                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
-                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
-                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
-                    return 0;
-                }))
-                .then(Commands.literal("remove")
-                        .then(Commands.argument("name", StringArgumentType.greedyString()).suggests(new CustomFunctionProvider())
-                                .executes(ctx -> {
-                                    String name = StringArgumentType.getString(ctx, "name");
-                                    deleteCommand(name);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
-                                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                })))
-                .then(Commands.literal("run")
-                        .then(Commands.argument("function", StringArgumentType.greedyString())
-                                .suggests(new CustomFunctionProvider())
-                                .executes((ctx) -> {
-                                    String eqn = StringArgumentType.getString(ctx, "function");
-                                    double result = CalcCommand.getParsedExpression(ctx.getSource().getEntity(), eqn);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
-                                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                }))
-
-
-
-        ).then(Commands.literal("help").executes(ctx -> {
-                            CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
-                            return 0;
-                        }))
-
-        );
-
-
-        return command;
+                                            return messageBuilder;
     }
 
+    public static CalcMessageBuilder executeList(ICommandSender sender) {
+        JsonObject fs = getFunctions();
+                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
+                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
+                    return messageBuilder;
+    }
+    public static  CalcMessageBuilder executeRemove(ICommandSender sender, String name) {
+        deleteCommand(name);
+                                   CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
+                                   return messageBuilder;
+    }
+
+    public  static CalcMessageBuilder executeRun(ICommandSender sender, String eqn) {
+        double result = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), eqn);
+        CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
+        return messageBuilder;
+    }
 
     public static ArrayList<String> parseEquationVariables(String input) {
         String patternString = "\\[([^\\]]+)\\]";//"\\[[^\\]]+\\]";

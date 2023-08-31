@@ -10,7 +10,6 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
-import net.minecraft.command.Commands;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
@@ -37,7 +36,7 @@ public class SecondsToRepeater {
 //        return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, String seconds) {
+    public static CalcMessageBuilder execute(ICommandSender sender, String seconds) {
         double secondsDouble = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), seconds);
         double ticks = secondsDouble * 10;
         double repeaters = Math.ceil(ticks/4);

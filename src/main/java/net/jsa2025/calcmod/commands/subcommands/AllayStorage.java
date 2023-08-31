@@ -9,7 +9,6 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
-import net.minecraft.command.Commands;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;

@@ -6,6 +6,8 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.command.ICommandSender;
 
 
@@ -32,7 +34,7 @@ public class Rates {
 //        return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, String numberofitems, String time) {
+    public static CalcMessageBuilder execute(ICommandSender sender, String numberofitems, String time) {
         double items = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofitems);
         double timeDouble = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), time);
         double itemspersecond = items / timeDouble;

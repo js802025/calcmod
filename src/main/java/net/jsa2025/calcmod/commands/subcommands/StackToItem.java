@@ -11,8 +11,6 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
-import net.minecraft.command.Commands;
-
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
 
@@ -50,7 +48,7 @@ public class StackToItem {
 //        return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, String numberofstacks, int stackSize) {
+    public static CalcMessageBuilder execute(ICommandSender sender, String numberofstacks, int stackSize) {
         double stacks = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofstacks, 1);
         double items = stacks * stackSize;
         return new CalcMessageBuilder().addInput(numberofstacks).addString(" ").addInput(nf.format(stackSize)).addString(" Stacks = ").addResult(nf.format(items)).addString(" Items");

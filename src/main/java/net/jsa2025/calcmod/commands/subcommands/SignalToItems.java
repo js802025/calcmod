@@ -64,7 +64,7 @@ public static Map<String, Integer> containers;
         containers.put("smoker", 3);
     }
 
-    public static String[] execute(ICommandSender sender, String container, String signal) {
+    public static CalcMessageBuilder execute(ICommandSender sender, String container, String signal) {
         double strength = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), signal);
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;
@@ -89,7 +89,7 @@ public static Map<String, Integer> containers;
             stackable1 = nf.format(item1);
         }
         CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items required for 64 stackable: ", "result", "\nItems required for 16 stackable: ", "result", "\nItems required for non-stackable: ", "result"}, new String[] {}, new String[] {CalcCommand.getParsedStack(item64, 64), stackable16, stackable1});
-        
+
         if (strength > 15) {
             message.addString("\n§cError: Signal Strength out of range (0, 15)");
         }
