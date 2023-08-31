@@ -45,8 +45,8 @@ public class ItemToSb {
 //        return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(sender.getPosition(), numberofitems, stackSize);
+    public static CalcMessageBuilder execute(ICommandSender sender, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofitems, stackSize);
         double sbs = items / (stackSize * 27);
         CalcMessageBuilder message= new CalcMessageBuilder().addInput(numberofitems).addString(" Items = ").addResult(nf.format(sbs)).addString(" SBs");
 

@@ -1,6 +1,7 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
+import net.jsa2025.calcmod.commands.CalcCommand;
 import net.minecraft.command.ICommandSender;
 
 import net.minecraft.command.Commands;
@@ -59,9 +60,18 @@ public class Piglin {
 //      return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, Integer gold, String item) {
-        double amount_of_items = gold/barter.get(item);
-        String[] message = {"Number of "+item+"s that "+gold+" gold will get: \nResult: ", String.valueOf(nf.format(amount_of_items))};
+    public static CalcMessageBuilder executeToItems(ICommandSender sender, String gold, String item) {
+
+        double amount_of_items = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), gold)/barter.get(item);
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Avg amount of ", "input", " that ", "input"," gold ingots will get = ","result"}, new String[] {item, gold}, new String[] {nf.format(amount_of_items)});
+        return message;
+
+
+    }
+    public static CalcMessageBuilder executeToGold(ICommandSender sender, String numberofitems, String item) {
+
+        double amount_of_items = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofitems)*barter.get(item);
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Avg gold ingots to get ", "input"," ","input"," = ", "result"}, new String[] {numberofitems, item}, new String[] {nf.format(amount_of_items)});
         return message;
 
 

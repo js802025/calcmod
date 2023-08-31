@@ -10,8 +10,6 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 
-import net.minecraft.command.Commands;
-
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
 
@@ -49,11 +47,12 @@ public class ItemToStack {
 //        return command;
 //    }
 
-    public static String[] execute(ICommandSender sender, String numberofitems, int stackSize) {
-        double items = CalcCommand.getParsedExpression(sender.getPosition(), numberofitems, stackSize);
+    public static CalcMessageBuilder execute(ICommandSender sender, String numberofitems, int stackSize) {
+        double items = CalcCommand.getParsedExpression(sender.getCommandSenderEntity(), numberofitems, stackSize);
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
-        String[] message = {"Stacks: ",  nf.format(stacks), " \nLeftover Items: ",  nf.format(leftover)};
+        CalcMessageBuilder message = new CalcMessageBuilder().addInput(numberofitems).addString(" ").addInput(nf.format(stackSize)).addString(" Stackable items = ").addResult(nf.format(stacks)).addString(" Stacks + ").addResult(nf.format(leftover)).addString(" Items");
+
         return message;
     }
 
