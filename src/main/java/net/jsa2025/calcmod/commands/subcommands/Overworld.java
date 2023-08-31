@@ -28,7 +28,7 @@ public class Overworld {
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+            BlockPos pos = BlockPosArgument.getSpawnablePos(ctx, "pos");
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
