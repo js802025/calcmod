@@ -14,6 +14,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -65,7 +66,7 @@ public class CalcCommand {
 //
 //    }
 
-    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
+    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
         command = Basic.registerServer(command);
         command = Storage.registerServer(command);
@@ -84,6 +85,7 @@ public class CalcCommand {
         command = SignalToItems.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
+
 
         dispatcher.register(command);
     }
@@ -183,22 +185,11 @@ public class CalcCommand {
         messageText.append(Component.literal(" "));
 
         String finalM = m;
-        source.sendSuccess(new Supplier<Component>() {
-            @Override
-            public Component get() {
-                return messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", "")))));
-            }
-        }, false);
+        source.sendSuccess(messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", ""))))), false);
     }
     
     public static void sendMessageServer(CommandSourceStack source, CalcMessageBuilder messageBuilder) {
-        source.sendSuccess(new Supplier<Component>() {
-            @Override
-            public Component get() {
-                return messageBuilder.generateStyledText();
-            }
-        }, Objects.isNull(source.getEntity()));
-
+        source.sendSuccess(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
     }
 
     
