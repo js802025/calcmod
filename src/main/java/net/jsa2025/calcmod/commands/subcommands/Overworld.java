@@ -26,7 +26,7 @@ public class Overworld {
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
         .then(Commands.literal("overworld").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getCommandSenderBlockPosition());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }).then(Commands.argument("pos", BlockPosArgument.blockPos())

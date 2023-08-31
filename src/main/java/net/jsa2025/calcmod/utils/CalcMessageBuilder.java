@@ -1,7 +1,7 @@
 package net.jsa2025.calcmod.utils;
 
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
 
 import java.awt.*;
@@ -26,7 +26,7 @@ public class CalcMessageBuilder {
     MessageType messageType;
     String helpMessage;
 
-    TranslationTextComponent messageText = new TranslationTextComponent("");
+    TextComponentString messageText = new TextComponentString("");
 
     public CalcMessageBuilder() {
         this.messageType = MessageType.NONE;
@@ -50,15 +50,15 @@ public class CalcMessageBuilder {
     }
 
     public CalcMessageBuilder addString(String text) {
-        messageText.append(text);
+        messageText.appendText(text);
         return this;
     }
     public CalcMessageBuilder addInput(String text) {
-        messageText.append("§b" + text + "§f");
+        messageText.appendText("§b" + text + "§f");
         return this;
     }
     public CalcMessageBuilder addResult(String text) {
-        messageText.append(new TranslationTextComponent("§a" + text + "§f")
+        messageText.appendSibling(new TextComponentString("§a" + text + "§f")
                 .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+text+'"'))));
         return this;
     }
@@ -80,12 +80,12 @@ public class CalcMessageBuilder {
         return this;
     }
 
-    public TranslationTextComponent generateStyledText() {
+    public TextComponentString generateStyledText() {
         if (Objects.requireNonNull(this.messageType) == MessageType.HELP) {
-            return new TranslationTextComponent(helpMessage);
+            return new TextComponentString(helpMessage);
         }
-        messageText.append(" ");
-        messageText.append(new TranslationTextComponent("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")+'"'))));
+        messageText.appendText(" ");
+        messageText.appendSibling(new TextComponentString("§3[Click to Copy]§f").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")+'"'))));
         return messageText;
     }
 

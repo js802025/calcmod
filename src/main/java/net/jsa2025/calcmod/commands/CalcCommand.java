@@ -123,9 +123,9 @@ public class CalcCommand {
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
-            vars.put("x", (double) player.getCommandSenderBlockPosition().getX());
-            vars.put("y", (double) player.getCommandSenderBlockPosition().getX());
-            vars.put("z", (double) player.getCommandSenderBlockPosition().getZ());
+            vars.put("x", (double) player.getPosition().getX());
+            vars.put("y", (double) player.getPosition().getX());
+            vars.put("z", (double) player.getPosition().getZ());
             //health missing
         }
        //
@@ -204,11 +204,11 @@ public class CalcCommand {
             } 
         }
         messageText.appendSibling(new TextComponentString(" "));
-        source.getEntity().sendMessage(messageText.appendSibling(new TextComponentString("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))));
+        source.sendFeedback(messageText.appendSibling(new TextComponentString("\2473[Click To Copy]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/copy \""+m.replaceAll("§a", "").replaceAll("§f", "")+'"')))), true);
     }
 
     public static void sendMessageServer(CommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendSuccess(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
+        source.sendFeedback(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
     }
 
     

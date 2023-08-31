@@ -41,12 +41,12 @@ public class Craft {
 
     public static LiteralArgumentBuilder<CommandSource> registerServer(LiteralArgumentBuilder<CommandSource> command) {
         command
-        .then(Commands.literal("craft").then(Commands.argument("item", ResourceLocationArgument.id()).suggests(new RecipeSuggestionProvider())
+        .then(Commands.literal("craft").then(Commands.argument("item", ResourceLocationArgument.resourceLocation()).suggests(new RecipeSuggestionProvider())
         .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
 //            String item = StringArgumentType.getString(ctx, "item");
 //==            Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
-            IRecipe<?> itemR = ResourceLocationArgument.getRecipe(ctx, "item");
+            IRecipe itemR = ResourceLocationArgument.getRecipe(ctx, "item");
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemR, StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
@@ -60,10 +60,10 @@ public class Craft {
     }
 
 
-    public static CalcMessageBuilder execute(Entity player, IRecipe<?> item, String amount) {
+    public static CalcMessageBuilder execute(Entity player, IRecipe item, String amount) {
 
         NonNullList<Ingredient> is = item.getIngredients();
-        int outputSize = item.getResultItem().getCount();
+        int outputSize = item.getRecipeOutput().getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
@@ -84,7 +84,7 @@ public class Craft {
             }
         }
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getResultItem().getDisplayName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getRecipeOutput().getDisplayName().getString()}, new String[] {});
 
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();
