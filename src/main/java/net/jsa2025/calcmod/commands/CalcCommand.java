@@ -14,7 +14,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -84,6 +83,8 @@ public class CalcCommand {
         command = Random.registerServer(command);
         command = Craft.registerServer(command);
         command = SignalToItems.registerServer(command);
+        command = Piglin.registerServer(command);
+        command = Custom.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
 
@@ -128,12 +129,13 @@ public class CalcCommand {
             withVars = withVars.replaceAll(func.split("[(]")[0], "{"+f+"}");
         }
         ArrayList<PrimitiveElement> primitiveElements = new ArrayList<>();
+
         for (String key : vars.keySet()) {
             //switch out variables in func unless override by local
             for (int f = 0; f< parsedCustomFunctions.size(); f++) {
                 String func = parsedCustomFunctions.get(f);
                 String expression = func.split("= ")[1].replaceAll(key, "("+vars.get(key)+")");
-                if (!Custom.parseEquationVariables(func).contains(key)) {
+                if (contains(func.split(" =")[0].split("[(]")[1].replace("[)]", "").split(","), key)) {
                     parsedCustomFunctions.set(f, func.split("= ")[0] + "= " + expression);
                 }
             }
@@ -150,6 +152,15 @@ public class CalcCommand {
             return new Expression(withVars, primitiveElements.toArray(new PrimitiveElement[0] )).calculate();
         }
 
+    static boolean contains(String[] array, String value) {
+        for (String str : array) {
+            if (str.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static String getParsedStack(double items, int stacksize) {
         if (items >= 64) {
             return "Stacks: "+nf.format(Math.floor(items / stacksize))+", Items: "+ nf.format(items % stacksize);
@@ -157,7 +168,7 @@ public class CalcCommand {
             return nf.format(items);
         }
     }
-    
+
 
 
     public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
@@ -181,12 +192,11 @@ public class CalcCommand {
                 return;
             } 
         }
-        messageText.append(Component.literal(" "));
-        source.getPlayer().sendSystemMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
-        messageText.append(Component.literal(" "));
+        messageText.append(new TextComponent(" "));
+        messageText.append(new TextComponent(" "));
 
         String finalM = m;
-        source.sendSuccess(messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+        source.sendSuccess(messageText.append(new TextComponent("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", ""))))), false);
     }
     
     public static void sendMessageServer(CommandSourceStack source, CalcMessageBuilder messageBuilder) {

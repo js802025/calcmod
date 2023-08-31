@@ -1,9 +1,6 @@
 package net.jsa2025.calcmod.utils;
 
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 
 import java.util.Objects;
 
@@ -26,7 +23,7 @@ public class CalcMessageBuilder {
     MessageType messageType;
     String helpMessage;
 
-    MutableComponent messageText = Component.literal("");
+    MutableComponent messageText = new TextComponent("");
 
     public CalcMessageBuilder() {
         this.messageType = MessageType.NONE;
@@ -58,7 +55,7 @@ public class CalcMessageBuilder {
         return this;
     }
     public CalcMessageBuilder addResult(String text) {
-        messageText.append(Component.literal("§a" + text + "§f")
+        messageText.append(new TextComponent("§a" + text + "§f")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
         return this;
     }
@@ -82,10 +79,10 @@ public class CalcMessageBuilder {
 
     public Component generateStyledText() {
         if (Objects.requireNonNull(this.messageType) == MessageType.HELP) {
-            return Component.literal(helpMessage);
+            return new TextComponent(helpMessage);
         }
         messageText.append(" ");
-        messageText.append(Component.literal("§3[Click to Copy]§f").setStyle(net.minecraft.network.chat.Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+        messageText.append(new TextComponent("§3[Click to Copy]§f").setStyle(net.minecraft.network.chat.Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
         return messageText;
     }
 

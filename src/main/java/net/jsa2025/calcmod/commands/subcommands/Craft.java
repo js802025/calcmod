@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +41,7 @@ public class Craft {
 //            String item = StringArgumentType.getString(ctx, "item");
 //==            Optional<? extends Recipe<?>> itemR = ctx.getSource().getRecipeManager().byKey(ResourceLocation.tryParse(item));
             Recipe<?> itemR = ResourceLocationArgument.getRecipe(ctx, "item");
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemR, StringArgumentType.getString(ctx, "amount"), ctx.getSource().registryAccess());
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemR, StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         })))
@@ -55,10 +54,10 @@ public class Craft {
     }
 
 
-    public static CalcMessageBuilder execute(Entity player, Recipe<?> item, String amount, RegistryAccess registryAccess) {
+    public static CalcMessageBuilder execute(Entity player, Recipe<?> item, String amount) {
 
         var is = item.getIngredients();
-        var outputSize = item.getResultItem(registryAccess).getCount();
+        var outputSize = item.getResultItem().getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
@@ -79,7 +78,7 @@ public class Craft {
             }
         }
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getResultItem(registryAccess).getDisplayName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getResultItem().getDisplayName().getString()}, new String[] {});
 
         for (Map.Entry<String, Integer> entry : ingredients.entrySet()) {
             String key = entry.getKey();
