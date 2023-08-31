@@ -11,6 +11,11 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.ContainerSuggestionProvider;
 import net.minecraft.command.Commands;import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.command.Commands;
+
+import net.jsa2025.calcmod.utils.CalcMessageBuilder;
+import net.minecraft.entity.Entity;
+
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,21 +38,21 @@ public class SignalToItems {
         .then(Commands.literal("signaltoitems")
         .then(Commands.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
         .then(Commands.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 0;
+            return 1;
         }))).then(Commands.literal("help").executes(ctx -> {
-            String[] message = Help.execute("signaltoitems");
-            CalcCommand.sendMessageServer(ctx.getSource(), message, true);
-            return 0;
+            CalcMessageBuilder message = Help.execute("signaltoitems");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
         })
         ));
         return command;
     }
 
-    public static String[] execute(ServerPlayerEntity player, String container, String signal) {
-        double strength = CalcCommand.getParsedExpression(player.getEntity().getCommandSenderBlockPosition(), signal);
-        Map<String, Integer> containers = ContainerSuggestionProvider.containers;
+    public static CalcMessageBuilder execute(Entity player, String container, String signal) {
+        double strength = CalcCommand.getParsedExpression(player, signal);
+        var containers = ContainerSuggestionProvider.containers;
         double stackAmount = containers.get(container);
         double secondlevel = (stackAmount*32)/7;
         double item64 = Math.max(strength, Math.ceil(secondlevel*(strength-1)));
@@ -70,11 +75,20 @@ public class SignalToItems {
         if (item1nextstrength > item1) {
             stackable1 = nf.format(item1);
         }
-
-        return new String[] {"Items Required for 64 Stackable: ", CalcCommand.getParsedStack(item64, 64), "\nItems Required for 16 Stackable: ", stackable16, "\nItems Required for Non Stackable: ", stackable1};
+        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items required for 64 stackable: ", "result", "\nItems required for 16 stackable: ", "result", "\nItems required for non-stackable: ", "result"}, new String[] {}, new String[] {CalcCommand.getParsedStack(item64, 64), stackable16, stackable1});
+        
+        if (strength > 15) {
+            message.addString("\n§cError: Signal Strength out of range (0, 15)");
+        }
+        return message;
+       // return new String[] {"Items Required for 64 Stackable: ", CalcCommand.getParsedStack(item64, 64), "\nItems Required for 16 Stackable: ", stackable16, "\nItems Required for Non Stackable: ", stackable1};
     }
 
-    public static String helpMessage = "§LSignal To Items:§r \nGiven a container and a desired signal strength from a comparator, returns the number of items needed to achieve that signal strength. \n§cUsage: /calc signaltoitems <container> <signal>§f";
+    public static String helpMessage = """
+        §b§LSignal To Items:§r§f
+           Given a container and a desired comparator signal strength §7§o(can be in expression form)§r§f, returns the number of items needed to achieve that signal strength.
+            §eUsage: /calc signaltoitems <container> <signal>§f
+                """;
 
 }
 
