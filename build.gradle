@@ -221,7 +221,7 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+    filesMatching(['mcmod.info', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]
     }
 }

@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "${mod_id}",
+    "name": "CalcMod",
+    "description": "${mod_description}",
+    "version": "${mod_version}",
+    "mcversion": "${minecraft_version}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["jsa2025"],
+    "credits": "shade",
+    "logoFile": "icon.png",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
