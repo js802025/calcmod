@@ -1,14 +1,14 @@
 [
   {
     "modid": "${mod_id}",
-    "name": "CalcMod",
+    "name": "${mod_name}",
     "description": "${mod_description}",
     "version": "${mod_version}",
     "mcversion": "${minecraft_version}",
     "url": "",
     "updateUrl": "",
     "authorList": ["jsa2025"],
-    "credits": "shade",
+    "credits": "The Forge and FML guys, for making this example",
     "logoFile": "icon.png",
     "screenshots": [],
     "dependencies": []
