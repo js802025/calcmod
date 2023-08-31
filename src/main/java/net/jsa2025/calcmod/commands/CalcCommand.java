@@ -163,7 +163,7 @@ public class CalcCommand  extends CommandBase {
             } else if (args[0].contains("random")) {
                 if (args[1].contains("help")) message = Help.execute("random");
                 else if (args[1].contains("minmax")) message = Random.execute(sender, args[2], args[3]);
-                else if (args[1].contains("max")) message = Random.execute(sender, args[1]);
+                else message = Random.execute(sender, args[1]);
             } else if (args[0].contains("rates")) {
                 if (args[1].contains("help")) message = Help.execute("rates");
                 else message = Rates.execute(sender, args[1], parseExpressionText(args, 2));
