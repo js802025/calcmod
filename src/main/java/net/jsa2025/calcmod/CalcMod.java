@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,6 +37,17 @@ public class CalcMod  {
 		{
 			LOGGER.debug("Registering CalcMod");
 			CalcCommand.registerServer(event.getDispatcher());
+		}
+	}
+
+	@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.DEDICATED_SERVER)
+	public static class ServerModEvents
+	{
+		@SubscribeEvent
+		public static void onServerStart(FMLServerStartingEvent event)
+		{
+			LOGGER.debug("Registering CalcMod");
+			CalcCommand.registerServer(event.getServer().getCommands().getDispatcher());
 		}
 	}
 
