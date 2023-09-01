@@ -8,6 +8,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -37,6 +38,17 @@ public class CalcMod  {
 		{
 			LOGGER.debug("Registering CalcMod");
 			CalcCommand.registerServer(event.getDispatcher());
+		}
+	}
+
+	@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.DEDICATED_SERVER)
+	public static class ServerModEvents
+	{
+		@SubscribeEvent
+		public static void onServerStart(ServerStartingEvent event)
+		{
+			LOGGER.debug("Registering CalcMod");
+			CalcCommand.registerServer(event.getServer().getCommands().getDispatcher());
 		}
 	}
 
