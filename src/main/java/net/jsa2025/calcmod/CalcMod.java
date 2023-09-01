@@ -40,5 +40,15 @@ public class CalcMod  {
 			CalcCommand.registerServer(event.getCommandDispatcher(), false);
 		}
 	}
+	@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.DEDICATED_SERVER)
+	public static class ServerModEvents
+	{
+		@SubscribeEvent
+		public static void onServerStart(FMLServerStartingEvent event)
+		{
+			LOGGER.debug("Registering CalcMod");
+			CalcCommand.registerServer(event.getServer().getCommands().getDispatcher(), true);
+		}
+	}
 
 }
