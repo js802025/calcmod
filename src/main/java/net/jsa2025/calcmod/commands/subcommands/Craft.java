@@ -56,8 +56,8 @@ public class Craft {
 
     public static CalcMessageBuilder execute(Entity player, Recipe item, String amount) {
 
-        var is = item.getPreviewInputs();
-        var outputSize = item.getOutput().getCount();
+        DefaultedList is = item.getPreviewInputs();
+        int outputSize = item.getOutput().getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
         Map<String, Integer> ingredients = new HashMap<String, Integer>();
@@ -108,10 +108,6 @@ public class Craft {
         return messageBuilder;
     }
 
-    public static String helpMessage = """
-        §LCraft:§r
-        Given an item and the quanity you want to craft of it, returns the amounts of the ingredients needed to craft the quantity of the item.
-        §cUsage: /calc craft <item> <amount>§f
-            """;
+    public static String helpMessage = "§b§LCraft:§r§f \nGiven an item and the quanity you want to craft of it, returns the amounts of the ingredients needed to craft the quantity of the item. \n§cUsage: /calc craft <item> <amount>§f";
     
 }
