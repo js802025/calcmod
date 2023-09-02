@@ -58,9 +58,5 @@ public class ItemToStack {
         return message;
     }
 
-    public static String helpMessage = """
-        §b§LItem to Stack:§r§f
-            Given a number of items §7§o(can be in expression form)§r§f, returns the number of stacks and remainder items.
-            §eUsage: /calc itemtostack <numberofitems>§f
-                """;
+    public static String helpMessage = "§b§LItem to Stack:§r§f \nGiven a number of items §7§o(can be in expression form)§r§f, returns the number of stacks and remainder items. \n§eUsage: /calc itemtostack <numberofitems>§f";
 }

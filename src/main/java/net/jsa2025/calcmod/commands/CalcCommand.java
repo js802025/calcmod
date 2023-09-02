@@ -152,9 +152,9 @@ public class CalcCommand {
 
     
     public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        var messageText = new LiteralText("");
+        LiteralText messageText = new LiteralText("");
         String m = "";
-        for (var i = 0; i < message.length; i++) {
+        for (int i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
             messageText.append(new LiteralText(message[i]));
             m += message[i];

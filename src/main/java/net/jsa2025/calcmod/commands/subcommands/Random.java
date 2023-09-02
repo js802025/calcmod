@@ -60,10 +60,6 @@ public class Random {
         return new CalcMessageBuilder("Invalid Arguments");
     }
 
-    public static String helpMessage = """
-        §b§LRandom:§r§f
-            Given a maximum and/or minimum value, returns a random number between those values §7(inclusive)§r. If just a maximum value is entered, picks a random number from 0 to the max value §7(inclusive)§r.
-            §eUsage: /calc random <max>§f
-            """;
+    public static String helpMessage = "§b§LRandom:§r§f \nGiven a maximum and/or minimum value, returns a random number between those values §7(inclusive)§r. If just a maximum value is entered, picks a random number from 0 to the max value §7(inclusive)§r. \n§eUsage: /calc random <max>§f";
     
 }
