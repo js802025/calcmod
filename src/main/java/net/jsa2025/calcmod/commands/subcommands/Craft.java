@@ -28,7 +28,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-
+import net.minecraft.util.DefaultedList;
 
 
 public class Craft {
