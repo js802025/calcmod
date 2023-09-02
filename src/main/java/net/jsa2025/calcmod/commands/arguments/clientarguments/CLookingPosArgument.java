@@ -92,10 +92,8 @@ public class CLookingPosArgument implements CPosArgument {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof CLookingPosArgument lookingPosArgument)) {
-            return false;
         } else {
-            return this.x == lookingPosArgument.x && this.y == lookingPosArgument.y && this.z == lookingPosArgument.z;
+            return false;
         }
     }
 

@@ -82,10 +82,6 @@ public class StackToItem {
         return new CalcMessageBuilder().addInput(numberofstacks).addString(" ").addInput(nf.format(stackSize)).addString(" Stacks = ").addResult(nf.format(items)).addString(" Items");
     }
 
-    public static String helpMessage = """
-        §b§LStack to Item:§r§f
-            Given a number of stacks §7§o(can be in expression form)§r§f, returns the number of items.
-            §eUsage: /calc stacktoitem <numberofstacks>§f
-                """;
+    public static String helpMessage = "§b§LStack to Item:§r§f \nGiven a number of stacks §7§o(can be in expression form)§r§f, returns the number of items. \n§eUsage: /calc stacktoitem <numberofstacks>§f";
     
 }

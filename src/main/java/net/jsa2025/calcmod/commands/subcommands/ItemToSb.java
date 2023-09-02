@@ -84,9 +84,5 @@ public class ItemToSb {
         return message;
     }
 
-    public static String helpMessage = """
-        §b§LItem to Sb:§r§f
-            Given a number of items §7§o(can be in expression form)§r§f, returns the number of Shulker Boxes.
-            §eUsage: /calc itemtosb <numberofitems>§f
-                """;
+    public static String helpMessage = "§b§LItem to Sb:§r§f \nGiven a number of items §7§o(can be in expression form)§r§f, returns the number of Shulker Boxes. \n§eUsage: /calc itemtosb <numberofitems>§f";
 }

@@ -45,14 +45,10 @@ public class CDefaultPosArgument implements CPosArgument {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof CDefaultPosArgument defaultPosArgument)) {
-            return false;
         } else {
-            if (this.x.equals(defaultPosArgument.x)) {
-                return this.y.equals(defaultPosArgument.y) && this.z.equals(defaultPosArgument.z);
-            }
             return false;
         }
+
     }
 
     public static CDefaultPosArgument parse(StringReader reader) throws CommandSyntaxException {
