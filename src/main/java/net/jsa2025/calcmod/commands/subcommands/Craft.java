@@ -45,7 +45,7 @@ public class Craft {
         .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
         .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
@@ -62,7 +62,7 @@ public class Craft {
         .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
         .then(CommandManager.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
