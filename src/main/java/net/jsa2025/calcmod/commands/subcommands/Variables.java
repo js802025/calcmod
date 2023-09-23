@@ -51,6 +51,7 @@ public class Variables {
                 x: player x coord
                 y: player y coord
                 z: player z coord
+                health: player health
                 """;
         return new CalcMessageBuilder(message);
     }
