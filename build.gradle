@@ -5,11 +5,11 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'io.github.goooler.shadow' version '8.1.7'
     id 'java'
 }
 
-version = "forge-"+minecraft_version+"-"+mod_version
+version =  mod_version+"+forge."+minecraft_version
 group = mod_group_id
 
 base {
@@ -17,7 +17,7 @@ base {
 }
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
@@ -48,6 +48,7 @@ minecraft {
     // In most cases, it is not necessary to enable.
     // enableEclipsePrepareRuns = true
     // enableIdeaPrepareRuns = true
+    reobf = false
 
     // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
     // It is REQUIRED to be set to true for this template to function.
@@ -132,6 +133,7 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+
 }
 
 
@@ -156,6 +158,8 @@ dependencies {
 
   //  modImplementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
     minecraftLibrary 'org.mariuszgromada.math:MathParser.org-mXparser:5.2.1'
+    implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
+
     //runtimeOnly 'org.mariuszgromada.math:MathParser.org-mXparser:5.2.1'
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
@@ -191,7 +195,7 @@ shadowJar {
 
 }
 
-reobf {
+jar {
     shadowJar {} // Reobfuscate the shadowed JAR
 }
 
@@ -229,7 +233,7 @@ tasks.named('jar', Jar).configure {
     }
 
     // This is the preferred method to reobfuscate your jar file
-    finalizedBy 'reobfJar'
+  //  finalizedBy 'reobfJar'
 
 }
 

@@ -170,37 +170,42 @@ public class CalcCommand {
     
 
 
-    public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
-        var messageText = Component.literal("");
-        String m = "";
-        for (var i = 0; i < message.length; i++) {
-           if (i % 2 == 0) {
-            messageText.append(Component.literal(message[i]));
-            m += message[i];
-           } else {
-            messageText.append(Component.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
-            m += message[i];
-           }
-
-        }
-
-
-        if (isHelpMessage.length > 0) {
-            if (isHelpMessage[0]) {
-                source.getPlayer().sendSystemMessage(messageText, false);
-                return;
-            } 
-        }
-        messageText.append(Component.literal(" "));
-        source.getPlayer().sendSystemMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
-        messageText.append(Component.literal(" "));
-
-        String finalM = m;
-        source.sendSuccess(messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", ""))))), false);
-    }
+//    public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) throws CommandSyntaxException {
+//        var messageText = Component.literal("");
+//        String m = "";
+//        for (var i = 0; i < message.length; i++) {
+//           if (i % 2 == 0) {
+//            messageText.append(Component.literal(message[i]));
+//            m += message[i];
+//           } else {
+//            messageText.append(Component.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+//            m += message[i];
+//           }
+//
+//        }
+//
+//
+//        if (isHelpMessage.length > 0) {
+//            if (isHelpMessage[0]) {
+//                source.getPlayer().sendSystemMessage(messageText, false);
+//                return;
+//            }
+//        }
+//        messageText.append(Component.literal(" "));
+//        source.getPlayer().sendSystemMessage(messageText.append(Component.literal("\2473[Click To Copy]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+//        messageText.append(Component.literal(" "));
+//
+//        String finalM = m;
+//        source.sendSuccess(messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalM.replaceAll("§a", "").replaceAll("§f", ""))))), false);
+//    }
     
     public static void sendMessageServer(CommandSourceStack source, CalcMessageBuilder messageBuilder) {
-        source.sendSuccess(messageBuilder.generateStyledText(), Objects.isNull(source.getEntity()));
+        source.sendSuccess(new Supplier<Component>() {
+            @Override
+            public Component get() {
+                return messageBuilder.generateStyledText();
+            }
+        }, Objects.isNull(source.getEntity()));
     }
 
     
