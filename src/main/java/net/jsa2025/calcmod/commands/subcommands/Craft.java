@@ -72,18 +72,25 @@ public class Craft {
     
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command, CommandRegistryAccess registry) {
         command
-        .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
-        .then(CommandManager.argument("amount", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item").value(), StringArgumentType.getString(ctx, "amount"), 2, ctx.getSource().getRegistryManager());
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("craft");
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })));
+                .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
+                                .then(CommandManager.literal("depth").then( CommandManager.argument("level", IntegerArgumentType.integer())
+                                        .then(CommandManager.argument("amount", StringArgumentType.greedyString())
+                                                .executes((ctx) -> {
+                                                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item").value(), StringArgumentType.getString(ctx, "amount"), IntegerArgumentType.getInteger(ctx, "level"), ctx.getSource().getRegistryManager());
+                                                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+                                                    return 1;
+                                                })))
+                                ).then(CommandManager.argument("amount", StringArgumentType.greedyString())
+                                        .executes((ctx) -> {
+                                            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item").value(), StringArgumentType.getString(ctx, "amount"), 1, ctx.getSource().getRegistryManager());
+                                            CalcCommand.sendMessageServer(ctx.getSource(), message);
+                                            return 1;
+                                        })))
+                        .then(CommandManager.literal("help").executes(ctx -> {
+                            CalcMessageBuilder message = Help.execute("craft");
+                            CalcCommand.sendMessageServer(ctx.getSource(), message);
+                            return 1;
+                        })));
         return command;
     }
 
