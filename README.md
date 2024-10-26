@@ -1,15 +1,14 @@
-![CalcMod Logo](https://i.ibb.co/gWjwWXv/calcmodsmall.png)  [![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/github_vector.svg)](https://github.com/js802025/calcmod)  [![curseforge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/curseforge_vector.svg)
-](https://www.curseforge.com/minecraft/mc-mods/calcmod)  [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/modrinth_vector.svg)](https://modrinth.com/mod/calcmod)  
-<br>
+![CalcMod Logo](https://i.ibb.co/gWjwWXv/calcmodsmall.png)  [![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/github_vector.svg)](https://github.com/js802025/calcmod)  [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/modrinth_vector.svg)](https://modrinth.com/mod/calcmod)
+  [![curseforge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/curseforge_vector.svg)
+](https://www.curseforge.com/minecraft/mc-mods/calcmod)  
 
-<center>Bring the power of calculation to your Minecraft chat with CalcMod! Discover a wide range of features designed for both casual and technical players, from basic calculations to advanced utilities for optimizing your gameplay.</center>  
+### <center>Bring the power of calculation to your Minecraft chat with CalcMod! Whether you're a casual or technical player, enjoy features from basic calculations to advanced tools for optimizing gameplay.</center>   
 
 
-<br>  
-
+<br>   
 
 |/calc craft piston 3 sb|  
-|:-:|
+|:-:| 
 |![Craft Command Example](https://i.postimg.cc/pTsPVJdv/Calc-Craft.png)|
 |**/calc nether ~ ~ ~**|  
 |![X: -120 Z: 4500 to Nether = X: -15 Z: 563](https://i.postimg.cc/N0kwjk0M/Calc-Nether.png)|
@@ -29,6 +28,27 @@ See a few examples in [gallery](https://modrinth.com/mod/calcmod/gallery)
 Functions like a simple calculator with some handy variables. To see a list of variables run /calc variables.
 
 >Usage: ```/calc <expression>```
+
+<details>
+<summary>Supported Operators</summary>  
+
+| **Symbol(s)** | **Syntax** |      **Operation**     |
+|:-------------:|:----------:|:----------------------:|
+|       +       |     a+b    | Addition               |
+|       –       |     a–b    | Subtraction            |
+|   * , × , ∙   |     a*b    | Multiplication         |
+|   / , : , ÷   |     a/b    | Division               |
+|       ^       |     a^b    | Exponentiation (power) |
+|       !       |     n!     | Factorial              |
+|       #       |     a#b    | Modulo                 |
+|       %       |     n%     | Percentage             |
+|       ^^      |    a^^b    | Tetration              |
+|       √       |     √x     | Square root            |
+|       ∛       |     ∛x     | Cube root              |
+|       ∜       |     ∜x     | Fourth root            |
+</details>
+
+> CalcMod has even more advanced functions and variables for Minecraft, located in a spreadsheet [here](https://docs.google.com/spreadsheets/d/1L3jCFO6ZiUymXbRJKOJIWGpcOQjfvU3TpCcFPeUJDNA/edit?usp=sharing).
 </details>
 
 
@@ -48,10 +68,10 @@ Calculates the number of needed item sorters given a rate of items per hour *(ca
 <details>
 <summary>🛠️ Crafting Utils</summary>
 
-Given a desired item and the quantity to be crafted, returns the amounts of the items needed to craft the amount of the desired item.
+Given a desired item and the quantity to be crafted, returns the amounts of the items needed to craft the amount of the desired item.  
 
-Depth signifies how many levels of recursive crafting to go down. Default depth is 1. (Currently only in 1.3.2+).
-
+**<font color=#55ff55>(1.3.2+)</font>** Depth is an optional argument that specifies how many levels of recursive crafting to perform on the recipe. Default depth is 1. 
+  
 >Usage: ```/calc craft <item> <amount>```  
 >Usage: ```/calc craft <item> <depth> <amount>```
 </details>
@@ -101,35 +121,38 @@ Given a container and a desired comparator signal strength, returns the number o
 
 
 <details>
-<summary>🐷 Piglin Bartering Utils <font color=#ff5555>(New)</font></summary>
+<summary>🐷 Piglin Bartering Utils  </summary>
 
-Calculates the average amount of gold ingots to barter to get a number of a desired item *(togold)*, or the average amount of an item that will be recieved when bartering a number of gold ingots *(toitem)*.
+Calculates the average amount of gold ingots to barter to get a number of a desired item *(togold)*, or the average amount of an item that will be recieved when bartering a number of gold ingots *(toitem)*.  
 
 >Usage: ```/calc barter togold <numberofitems> <item>```  
->Usage: ```/calc barter toitem <amountofgold> <item>```
+>Usage: ```/calc barter toitem <amountofgold> <item>```  
 </details>
 
 
 
 <details>
-<summary>🧮 Custom Functions <font color=#ff5555>(New)</font></summary>
+<summary>🧮 Custom Functions </summary>   
 
-Custom functions are reusable commands that perform a specific computation. Custom functions can be run in any number field formatted with the function name and the parameters in perenthases ```customfunction(param1, paramN)```.  
-Custom functions can have any number of parameters, specified in [square] brackets when adding a function.
+Custom functions are reusable commands that perform a specific computation. Custom functions can be run in any number field formatted with the function name and the parameters in parentheses ```functionname(param1, paramN)```.  
 
-**Create your function:**  
-```/calc custom add blockstoingots [num-blocks]*9```
+**Creating a Function:**  
+Custom functions can have any number of parameters, specified in [square] brackets when adding a function.  
+|⚠️ Using any numbers or special characters in a parameter may result in a broken function.|
+|:-:|
+ 
+Ex) ```/calc custom add blockstoingots [numBlocks]*9```   
 
 | /calc blockstoingots(72) |
 |:-:|
-| ![blockstoingots(72) = 648](https://i.ibb.co/FK35cqK/CalcFn.png) |
+| ![blockstoingots(72) = 648](https://i.ibb.co/FK35cqK/CalcFn.png) | 
 
 
 >Usage: ```/calc custom add <name> <function>```  
 >Usage: ```/calc custom run <name> <input>```  
 >Usage: ```/calc <name>(<parameters>)```  
 >Usage: ```/calc custom list```  
->Usage: ```/calc custom remove <name>```
+>Usage: ```/calc custom remove <name>```   
 
 </details>  
 
@@ -161,7 +184,7 @@ Given a number of items *(can be in expression form)*, returns the number of sta
 <details>
 <summary>Seconds → Hopper Clock Items</summary>
 
-Given a number of seconds *(can be in expression form)*, returns the number of items needed in a hopper clock to achieve that time. *Uses formula and hopper clock from [hoppertimer.net](https://hoppertimer.net/).*
+Given a number of seconds *(can be in expression form)*, returns the number of items needed in a hopper clock to achieve that time. *Uses formula and hopper clock from [hoppertimer.net](https://hoppertimer.net/).*  
 
 ![final.png](https://i.postimg.cc/pVg9W6Gw/final.png)
 >Usage: ```/calc secondstohopperclock <seconds>```
@@ -176,12 +199,10 @@ Given a number of seconds *(can be in expression form)*, returns the number of r
 > Usage: ```/calc secondstorepeater <seconds>```
 </details>  
 
-> CalcMod has even more advanced functions and variables for Minecraft, located in a spreadsheet [here](https://docs.google.com/spreadsheets/d/1L3jCFO6ZiUymXbRJKOJIWGpcOQjfvU3TpCcFPeUJDNA/edit?usp=sharing).
-
 
 # ❎ Variables
 
-Variables can be used inside commands in **any number field**. They act as shortcuts instead of having to remember that "a double chest full of 16 stackable items is 864."
+Variables can be used inside commands in **any number field**. They act as shortcuts instead of having to remember that "a double chest full of 16 stackable items is 864." 
 If no stack size is given, variables default to the contextualized stack size in each command.
 
 
@@ -220,3 +241,4 @@ Dynamic variables change depending on an in-game status. These can be particular
 </details>
 
 
+</br>
