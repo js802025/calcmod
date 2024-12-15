@@ -170,30 +170,30 @@ public class CalcCommand {
         }
     }
     
-    public static void sendMessage(FabricClientCommandSource source, String[] message, Boolean... isHelpMessage) {
-        var messageText = Text.literal("");
-        String m = "";
-        for (var i = 0; i < message.length; i++) {
-           if (i % 2 == 0) {
-            messageText.append(Text.literal(message[i]));
-            m += message[i];
-           } else {
-            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
-            m += message[i];
-           }
-           
-        }
-
-        
-        if (isHelpMessage.length > 0) {
-            if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
-                return;
-            } 
-        }
-        messageText.append(Text.literal(" "));
-        source.getPlayer().sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
-    }
+//    public static void sendMessage(FabricClientCommandSource source, String[] message, Boolean... isHelpMessage) {
+//        var messageText = Text.literal("");
+//        String m = "";
+//        for (var i = 0; i < message.length; i++) {
+//           if (i % 2 == 0) {
+//            messageText.append(Text.literal(message[i]));
+//            m += message[i];
+//           } else {
+//            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+//            m += message[i];
+//           }
+//
+//        }
+//
+//
+//        if (isHelpMessage.length > 0) {
+//            if (isHelpMessage[0]) {
+//                source.getPlayer().sendMessage(messageText);
+//                return;
+//            }
+//        }
+//        messageText.append(Text.literal(" "));
+//        source.getPlayer().sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+//    }
     
     public static void sendMessage(FabricClientCommandSource source, CalcMessageBuilder messageBuilder) {
         source.sendFeedback(messageBuilder.generateStyledText());

@@ -5,12 +5,15 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.*;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.recipe.display.SlotDisplayContexts;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -23,8 +26,8 @@ public class CIdentifierArgumentType implements ArgumentType<Identifier> {
         return new CIdentifierArgumentType();
     }
 
-    public static Identifier getIdentifier(final CommandContext<FabricClientCommandSource> context, final String name) {
-        return context.getArgument(name, Identifier.class);
+    public static String getIdentifier(final CommandContext<FabricClientCommandSource> context, final String name) {
+        return context.getArgument(name, Identifier.class).getPath();
     }
 
     @Override
@@ -32,10 +35,24 @@ public class CIdentifierArgumentType implements ArgumentType<Identifier> {
         return Identifier.fromCommandInput(stringReader);
     }
 
-    public static RecipeEntry<?> getRecipeArgument(final CommandContext<FabricClientCommandSource> context, final String argumentName) throws CommandSyntaxException {
-        RecipeManager recipeManager = context.getSource().getWorld().getRecipeManager();
-        Identifier identifier = getIdentifier(context, argumentName);
-        return recipeManager.get(identifier).orElseThrow(() -> UNKNOWN_RECIPE_EXCEPTION.create(identifier));
+    public static RecipeDisplayEntry getRecipeArgument(final CommandContext<FabricClientCommandSource> context, final String argumentName) throws CommandSyntaxException {
+        String identifier = getIdentifier(context, argumentName);
+//        return recipeManager.getPropertySet(identifier).
+        return context.getSource().getPlayer().getRecipeBook().getOrderedResults().stream().filter(x ->
+                x.getAllRecipes().stream().anyMatch(i -> {
+                        //    Logger.getLogger("calcmod").info(i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString() + " "+identifier);
+                    return i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString().contains(identifier);
+                }
+                )
+                ).findFirst().get().getAllRecipes().get(0);
+
+    }
+
+    public static Recipe getRecipeArgumentServer(final CommandContext<ServerCommandSource> context, final String argumentName) throws CommandSyntaxException {
+        Identifier identifier = context.getArgument(argumentName, Identifier.class);
+//        return recipeManager.getPropertySet(identifier).
+        return context.getSource().getServer().getRecipeManager().values().stream().filter(val -> val.id().getValue().equals(identifier)).findFirst().get().value();
+
     }
 
     @Override

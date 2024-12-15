@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands.arguments;
 
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -8,6 +9,9 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
+import net.jsa2025.calcmod.CalcMod;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.display.SlotDisplayContexts;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 
@@ -26,14 +30,16 @@ public class RecipeSuggestionProvider implements SuggestionProvider<ServerComman
 
         //     return item;
         // });
-        Stream<Identifier> recipeStream = context.getSource().getWorld().getRecipeManager().keys();
+        Collection<RecipeEntry<?>> recipeStream = context.getSource().getWorld().getRecipeManager().values();
         recipeStream.forEach(recipe -> {
-            String item = recipe.getPath();
-            if (item == null) {
-                return;
-            }
-            if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
-                builder.suggest(recipe.getNamespace()+":"+item);
+            if (!recipe.value().getDisplays().isEmpty()) {
+                String item = recipe.value().getDisplays().get(0).result().getFirst(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).getRegistryEntry().getIdAsString();
+                if (item == null) {
+                    return;
+                }
+                if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
+                    builder.suggest( item);
+                }
             }
         });
 

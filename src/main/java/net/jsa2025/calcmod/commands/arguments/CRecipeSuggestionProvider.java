@@ -9,6 +9,8 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
+import net.minecraft.recipe.display.SlotDisplayContexts;
 import net.minecraft.util.Identifier;
 
 public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClientCommandSource> {
@@ -26,14 +28,14 @@ public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClien
 
         //     return item;
         // });
-        Stream<Identifier> recipeStream = context.getSource().getWorld().getRecipeManager().keys();
+        Stream<RecipeResultCollection> recipeStream = context.getSource().getPlayer().getRecipeBook().getOrderedResults().stream();
         recipeStream.forEach(recipe -> {
-            String item = recipe.getPath();
+            String item = recipe.getAllRecipes().get(0).display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString();
             if (item == null) {
                 return;
             }
             if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
-                builder.suggest(recipe.getNamespace()+":"+item);
+                builder.suggest(item);
             }
         });
 
