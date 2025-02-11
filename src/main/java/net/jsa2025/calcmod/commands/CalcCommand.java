@@ -116,7 +116,7 @@ public class CalcCommand {
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
             vars.put("x", (double) player.getBlockPos().getX());
-            vars.put("y", (double) player.getBlockPos().getX());
+            vars.put("y", (double) player.getBlockPos().getY());
             vars.put("z", (double) player.getBlockPos().getZ());
             vars.put("health", (double) ((PlayerEntity) player).getHealth());
         }
