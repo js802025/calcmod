@@ -186,12 +186,12 @@ public class Craft {
        //     CalcMod.LOGGER.info("Step1"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
 
             //        CalcMod.LOGGER.info(manager.get(ingredient.getMatchingStacks()[0].getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
-            if (ingredient.getMatchingItems().size() > 0) {
-                if (ingredients.containsKey(ingredient.getMatchingItems().get(0).value().getName().getString())) {
-                    ingredients.put(ingredient.getMatchingItems().get(0).value().getName().getString(), Map.entry(ingredients.get(ingredient.getMatchingItems().get(0).value().getName().getString()).getKey(), ingredients.get(ingredient.getMatchingItems().get(0).value().getName().getString()).getValue()+amount_needed));
+            if (!ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).isEmpty()) {
+                if (ingredients.containsKey(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString())) {
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getKey(), ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getValue()+amount_needed));
                 } else {
            //         CalcMod.LOGGER.info("Step2"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
-                    ingredients.put(ingredient.getMatchingItems().get(0).value().getName().getString(), Map.entry(ingredient.getMatchingItems().get(0).value().getDefaultStack(), amount_needed));
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())), amount_needed));
                 }
           //      CalcMod.LOGGER.info("Step4"+ingredients.get(ingredient.getMatchingItems().get(0).getIdAsString()).getValue());
 
@@ -261,12 +261,12 @@ public class Craft {
             //     CalcMod.LOGGER.info("Step1"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
 
             //        CalcMod.LOGGER.info(manager.get(ingredient.getMatchingStacks()[0].getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
-            if (ingredient.getMatchingItems().size() > 0) {
-                if (ingredients.containsKey(ingredient.getMatchingItems().get(0).value().getName().getString())) {
-                    ingredients.put(ingredient.getMatchingItems().get(0).value().getName().getString(), Map.entry(ingredients.get(ingredient.getMatchingItems().get(0).value().getName().getString()).getKey(), ingredients.get(ingredient.getMatchingItems().get(0).value().getName().getString()).getValue()+amount_needed));
+            if (!ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).isEmpty()) {
+                if (ingredients.containsKey(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString())) {
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getKey(), ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getValue()+amount_needed));
                 } else {
                     //         CalcMod.LOGGER.info("Step2"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
-                    ingredients.put(ingredient.getMatchingItems().get(0).value().getName().getString(), Map.entry(ingredient.getMatchingItems().get(0).value().getDefaultStack(), amount_needed));
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())), amount_needed));
                 }
                 //      CalcMod.LOGGER.info("Step4"+ingredients.get(ingredient.getMatchingItems().get(0).getIdAsString()).getValue());
 

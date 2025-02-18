@@ -64,6 +64,7 @@ public class CalcCommand {
         command = Craft.register(command, registry);
         command = SignalToItems.register(command);
         command = Piglin.register(command);
+        command = Distance.register(command);
         command = Custom.register(command);
         command = Variables.register(command);
         command = Help.register(command);
@@ -89,6 +90,7 @@ public class CalcCommand {
         command = Craft.registerServer(command, registry);
         command = SignalToItems.registerServer(command);
         command = Piglin.registerServer(command);
+        command = Distance.registerServer(command);
         command = Custom.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
@@ -116,7 +118,7 @@ public class CalcCommand {
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
             vars.put("x", (double) player.getBlockPos().getX());
-            vars.put("y", (double) player.getBlockPos().getX());
+            vars.put("y", (double) player.getBlockPos().getY());
             vars.put("z", (double) player.getBlockPos().getZ());
             vars.put("health", (double) ((PlayerEntity) player).getHealth());
         }

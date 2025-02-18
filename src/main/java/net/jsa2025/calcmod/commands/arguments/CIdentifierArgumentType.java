@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
+import net.jsa2025.calcmod.CalcMod;
 import net.minecraft.recipe.*;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.recipe.display.SlotDisplayContexts;
@@ -27,7 +28,7 @@ public class CIdentifierArgumentType implements ArgumentType<Identifier> {
     }
 
     public static String getIdentifier(final CommandContext<FabricClientCommandSource> context, final String name) {
-        return context.getArgument(name, Identifier.class).getPath();
+        return context.getArgument(name, Identifier.class).getNamespace()+":"+context.getArgument(name, Identifier.class).getPath();
     }
 
     @Override
@@ -37,11 +38,10 @@ public class CIdentifierArgumentType implements ArgumentType<Identifier> {
 
     public static RecipeDisplayEntry getRecipeArgument(final CommandContext<FabricClientCommandSource> context, final String argumentName) throws CommandSyntaxException {
         String identifier = getIdentifier(context, argumentName);
-//        return recipeManager.getPropertySet(identifier).
         return context.getSource().getPlayer().getRecipeBook().getOrderedResults().stream().filter(x ->
                 x.getAllRecipes().stream().anyMatch(i -> {
-                        //    Logger.getLogger("calcmod").info(i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString() + " "+identifier);
-                    return i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString().contains(identifier);
+                         //   CalcMod.LOGGER.info(i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString());
+                    return i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString().equals(identifier);
                 }
                 )
                 ).findFirst().get().getAllRecipes().get(0);
@@ -51,6 +51,7 @@ public class CIdentifierArgumentType implements ArgumentType<Identifier> {
     public static Recipe getRecipeArgumentServer(final CommandContext<ServerCommandSource> context, final String argumentName) throws CommandSyntaxException {
         Identifier identifier = context.getArgument(argumentName, Identifier.class);
 //        return recipeManager.getPropertySet(identifier).
+        CalcMod.LOGGER.info(identifier.toString());
         return context.getSource().getServer().getRecipeManager().values().stream().filter(val -> val.id().getValue().equals(identifier)).findFirst().get().value();
 
     }
