@@ -4,13 +4,8 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.serialization.Dynamic;
-
-import dev.xpple.clientarguments.arguments.CResourceArgument;
 
 
-import dev.xpple.clientarguments.arguments.CResourceKeyArgument;
-import dev.xpple.clientarguments.arguments.CResourceOrIdArgument;
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
@@ -23,14 +18,11 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.logging.Logger;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.entity.Entity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.*;
 import net.minecraft.server.command.CommandManager;

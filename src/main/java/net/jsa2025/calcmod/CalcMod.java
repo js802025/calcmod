@@ -3,7 +3,6 @@ package net.jsa2025.calcmod;
 import net.fabricmc.api.*;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.loader.api.FabricLoader;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import org.slf4j.Logger;
