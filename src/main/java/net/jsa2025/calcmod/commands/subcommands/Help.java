@@ -64,13 +64,20 @@ public class Help {
         help.put("dist", Distance.helpMessage);
         help.put("custom", Custom.helpMessage);
         if (hterm.length == 0) {
-            String helpMenu = "";
+            CalcMessageBuilder messageBuilder = new CalcMessageBuilder();
+            messageBuilder.setMessageType(CalcMessageBuilder.MessageType.HELP);
+            messageBuilder.addString("§a§lCalc Mod §r \n");
+            messageBuilder.addString("§b§LBasic Usage:§r§f\n" +
+                    "            Given an expression, returns the result." +
+                    "            §eUsage: /calc <expressions§f\n");
+            messageBuilder.addString("§bFunctions:§r\n");
             for (Map.Entry<String, String> me :
              help.entrySet()) {
-                helpMenu += me.getValue() + "\n";
+                messageBuilder.addInput("§l"+me.getKey()+": §r").addRunCommand("§a§nSee Details >>§r", "calc "+me.getKey()+" help");
+                messageBuilder.addString("\n");
   
               }
-            CalcMessageBuilder messageBuilder = new CalcMessageBuilder(helpMenu);
+
             return messageBuilder;
         } else {
             CalcMessageBuilder messageBuilder = new CalcMessageBuilder(help.get(hterm[0]));

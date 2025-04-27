@@ -49,6 +49,10 @@ public class CalcMessageBuilder {
         this.helpMessage = helpMessage;
     }
 
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
+    }
+
     public CalcMessageBuilder addString(String text) {
         messageText.append(text);
         return this;
@@ -59,7 +63,7 @@ public class CalcMessageBuilder {
     }
     public CalcMessageBuilder addResult(String text) {
         messageText.append(Text.literal("§a" + text + "§f")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))));
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(text))));
         return this;
     }
 
@@ -80,13 +84,19 @@ public class CalcMessageBuilder {
         return this;
     }
 
+    public CalcMessageBuilder addRunCommand(String text, String command) {
+        messageText.append(Text.literal(text).setStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand(command))));
+        return this;
+    }
+
     public Text generateStyledText() {
-        if (Objects.requireNonNull(this.messageType) == MessageType.HELP) {
+        if (Objects.requireNonNull(this.messageType) == MessageType.HELP && helpMessage != null) {
             return Text.literal(helpMessage);
         }
-        messageText.append(" ");
-        messageText.append(Text.literal("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
-  //      messageText.append(Text.literal("[Click to Send]").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(), )));
+        if (Objects.requireNonNull(this.messageType) != MessageType.HELP) {
+            messageText.append(" ");
+            messageText.append(Text.literal("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+        }
         return messageText;
     }
 

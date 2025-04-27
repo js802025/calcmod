@@ -106,16 +106,16 @@ public class Distance {
 
     public static CalcMessageBuilder execute3d(BlockPos pos1, BlockPos pos2) {
         double dist = Math.sqrt(Math.pow(pos1.getX()-pos2.getX(), 2) + Math.pow(pos1.getY()-pos2.getY(), 2) + Math.pow(pos1.getZ()-pos2.getZ(), 2));
-        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.getX()+" Y: "+pos1.getY()+" Z: "+pos1.getZ()).addString(" to ").addInput("X: "+pos2.getX()+" Y: "+pos2.getY()+" Z: "+pos1.getZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
+        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.getX()+" Y: "+pos1.getY()+" Z: "+pos1.getZ()).addString(" to ").addInput("X: "+pos2.getX()+" Y: "+pos2.getY()+" Z: "+pos2.getZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
         return message;
     }
 
     public static String helpMessage = """
         §b§LDistance:§r§f
             Given two block positions, gives distance between them. If only one position is given, uses player's location. The 3D mode provides distance including height.
-            §eUsage: /calc dist <x1> <y1>§f
-            §eUsage: /calc dist <x1> <y1> <z1> <x2> <x2> <z2>§f
-            §eUsage: /calc dist 3d <x1> <y1>§f
-            §eUsage: /calc dist 3d <x1> <y1> <z1> <x2> <x2> <z2>§f
+            §eUsage: /calc dist <x1> <y1> <z1>§f
+            §eUsage: /calc dist <x1> <y1> <z1> <x2> <y2> <z2>§f
+            §eUsage: /calc dist 3d <x1> <y1> <z1>§f
+            §eUsage: /calc dist 3d <x1> <y1> <z1> <x2> <y2> <z2>§f
                 """;
 }

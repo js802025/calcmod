@@ -132,7 +132,15 @@ public class CalcCommand {
         //hide funcs from replace
         for (int f = 0; f< parsedCustomFunctions.size(); f++) {
             String func = parsedCustomFunctions.get(f);
-            withVars = withVars.replaceAll(func.split("[(]")[0], "{"+f+"}");
+            withVars = withVars.replaceAll(func.split("[(]")[0]+"[(]", "func"+f+"(");
+            func = func.replaceAll(func.split("[(]")[0]+"[(]", "func"+f+"(");
+            String[] funcVars = func.split("[(]")[1].split("[)]")[0].split(", ");
+            for (int v = 0; v < funcVars.length; v++) {
+                func = func.replaceAll(funcVars[v], "var"+f+v);
+            }
+
+
+            parsedCustomFunctions.set(f, func);
         }
         ArrayList<PrimitiveElement> primitiveElements = new ArrayList<>();
         for (String key : vars.keySet()) {
@@ -150,7 +158,7 @@ public class CalcCommand {
 
 
         for (int f = 0; f < parsedCustomFunctions.size(); f++) {
-            withVars = withVars.replaceAll("[{]"+f+"[}]", parsedCustomFunctions.get(f).split("[(]")[0]);
+            CalcMod.LOGGER.info(parsedCustomFunctions.get(f));
             primitiveElements.add(new Function(parsedCustomFunctions.get(f)));
         }
         CalcMod.LOGGER.info("Parsed "+withVars);
@@ -210,7 +218,7 @@ public class CalcCommand {
             messageText.append(Text.literal(message[i]));
             m += message[i];
            } else {
-            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(message[i]))));
             m += message[i];
            }
 
@@ -225,7 +233,7 @@ public class CalcCommand {
         }
         messageText.append(Text.literal(" "));
         source.sendChatMessage(SentMessage.of(SignedMessage.ofUnsigned("hello")), true, MessageType.params(MessageType.SAY_COMMAND, source));
-        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", "")))))
+        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(m.replaceAll("§a", "").replaceAll("§f", "")))))
                 );
     }
     

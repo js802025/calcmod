@@ -181,7 +181,6 @@ public class Custom {
             }
         }
         commandJson.append("],\n\"equation\": \"").append(input).append("\"\n}");
-      //  CalcMod.LOGGER.info(commandJson.toString());
         return variables;
     }
 
