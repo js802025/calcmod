@@ -2,18 +2,15 @@ package net.jsa2025.calcmod.commands.arguments;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.jsa2025.calcmod.CalcMod;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.display.SlotDisplayContexts;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
 
 public class RecipeSuggestionProvider implements SuggestionProvider<ServerCommandSource> {
     

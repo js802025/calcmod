@@ -8,7 +8,6 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import net.jsa2025.calcmod.CalcMod;
 import net.minecraft.recipe.*;

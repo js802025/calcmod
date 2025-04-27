@@ -8,7 +8,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -28,21 +27,16 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.recipebook.ClientRecipeBook;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.command.argument.RegistryKeyArgumentType;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.*;
-import net.minecraft.recipe.book.RecipeBook;
 import net.minecraft.recipe.display.RecipeDisplay;
 import net.minecraft.recipe.display.SlotDisplayContexts;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
 
 
 public class Craft {
@@ -100,7 +94,6 @@ public class Craft {
 
     @Environment(EnvType.CLIENT)
     public static CalcMessageBuilder execute(ClientPlayerEntity player, RecipeDisplayEntry item, String amount, int steps, DynamicRegistryManager registryManager) {
-    //    ClientPlayerEntity player = (ClientPlayerEntity) p;
         var is = item.craftingRequirements();
         var outputSize = item.display().result().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
@@ -133,8 +126,6 @@ public class Craft {
             }
         }
 
-   //     message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
-        
         return messageBuilder;
     }
 
@@ -172,8 +163,6 @@ public class Craft {
             }
         }
 
-        //     message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
-
         return messageBuilder;
     }
 
@@ -195,7 +184,6 @@ public class Craft {
                 }
           //      CalcMod.LOGGER.info("Step4"+ingredients.get(ingredient.getMatchingItems().get(0).getIdAsString()).getValue());
 
-                //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
             }
         }
         HashMap<String, Map.Entry<ItemStack, Integer>> ex_ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
@@ -208,16 +196,7 @@ public class Craft {
                // CalcMod.LOGGER.info("new");
                 //     CalcMod.LOGGER.info(manager.get(ingredient.getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
                 Optional<Identifier> ing_id = Optional.ofNullable(ingredient.getKey().getRegistryEntry().getKey().get().getValue());
-           //     CalcMod.LOGGER.info(ing_id.get().getPath());
-                if (ing_id.get().getPath() .contains("ingot")) {
 
-//                    Optional<Identifier> finalIng_id = ing_id;
-//                  //  CalcMod.LOGGER.info(finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath() .split("_")[0] + "_block");
-//                    book.getOrderedResults().stream().filter()
-//                    ing_id = book.getOrderedResults().stream().filter(x ->
-//                            Objects.equals(x.getPath(), finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath().split("_")[0] + "_block")
-//                    ).findFirst();
-                }
 
                 Optional<RecipeResultCollection> recipeResultCollection = book.getOrderedResults().stream().filter(x ->
                         x.getAllRecipes().stream().anyMatch(i -> {
@@ -234,7 +213,6 @@ public class Craft {
               //      CalcMod.LOGGER.info(String.valueOf((double) ingredient.getValue() / (double) recipe.getResult(registryManager).getCount()));
                     HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, book, registryManager, sis, (int) Math.ceil((double) ingredient.getValue() / (double) recipeDisplayEntry.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getCount()), steps - 1);
                //     CalcMod.LOGGER.info(recipe.getResult(registryManager).getName().getString());
-               //     ingredients.remove(recipe.getResult(registryManager).getName().getString());
                     for (String item : sub_ingredients.keySet()) {
                         if (ex_ingredients.containsKey(item)) {
                             ex_ingredients.put(item, Map.entry(ingredients.get(item).getKey(), ingredients.get(item).getValue() + sub_ingredients.get(item).getValue()));
@@ -270,7 +248,6 @@ public class Craft {
                 }
                 //      CalcMod.LOGGER.info("Step4"+ingredients.get(ingredient.getMatchingItems().get(0).getIdAsString()).getValue());
 
-                //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
             }
         }
         HashMap<String, Map.Entry<ItemStack, Integer>> ex_ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
@@ -312,7 +289,6 @@ public class Craft {
                 } else {
                     ex_ingredients.put(ingredient.getKey().getName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
                 }
-                //   return ingredients;
             }
         }
 

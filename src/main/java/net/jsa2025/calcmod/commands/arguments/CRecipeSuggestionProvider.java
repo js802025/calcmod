@@ -11,7 +11,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.recipe.display.SlotDisplayContexts;
-import net.minecraft.util.Identifier;
 
 public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClientCommandSource> {
     
