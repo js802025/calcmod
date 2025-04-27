@@ -66,10 +66,10 @@ public class Help {
         if (hterm.length == 0) {
             CalcMessageBuilder messageBuilder = new CalcMessageBuilder();
             messageBuilder.setMessageType(CalcMessageBuilder.MessageType.HELP);
-            messageBuilder.addString("§a§lCalc Mod §r \n");
+            messageBuilder.addString("§a§lCalcMod §r \n");
             messageBuilder.addString("§b§LBasic Usage:§r§f\n" +
                     "            Given an expression, returns the result." +
-                    "            §eUsage: /calc <expressions§f\n");
+                    "            §eUsage: /calc <expressions>§f\n");
             messageBuilder.addString("§bFunctions:§r\n");
             for (Map.Entry<String, String> me :
              help.entrySet()) {
