@@ -8,6 +8,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -200,12 +201,14 @@ public class Craft {
 
                 Optional<RecipeResultCollection> recipeResultCollection = book.getOrderedResults().stream().filter(x ->
                         x.getAllRecipes().stream().anyMatch(i -> {
-                                        Logger.getLogger("calcmod").info(i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString() + " "+ing_id.get().getPath());
+                                    //    Logger.getLogger("calcmod").info(i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString() + " "+ing_id.get().getPath());
                                     return i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString().contains(ing_id.get().getPath());
                                 }
                         )).findFirst();
                 if (recipeResultCollection.isPresent()) {
-                    RecipeDisplayEntry recipeDisplayEntry = recipeResultCollection.get().getAllRecipes().get(0);
+                  //  CalcMod.LOGGER.info("MATCH FOUND for "+ing_id.get().getPath()+": "+recipeResultCollection.get().getAllRecipes().get(0).display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString());
+
+                    RecipeDisplayEntry recipeDisplayEntry = recipeResultCollection.get().getAllRecipes().stream().filter(i -> i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString().contains(ing_id.get().getPath())).findFirst().get();
 //                    Recipe<?> recipe = manager.get(ing_id.get()).get().value();
                     Optional<List<Ingredient>> sis = recipeDisplayEntry.craftingRequirements();
                  //   CalcMod.LOGGER.info(String.valueOf(ingredient.getValue()));

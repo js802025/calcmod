@@ -43,7 +43,7 @@ public class CIdentifierArgumentType implements ArgumentType<Identifier> {
                     return i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString().equals(identifier);
                 }
                 )
-                ).findFirst().get().getAllRecipes().get(0);
+                ).findFirst().get().getAllRecipes().stream().filter(i -> i.display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString().equals(identifier)).findFirst().get();
 
     }
 
