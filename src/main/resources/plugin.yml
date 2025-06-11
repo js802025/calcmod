@@ -1,0 +1,6 @@
+main: ${PACKAGE}.CalcMod
+name: CalcMod
+version: "${VERSION}"
+api-version: "1.21.1"
+author: js802025
+description: A calculator in your chat with shortcuts designed for Minecraft.

@@ -1,91 +1,163 @@
+
+import java.text.SimpleDateFormat
+
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
-	id 'maven-publish'
+    id 'com.gradleup.shadow' version '8.3.6'
+    id 'java'
 }
 
-sourceCompatibility = "21"
-targetCompatibility = "21"
+group = "net.jsa2025.calcmod"
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version+"+fabric."+project.minecraft_version
-group = project.maven_group
-
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-	maven {
-		url = 'https://maven.xpple.dev/maven2'
-	}
+static def getTime() {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd-HHmm")
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return sdf.format(new Date()).toString()
 }
 
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	//mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
-	
-	modImplementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
-	include 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
-
-	modImplementation 'dev.xpple:clientarguments:1.11.1'
-	include 'dev.xpple:clientarguments:1.11.1'
-
-
-	// include 'com.ibm.icu:icu4j:71.1'
-	
-	// Uncomment the following line to enable the deprecated Fabric API modules. 
-	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
-
-	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+// Set version to version property if supplied
+String shortVersion = null
+if (hasProperty('ver')) {
+    if (ver.charAt(0) == "v") {
+        shortVersion = ver.substring(1).toUpperCase()
+    } else {
+        shortVersion = ver.toUpperCase()
+    }
 }
 
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 21
+// If the tag includes "-RC-" or no tag is supplied, append "-SNAPSHOT"
+int rcIdx
+if (shortVersion == null || shortVersion == "") {
+    version = getTime() + "-SNAPSHOT"
+} else if ((rcIdx = shortVersion.indexOf("-RC-")) != -1) {
+    version = shortVersion.substring(0, rcIdx) + "-SNAPSHOT"
+} else {
+    version = shortVersion+"+paper."+minecraft_version
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
-	}
+repositories {
+    maven {
+        name = 'papermc'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+        content {
+            includeModule("io.papermc.paper", "paper-api")
+            includeModule("io.papermc", "paperlib")
+            includeModule("net.md-5", "bungeecord-chat")
+            includeGroup("io.papermc.adventure")
+        }
+    }
+
+    maven {
+        name = 'minecraft'
+        url = 'https://libraries.minecraft.net'
+        content {
+            includeModule("com.mojang", "brigadier")
+        }
+    }
+
+//    maven {
+//        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+//
+//        // As of Gradle 5.1, you can limit this to only those
+//        // dependencies you expect from it
+//        content {
+//            includeGroup 'org.bukkit'
+//            includeGroup 'org.spigotmc'
+//        }
+//    }
+//    /*
+//     As Spigot-API depends on the BungeeCord ChatComponent-API,
+//    we need to add the Sonatype OSS repository, as Gradle,
+//    in comparison to maven, doesn't want to understand the ~/.m2
+//    directory unless added using mavenLocal(). Maven usually just gets
+//    it from there, as most people have run the BuildTools at least once.
+//    This is therefore not needed if you're using the full Spigot/CraftBukkit,
+//    or if you're using the Bukkit API.
+//    */
+//    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+//    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+
+    mavenCentral()
 }
 
-// configure the maven publication
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-		}
-	}
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
+    implementation 'io.papermc:paperlib:1.0.8'
+    testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
+    testImplementation 'io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.0'
+    implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
+//    compileOnly 'org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT'
+}
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
+test {
+    useJUnitPlatform()
+}
+
+processResources {
+    filesMatching("**/plugin.yml") {
+        expand ( NAME: rootProject.name, VERSION: version, PACKAGE: rootProject.group.toString() )
+    }
+}
+
+//checkstyle {
+//    toolVersion = '10.23.1'
+//    maxWarnings = 0
+//}
+
+//configurations.checkstyle {
+//    resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
+//        select("com.google.guava:guava:23.0")
+//    }
+//}
+
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = false
+        html.required = true
+    }
+}
+
+//tasks.withType(SpotBugsTask).configureEach {
+//    reports.create("html") {
+//        required = true
+//    }
+//    reports.create("xml") {
+//        required = false
+//    }
+//}
+
+shadowJar {
+    archiveClassifier.set('')
+    relocate 'io.papermc.lib', 'shadow.io.papermc.paperlib'
+    minimize()
+}
+
+// Disable jar and replace with shadowJar
+jar.enabled = false
+assemble.dependsOn(shadowJar)
+
+tasks.register('printProjectName') {
+    doLast {
+        println rootProject.name
+    }
+}
+
+tasks.register('release') {
+    dependsOn build
+
+    doLast {
+        if (!version.endsWith("-SNAPSHOT")) {
+            // Rename final JAR to trim off version information
+            shadowJar.archiveFile.get().getAsFile()
+                    .renameTo(layout.buildDirectory.get().toString() + File.separator + 'libs' + File.separator
+                            + rootProject.name + '.jar')
+        }
+    }
 }

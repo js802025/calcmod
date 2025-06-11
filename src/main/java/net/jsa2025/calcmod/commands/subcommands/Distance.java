@@ -1,15 +1,15 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import dev.xpple.clientarguments.arguments.CBlockPosArgument;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
+import io.papermc.paper.math.BlockPosition;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.command.argument.BlockPosArgumentType;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.math.BlockPos;
+
+import org.bukkit.entity.Player;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -17,39 +17,40 @@ import java.util.Locale;
 public class Distance {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command.then(ClientCommandManager.literal("dist").then(ClientCommandManager.argument("pos1", CBlockPosArgument.blockPos()).then(ClientCommandManager.argument("pos2", CBlockPosArgument.blockPos()).executes(
+    public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> command) {
+        command.then(Commands.literal("dist").then(Commands.argument("pos1", ArgumentTypes.blockPosition()).then(Commands.argument("pos2", ArgumentTypes.blockPosition()).executes(
                 ctx -> {
-                    BlockPos pos1 = CBlockPosArgument.getBlockPos(ctx, "pos1");
-                    BlockPos pos2 = CBlockPosArgument.getBlockPos(ctx, "pos2");
+                    BlockPosition pos1 = ctx.getArgument("pos1", BlockPositionResolver.class).resolve(ctx.getSource());
+                    BlockPosition pos2 = ctx.getArgument("pos2", BlockPositionResolver.class).resolve(ctx.getSource());
+
                     CalcMessageBuilder message = execute(pos1, pos2);
                     CalcCommand.sendMessage(ctx.getSource(), message);
                     return 1;
                 }
         )).executes(ctx -> {
-                BlockPos pos1 = ctx.getSource().getPlayer().getBlockPos();
-                BlockPos pos2 = CBlockPosArgument.getBlockPos(ctx, "pos1");
+                BlockPosition pos1 = ((Player)ctx.getSource().getExecutor()).getLocation().toBlock();
+                BlockPosition pos2 = ctx.getArgument("pos1", BlockPositionResolver.class).resolve(ctx.getSource());
                 CalcMessageBuilder message = execute(pos1, pos2);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
                 }
-        )).then(ClientCommandManager.literal("3d").then(ClientCommandManager.argument("pos1", CBlockPosArgument.blockPos()).then(ClientCommandManager.argument("pos2", CBlockPosArgument.blockPos()).executes(
+        )).then(Commands.literal("3d").then(Commands.argument("pos1", ArgumentTypes.blockPosition()).then(Commands.argument("pos2", ArgumentTypes.blockPosition()).executes(
                                 ctx -> {
-                                    BlockPos pos1 = CBlockPosArgument.getBlockPos(ctx, "pos1");
-                                    BlockPos pos2 = CBlockPosArgument.getBlockPos(ctx, "pos2");
+                                    BlockPosition pos1 = ctx.getArgument("pos1", BlockPositionResolver.class).resolve(ctx.getSource());
+                                    BlockPosition pos2 = ctx.getArgument("pos2", BlockPositionResolver.class).resolve(ctx.getSource());
                                     CalcMessageBuilder message = execute3d(pos1, pos2);
                                     CalcCommand.sendMessage(ctx.getSource(), message);
                                     return 1;
                                 }
                         )).executes(ctx -> {
-                                    BlockPos pos1 = ctx.getSource().getPlayer().getBlockPos();
-                                    BlockPos pos2 = CBlockPosArgument.getBlockPos(ctx, "pos1");
+                            BlockPosition pos1 = ((Player)ctx.getSource().getExecutor()).getLocation().toBlock();
+                            BlockPosition pos2 = ctx.getArgument("pos1", BlockPositionResolver.class).resolve(ctx.getSource());
                                     CalcMessageBuilder message = execute3d(pos1, pos2);
                                     CalcCommand.sendMessage(ctx.getSource(), message);
                                     return 1;
                                 }
                         )))
-                        .then(ClientCommandManager.literal("help").executes(ctx -> {
+                        .then(Commands.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("dist");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -59,54 +60,54 @@ public class Distance {
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command.then(CommandManager.literal("dist").then(CommandManager.argument("pos1", BlockPosArgumentType.blockPos()).then(CommandManager.argument("pos2", BlockPosArgumentType.blockPos()).executes(
-                ctx -> {
-                    BlockPos pos1 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
-                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos2");
-                    CalcMessageBuilder message = execute(pos1, pos2);
-                    CalcCommand.sendMessageServer(ctx.getSource(), message);
-                    return 1;
-                }
-        )).executes(ctx -> {
-                    BlockPos pos1 = ctx.getSource().getPlayer().getBlockPos();
-                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
-                    CalcMessageBuilder message = execute(pos1, pos2);
-                    CalcCommand.sendMessageServer(ctx.getSource(), message);
-                    return 1;
-                }
-        )).then(CommandManager.literal("3d").then(CommandManager.argument("pos1", BlockPosArgumentType.blockPos()).then(CommandManager.argument("pos2", BlockPosArgumentType.blockPos()).executes(
-                ctx -> {
-                    BlockPos pos1 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
-                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos2");
-                    CalcMessageBuilder message = execute3d(pos1, pos2);
-                    CalcCommand.sendMessageServer(ctx.getSource(), message);
-                    return 1;
-                }
-        )).executes(ctx -> {
-                    BlockPos pos1 = ctx.getSource().getPlayer().getBlockPos();
-                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
-                    CalcMessageBuilder message = execute3d(pos1, pos2);
-                    CalcCommand.sendMessageServer(ctx.getSource(), message);
-                    return 1;
-                }
-        ))).then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("dist");
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })));
-        return command;
-    }
+//    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+//        command.then(CommandManager.literal("dist").then(CommandManager.argument("pos1", BlockPosArgumentType.blockPos()).then(CommandManager.argument("pos2", BlockPosArgumentType.blockPos()).executes(
+//                ctx -> {
+//                    BlockPos pos1 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
+//                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos2");
+//                    CalcMessageBuilder message = execute(pos1, pos2);
+//                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+//                    return 1;
+//                }
+//        )).executes(ctx -> {
+//                    BlockPos pos1 = ctx.getSource().getPlayer().getBlockPos();
+//                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
+//                    CalcMessageBuilder message = execute(pos1, pos2);
+//                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+//                    return 1;
+//                }
+//        )).then(CommandManager.literal("3d").then(CommandManager.argument("pos1", BlockPosArgumentType.blockPos()).then(CommandManager.argument("pos2", BlockPosArgumentType.blockPos()).executes(
+//                ctx -> {
+//                    BlockPos pos1 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
+//                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos2");
+//                    CalcMessageBuilder message = execute3d(pos1, pos2);
+//                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+//                    return 1;
+//                }
+//        )).executes(ctx -> {
+//                    BlockPos pos1 = ctx.getSource().getPlayer().getBlockPos();
+//                    BlockPos pos2 = BlockPosArgumentType.getBlockPos(ctx, "pos1");
+//                    CalcMessageBuilder message = execute3d(pos1, pos2);
+//                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+//                    return 1;
+//                }
+//        ))).then(CommandManager.literal("help").executes(ctx -> {
+//            CalcMessageBuilder message = Help.execute("dist");
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        })));
+//        return command;
+//    }
 
-    public static CalcMessageBuilder execute(BlockPos pos1, BlockPos pos2) {
-        double dist = Math.sqrt(Math.pow(pos1.getX()-pos2.getX(), 2) + Math.pow(pos1.getZ()-pos2.getZ(), 2));
-        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.getX()+" Z: "+pos1.getZ()).addString(" to ").addInput("X: "+pos2.getX()+" Z: "+pos2.getZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
+    public static CalcMessageBuilder execute(BlockPosition pos1, BlockPosition pos2) {
+        double dist = Math.sqrt(Math.pow(pos1.toVector().getBlockX()-pos2.toVector().getBlockX(), 2) + Math.pow(pos1.toVector().getBlockX()-pos2.toVector().getZ(), 2));
+        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.toVector().getBlockX()+" Z: "+pos1.toVector().getZ()).addString(" to ").addInput("X: "+pos2.toVector().getBlockX()+" Z: "+pos2.toVector().getBlockZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
         return message;
     }
 
-    public static CalcMessageBuilder execute3d(BlockPos pos1, BlockPos pos2) {
-        double dist = Math.sqrt(Math.pow(pos1.getX()-pos2.getX(), 2) + Math.pow(pos1.getY()-pos2.getY(), 2) + Math.pow(pos1.getZ()-pos2.getZ(), 2));
-        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.getX()+" Y: "+pos1.getY()+" Z: "+pos1.getZ()).addString(" to ").addInput("X: "+pos2.getX()+" Y: "+pos2.getY()+" Z: "+pos2.getZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
+    public static CalcMessageBuilder execute3d(BlockPosition pos1, BlockPosition pos2) {
+        double dist = Math.sqrt(Math.pow(pos1.toVector().getBlockX()-pos2.toVector().getBlockZ(), 2) + Math.pow(pos1.toVector().getBlockY()-pos2.toVector().getBlockY(), 2) + Math.pow(pos1.toVector().getBlockZ()-pos2.toVector().getBlockZ(), 2));
+        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.toVector().getBlockX()+" Y: "+pos1.toVector().getBlockY()+" Z: "+pos1.toVector().getBlockZ()).addString(" to ").addInput("X: "+pos2.toVector().getBlockX()+" Y: "+pos2.toVector().getBlockY()+" Z: "+pos2.toVector().getBlockZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
         return message;
     }
 

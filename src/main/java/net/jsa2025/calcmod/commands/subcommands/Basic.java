@@ -3,9 +3,9 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -16,37 +16,33 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
 
-
-
+import org.bukkit.entity.Entity;
 
 
 public class Basic {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(ClientCommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
+        .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getExecutor(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
         return command;
     }
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }));
-        return command;
-    }
+//    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+//        command
+//        .then(CommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
+//            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        }));
+//        return command;
+//    }
 
     public static CalcMessageBuilder execute(Entity player, String expression) {
         CalcMod.LOGGER.info("Entity Name: "+expression);

@@ -4,8 +4,9 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
@@ -15,28 +16,26 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import org.bukkit.entity.Entity;
 
 public class Random {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(ClientCommandManager.literal("random")
-        .then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
+        .then(Commands.literal("random")
+        .then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getExecutor(), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
-        .then(ClientCommandManager.literal("minmax").then(ClientCommandManager.argument("min", StringArgumentType.string()).then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+        .then(Commands.literal("minmax").then(Commands.argument("min", StringArgumentType.string()).then(Commands.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getExecutor(), StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("random");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -44,26 +43,26 @@ public class Random {
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("random")
-        .then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(CommandManager.literal("minmax").then(CommandManager.argument("min", StringArgumentType.string()).then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))))
-        .then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("random");
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })));
-        return command;
-    }
+//    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+//        command
+//        .then(CommandManager.literal("random")
+//        .then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+//            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        }))
+//        .then(CommandManager.literal("minmax").then(CommandManager.argument("min", StringArgumentType.string()).then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+//            CalcMessageBuilder message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        }))))
+//        .then(CommandManager.literal("help").executes(ctx -> {
+//            CalcMessageBuilder message = Help.execute("random");
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        })));
+//        return command;
+//    }
 
 
     public static CalcMessageBuilder execute(Entity player, String... range) {

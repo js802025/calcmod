@@ -4,8 +4,9 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
@@ -15,16 +16,15 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+
 
 public class Help {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(ClientCommandManager.literal("help")
+        .then(Commands.literal("help")
         .executes(ctx -> {
             CalcMessageBuilder message = execute();
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -33,16 +33,16 @@ public class Help {
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("help")
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute();
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }));
-        return command;
-    }
+//    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+//        command
+//        .then(CommandManager.literal("help")
+//        .executes(ctx -> {
+//            CalcMessageBuilder message = execute();
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        }));
+//        return command;
+//    }
 
     public static CalcMessageBuilder execute(String... hterm) {
         Map<String, String> help = new LinkedHashMap<String, String>();

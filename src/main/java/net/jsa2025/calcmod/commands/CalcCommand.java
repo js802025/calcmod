@@ -5,30 +5,23 @@ import java.text.NumberFormat;
 import com.mojang.brigadier.CommandDispatcher;
 
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
 import net.jsa2025.calcmod.commands.subcommands.Random;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.message.MessageType;
-import net.minecraft.network.message.SentMessage;
-import net.minecraft.network.message.SignedMessage;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
 
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
+
 import org.mariuszgromada.math.mxparser.Function;
 import org.mariuszgromada.math.mxparser.PrimitiveElement;
 
@@ -40,8 +33,8 @@ public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
-        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
+    public static void register (CommandDispatcher<CommandSourceStack> dispatcher) {
+        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
         command = Basic.register(command);
         command = Storage.register(command);
         command = Nether.register(command);
@@ -55,7 +48,7 @@ public class CalcCommand {
         command = Rates.register(command);
         command = AllayStorage.register(command);
         command = Random.register(command);
-        command = Craft.register(command, registry);
+        command = Craft.register(command);
         command = SignalToItems.register(command);
         command = Piglin.register(command);
         command = Distance.register(command);
@@ -66,31 +59,31 @@ public class CalcCommand {
 
     }
     
-    public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
-        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
-        Basic.registerServer(command);
-        command = Storage.registerServer(command);
-        command = Nether.registerServer(command);
-        command = Overworld.registerServer(command);
-        command = SbToItem.registerServer(command);
-        command = ItemToSb.registerServer(command);
-        command = SecondsToHopperClock.registerServer(command);
-        command = SecondsToRepeater.registerServer(command);
-        command = ItemToStack.registerServer(command);
-        command = StackToItem.registerServer(command);
-        command = Rates.registerServer(command);
-        command = AllayStorage.registerServer(command);
-        command = Random.registerServer(command);
-        command = Craft.registerServer(command, registry);
-        command = SignalToItems.registerServer(command);
-        command = Piglin.registerServer(command);
-        command = Distance.registerServer(command);
-        command = Custom.registerServer(command);
-        command = Variables.registerServer(command);
-        command = Help.registerServer(command);
-
-        dispatcher.register(command);
-    }
+//    public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
+//        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
+//        Basic.registerServer(command);
+//        command = Storage.registerServer(command);
+//        command = Nether.registerServer(command);
+//        command = Overworld.registerServer(command);
+//        command = SbToItem.registerServer(command);
+//        command = ItemToSb.registerServer(command);
+//        command = SecondsToHopperClock.registerServer(command);
+//        command = SecondsToRepeater.registerServer(command);
+//        command = ItemToStack.registerServer(command);
+//        command = StackToItem.registerServer(command);
+//        command = Rates.registerServer(command);
+//        command = AllayStorage.registerServer(command);
+//        command = Random.registerServer(command);
+//        command = Craft.registerServer(command, registry);
+//        command = SignalToItems.registerServer(command);
+//        command = Piglin.registerServer(command);
+//        command = Distance.registerServer(command);
+//        command = Custom.registerServer(command);
+//        command = Variables.registerServer(command);
+//        command = Help.registerServer(command);
+//
+//        dispatcher.register(command);
+//    }
 
    
 
@@ -111,10 +104,10 @@ public class CalcCommand {
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
-            vars.put("x", (double) player.getBlockPos().getX());
-            vars.put("y", (double) player.getBlockPos().getY());
-            vars.put("z", (double) player.getBlockPos().getZ());
-            vars.put("health", (double) ((PlayerEntity) player).getHealth());
+            vars.put("x", (double) player.getX());
+            vars.put("y", (double) player.getY());
+            vars.put("z", (double) player.getZ());
+            vars.put("health", (double) ((Player) player).getHealth());
         }
        //
         vars.put("dub", vars.get("dub"+ stackSize));
@@ -199,47 +192,48 @@ public class CalcCommand {
 //        source.getPlayer().sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
 //    }
     
-    public static void sendMessage(FabricClientCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(messageBuilder.generateStyledText());
+    public static void sendMessage(CommandSourceStack source, CalcMessageBuilder messageBuilder) {
+        source.getSender().sendMessage(messageBuilder.generateStyledText());
+
 
     }
     
-    public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) {
-        var messageText = Text.literal("");
-        String m = "";
-        for (var i = 0; i < message.length; i++) {
-           if (i % 2 == 0) {
-            messageText.append(Text.literal(message[i]));
-            m += message[i];
-           } else {
-            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(message[i]))));
-            m += message[i];
-           }
-
-        }
-
-
-        if (isHelpMessage.length > 0) {
-            if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
-                return;
-            } 
-        }
-        messageText.append(Text.literal(" "));
-        source.sendChatMessage(SentMessage.of(SignedMessage.ofUnsigned("hello")), true, MessageType.params(MessageType.SAY_COMMAND, source));
-        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(m.replaceAll("§a", "").replaceAll("§f", "")))))
-                );
-    }
+//    public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) {
+//        var messageText = .literal("");
+//        String m = "";
+//        for (var i = 0; i < message.length; i++) {
+//           if (i % 2 == 0) {
+//            messageText.append(Text.literal(message[i]));
+//            m += message[i];
+//           } else {
+//            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(message[i]))));
+//            m += message[i];
+//           }
+//
+//        }
+//
+//
+//        if (isHelpMessage.length > 0) {
+//            if (isHelpMessage[0]) {
+//                source.getPlayer().sendMessage(messageText);
+//                return;
+//            }
+//        }
+//        messageText.append(Text.literal(" "));
+//        source.sendChatMessage(SentMessage.of(SignedMessage.ofUnsigned("hello")), true, MessageType.params(MessageType.SAY_COMMAND, source));
+//        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(m.replaceAll("§a", "").replaceAll("§f", "")))))
+//                );
+//    }
     
-    public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(new Supplier<Text>() {
-            @Override
-            public Text get() {
-                return messageBuilder.generateStyledText();
-            }
-        }, Objects.isNull(source.getPlayer()));
-
-    }
+//    public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
+//        source.sendFeedback(new Supplier<Text>() {
+//            @Override
+//            public Text get() {
+//                return messageBuilder.generateStyledText();
+//            }
+//        }, Objects.isNull(source.getPlayer()));
+//
+//    }
 
     
 

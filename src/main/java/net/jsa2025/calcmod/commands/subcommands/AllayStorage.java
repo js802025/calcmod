@@ -5,9 +5,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 
-
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
 import java.text.DecimalFormat;
@@ -16,21 +15,19 @@ import java.util.Locale;
 
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import org.bukkit.entity.Entity;
 
 public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(ClientCommandManager.literal("allaystorage").then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
+        .then(Commands.literal("allaystorage").then(Commands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getExecutor(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })).then(ClientCommandManager.literal("help").executes((ctx) -> {
+        })).then(Commands.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("allaystorage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -38,20 +35,20 @@ public class AllayStorage {
         return command;
     }
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("allaystorage").then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("allaystorage");
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })));
-        return command;
-    }
-    
+//    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+//        command
+//        .then(CommandManager.literal("allaystorage").then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+//            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        })).then(CommandManager.literal("help").executes((ctx) -> {
+//            CalcMessageBuilder message = Help.execute("allaystorage");
+//            CalcCommand.sendMessageServer(ctx.getSource(), message);
+//            return 1;
+//        })));
+//        return command;
+//    }
+//
 
     public static CalcMessageBuilder execute(Entity player, String itemsperhour) {
         double rates = CalcCommand.getParsedExpression(player, itemsperhour, 1);
