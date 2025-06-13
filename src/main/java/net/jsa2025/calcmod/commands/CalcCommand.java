@@ -114,11 +114,11 @@ public class CalcCommand {
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
             vars.put("x", (double) player.blockPosition().getX());
-            vars.put("y", (double) player.blockPosition().getX());
+            vars.put("y", (double) player.blockPosition().getY());
             vars.put("z", (double) player.blockPosition().getZ());
             vars.put("health", (double) ((Player) player).getHealth());
         }
-       //
+        //
         vars.put("dub", vars.get("dub"+ stackSize));
         vars.put("sb", vars.get("sb"+stackSize));
         vars.put("stack", vars.get("stack"+stackSize));
@@ -128,7 +128,15 @@ public class CalcCommand {
         //hide funcs from replace
         for (int f = 0; f< parsedCustomFunctions.size(); f++) {
             String func = parsedCustomFunctions.get(f);
-            withVars = withVars.replaceAll(func.split("[(]")[0], "{"+f+"}");
+            withVars = withVars.replaceAll(func.split("[(]")[0]+"[(]", "func"+f+"(");
+            func = func.replaceAll(func.split("[(]")[0]+"[(]", "func"+f+"(");
+            String[] funcVars = func.split("[(]")[1].split("[)]")[0].split(", ");
+            for (int v = 0; v < funcVars.length; v++) {
+                func = func.replaceAll(funcVars[v], "var"+f+v);
+            }
+
+
+            parsedCustomFunctions.set(f, func);
         }
         ArrayList<PrimitiveElement> primitiveElements = new ArrayList<>();
         for (String key : vars.keySet()) {
@@ -146,11 +154,11 @@ public class CalcCommand {
 
 
         for (int f = 0; f < parsedCustomFunctions.size(); f++) {
-            withVars = withVars.replaceAll("[{]"+f+"[}]", parsedCustomFunctions.get(f).split("[(]")[0]);
+            CalcMod.LOGGER.info(parsedCustomFunctions.get(f));
             primitiveElements.add(new Function(parsedCustomFunctions.get(f)));
         }
         CalcMod.LOGGER.info("Parsed "+withVars);
-            return new Expression(withVars, primitiveElements.toArray(new PrimitiveElement[0] )).calculate();
+        return new Expression(withVars, primitiveElements.toArray(new PrimitiveElement[0] )).calculate();
         }
     static boolean contains(String[] array, String value) {
         for (String str : array) {
