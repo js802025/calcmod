@@ -11,6 +11,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
 
 public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
     
@@ -27,14 +30,17 @@ public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourc
 
         //     return item;
         // });
-        Stream<ResourceLocation> recipeStream = context.getSource().getRecipeManager().getRecipeIds();
+        Stream<RecipeHolder<?>> recipeStream = context.getSource().getRecipeManager().getRecipes().stream();
         recipeStream.forEach(recipe -> {
-            String item = recipe.getPath();
-            if (item == null) {
-                return;
-            }
-            if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
-                builder.suggest(recipe.getNamespace()+":"+item);
+            if (!recipe.value().display().isEmpty() && (recipe.value().display().get(0).type().equals(ShapedCraftingRecipeDisplay.TYPE) || recipe.value().display().get(0).type().equals(ShapelessCraftingRecipeDisplay.TYPE)))
+            {
+                String item = recipe.id().registry().getPath();
+                if (item == null) {
+                    return;
+                }
+                if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
+                    builder.suggest(recipe.id().registry() + ":" + item);
+                }
             }
         });
 

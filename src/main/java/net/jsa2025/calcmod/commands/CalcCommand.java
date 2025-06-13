@@ -96,6 +96,7 @@ public class CalcCommand {
    
 
     public static double getParsedExpression(Entity player, String in, Integer... nonstackable) {
+        License.iConfirmNonCommercialUse("js802025");
         int stackSize;
         if (nonstackable.length == 0) stackSize = 64;
         else stackSize = nonstackable[0];
