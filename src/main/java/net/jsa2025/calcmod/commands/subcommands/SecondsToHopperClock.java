@@ -33,7 +33,6 @@ public class SecondsToHopperClock {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
-        // Make the base command executable to show help
         secondsToHopperClockLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("secondstohopperclock");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -59,7 +58,6 @@ public class SecondsToHopperClock {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
-        // Make the base command executable to show help
         secondsToHopperClockLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("secondstohopperclock");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

@@ -34,7 +34,6 @@ public class AllayStorage {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
-        // Base command shows help
         allayStorageLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("allaystorage");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -58,7 +57,6 @@ public class AllayStorage {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
-        // Base command shows help
         allayStorageLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("allaystorage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

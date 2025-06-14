@@ -1,16 +1,12 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -19,7 +15,6 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.CCustomFunctionProvider;
 import net.jsa2025.calcmod.commands.arguments.CustomFunctionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import java.io.BufferedReader;
@@ -30,9 +25,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -94,7 +87,6 @@ public class Custom {
                 CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
                 return 0;
             }));
-        // Base command shows help
         customLiteral.executes(ctx -> {
             CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
             return 0;
@@ -159,7 +151,6 @@ public class Custom {
                 CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
                 return 0;
             }));
-        // Base command shows help
         customLiteral.executes(ctx -> {
             CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
             return 0;

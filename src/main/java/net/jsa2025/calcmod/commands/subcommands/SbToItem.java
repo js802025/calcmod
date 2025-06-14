@@ -23,23 +23,17 @@ public class SbToItem {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> sbToItemLiteral) {
-        // This will define "sbtoitem <numberofsbs>" (defaulting to stackSize 64)
-        // And "sbtoitem help"
-        // The "16s" and "1s" variants will be handled as separate commands/aliases in CalcCommand.java
-        // or by adding more specific arguments to this "sbtoitem" literal.
-        // For now, this focuses on the primary "sbtoitem" name.
         sbToItemLiteral.then(ClientCommandManager.argument("numberofsbs", StringArgumentType.greedyString())
             .executes((ctx) -> {
                 CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
                 CalcCommand.sendMessage(ctx.getSource(), message);
                 return 1;
             }))
-            .then(ClientCommandManager.literal("help").executes(ctx -> { // Making help a subcommand of sbtoitem
+            .then(ClientCommandManager.literal("help").executes(ctx -> { 
                 CalcMessageBuilder message = Help.execute("sbtoitem");
                 CalcCommand.sendMessage(ctx.getSource(), message);
                 return 1;
             }));
-        // If sbtoitem itself should be executable (e.g. /calc sbtoitem with no args shows help)
         sbToItemLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("sbtoitem");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -60,12 +54,11 @@ public class SbToItem {
                 CalcCommand.sendMessageServer(ctx.getSource(), message);
                 return 1;
             }))
-            .then(CommandManager.literal("help").executes(ctx -> { // Making help a subcommand of sbtoitem
+            .then(CommandManager.literal("help").executes(ctx -> { 
                 CalcMessageBuilder message = Help.execute("sbtoitem");
                 CalcCommand.sendMessageServer(ctx.getSource(), message);
                 return 1;
             }));
-        // If sbtoitem itself should be executable
         sbToItemLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("sbtoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
@@ -79,7 +72,6 @@ public class SbToItem {
         return sbToItemLiteral;
     }
 
-    // Execute method remains the same, stackSize is passed by the command's executes block
     public static CalcMessageBuilder execute(Entity player, String numberofsbs, int stackSize) {
         double sbs = CalcCommand.getParsedExpression(player, numberofsbs, stackSize);
         double items = sbs * stackSize * 27;

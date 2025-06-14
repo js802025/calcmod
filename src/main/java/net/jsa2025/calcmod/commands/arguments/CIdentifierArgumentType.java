@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 
 public class CIdentifierArgumentType implements ArgumentType<Identifier> {
     private static final Collection<String> EXAMPLES = Arrays.asList("foo", "foo:bar", "012");
-    private static final DynamicCommandExceptionType UNKNOWN_ADVANCEMENT_EXCEPTION = new DynamicCommandExceptionType(id -> Text.stringifiedTranslatable("advancement.advancementNotFound", id));
+    //private static final DynamicCommandExceptionType UNKNOWN_ADVANCEMENT_EXCEPTION = new DynamicCommandExceptionType(id -> Text.stringifiedTranslatable("advancement.advancementNotFound", id));
     private static final DynamicCommandExceptionType UNKNOWN_RECIPE_EXCEPTION = new DynamicCommandExceptionType(id -> Text.stringifiedTranslatable("recipe.notFound", id));
 
     public static CIdentifierArgumentType identifier() {

@@ -1,6 +1,5 @@
 package net.jsa2025.calcmod.commands.arguments;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -9,7 +8,6 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class ContainerSuggestionProvider implements SuggestionProvider<ServerCommandSource> {
@@ -50,9 +48,6 @@ public class ContainerSuggestionProvider implements SuggestionProvider<ServerCom
             }
         }
 
-
-
-        
     return builder.buildFuture();
     }
     

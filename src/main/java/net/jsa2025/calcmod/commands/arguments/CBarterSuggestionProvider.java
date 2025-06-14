@@ -36,9 +36,6 @@ public class CBarterSuggestionProvider implements SuggestionProvider<FabricClien
                 builder.suggest(b);
             }
         }
-
-
-
         
     return builder.buildFuture();
     }

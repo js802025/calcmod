@@ -41,7 +41,6 @@ public class Random {
                 CalcCommand.sendMessage(ctx.getSource(), message);
                 return 1;
             }));
-        // Make the base command executable to show help
         randomLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("random");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -73,7 +72,6 @@ public class Random {
                 CalcCommand.sendMessageServer(ctx.getSource(), message);
                 return 1;
             }));
-        // Make the base command executable to show help
         randomLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("random");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

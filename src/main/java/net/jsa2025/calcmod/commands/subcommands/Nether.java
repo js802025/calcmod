@@ -7,9 +7,7 @@ import dev.xpple.clientarguments.arguments.CBlockPosArgument;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
-//import net.minecraft.core.BlockPos;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
 import java.text.DecimalFormat;

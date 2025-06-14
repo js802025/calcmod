@@ -46,7 +46,6 @@ public class Piglin {
                 CalcCommand.sendMessage(ctx.getSource(), message);
                 return 1;
             }));
-        // Base command shows help
         barterLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("barter");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -87,7 +86,6 @@ public class Piglin {
                 CalcCommand.sendMessageServer(ctx.getSource(), message);
                 return 1;
             }));
-        // Base command shows help
         barterLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("barter");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

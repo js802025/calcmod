@@ -2,9 +2,9 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder; // Added for itemArgument
-import com.mojang.serialization.Dynamic;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder; 
 
 import net.jsa2025.calcmod.CalcMod;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
@@ -18,11 +18,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.command.CommandRegistryAccess;
-// import net.minecraft.command.argument.IdentifierArgumentType; // No longer needed by client if all string
 import net.minecraft.entity.Entity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items; 
@@ -44,11 +40,15 @@ public class Craft {
     public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
         LiteralArgumentBuilder<FabricClientCommandSource> craftLiteral = ClientCommandManager.literal("craft");
 
-        RequiredArgumentBuilder<FabricClientCommandSource, String> itemArgument = ClientCommandManager.argument("item", StringArgumentType.string())
+        RequiredArgumentBuilder<FabricClientCommandSource, Identifier> itemArgument = ClientCommandManager.argument("item", CIdentifierArgumentType.identifier())
             .suggests(new CRecipeSuggestionProvider())
-            .executes(ctx -> { // Path: /calc craft <item> (default amount "1", default depth 1)
-                String itemName = StringArgumentType.getString(ctx, "item");
-                Identifier itemId = Identifier.of(itemName);
+            .executes(ctx -> { 
+                Identifier itemId = CIdentifierArgumentType.getIdentifier(ctx, "item");
+                String itemName = itemId.toString();
+                if (!itemId.toString().contains(":")) {
+                    ctx.getSource().sendError(Text.literal("Invalid item format: '"+itemId.toString()+"'. Please use a namespaced ID like 'minecraft:"+itemId.toString()+"'."));
+                    return 0; 
+                }
                 Item item = Registries.ITEM.get(itemId);
                 if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
                     ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
@@ -60,11 +60,14 @@ public class Craft {
                 return 1;
             });
 
-        // Path: /calc craft <item> <amount> (default depth 1)
-        itemArgument.then(ClientCommandManager.argument("amount", StringArgumentType.string()) // Changed from greedyString
+        itemArgument.then(ClientCommandManager.argument("amount", StringArgumentType.string()) 
             .executes(ctx -> {
-                String itemName = StringArgumentType.getString(ctx, "item");
-                Identifier itemId = Identifier.of(itemName);
+                Identifier itemId = CIdentifierArgumentType.getIdentifier(ctx, "item");
+                String itemName = itemId.toString();
+                if (!itemId.toString().contains(":")) {
+                    ctx.getSource().sendError(Text.literal("Invalid item format: '"+itemId.toString()+"'. Please use a namespaced ID like 'minecraft:"+itemId.toString()+"'."));
+                    return 0; 
+                }
                 Item item = Registries.ITEM.get(itemId);
                 if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
                     ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
@@ -77,13 +80,16 @@ public class Craft {
                 return 1;
             }));
 
-        // Path: /calc craft <item> depth <level> <amount_with_depth>
         itemArgument.then(ClientCommandManager.literal("depth")
             .then(ClientCommandManager.argument("level", IntegerArgumentType.integer())
                 .then(ClientCommandManager.argument("amount_with_depth", StringArgumentType.greedyString()) 
                     .executes(ctx -> {
-                        String itemName = StringArgumentType.getString(ctx, "item");
-                        Identifier itemId = Identifier.of(itemName);
+                        Identifier itemId = CIdentifierArgumentType.getIdentifier(ctx, "item");
+                        String itemName = itemId.toString();
+                        if (!itemId.toString().contains(":")) {
+                            ctx.getSource().sendError(Text.literal("Invalid item format: '"+itemId.toString()+"'. Please use a namespaced ID like 'minecraft:"+itemId.toString()+"'."));
+                            return 0; 
+                        }
                         Item item = Registries.ITEM.get(itemId);
                         if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
                             ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
@@ -99,7 +105,6 @@ public class Craft {
         
         craftLiteral.then(itemArgument);
         
-        // Path 4: /calc craft help
         craftLiteral.then(ClientCommandManager.literal("help")
             .executes(ctx -> {
                 CalcMessageBuilder message = Help.execute("craft");
@@ -115,8 +120,6 @@ public class Craft {
     public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
         var craftLiteral = CommandManager.literal("craft"); 
         
-        // Server-side still uses distinct item argument names as per its existing structure from Subtask 13
-        // This subtask is focused on client-side. Server-side remains unchanged from its last correct state.
         craftLiteral.then(CommandManager.argument("item", StringArgumentType.string()).suggests(new RecipeSuggestionProvider())
             .executes(ctx -> { 
                 String itemName = StringArgumentType.getString(ctx, "item");

@@ -4,7 +4,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.Map;
@@ -37,9 +36,6 @@ public class BarterSuggestionProvider implements SuggestionProvider<ServerComman
                 builder.suggest(b);
             }
         }
-
-
-
         
     return builder.buildFuture();
     }

@@ -34,7 +34,6 @@ public class Rates {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
-        // Base command shows help
         ratesLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("rates");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -61,7 +60,6 @@ public class Rates {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
-        // Base command shows help
         ratesLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("rates");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

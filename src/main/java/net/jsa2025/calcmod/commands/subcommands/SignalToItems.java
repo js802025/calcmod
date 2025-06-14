@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.CommandNode;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.CContainerSuggestionProvider;
@@ -21,12 +20,6 @@ import net.minecraft.server.command.ServerCommandSource;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
-
-
-
-
-
-
 
 public class SignalToItems {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -45,7 +38,6 @@ public class SignalToItems {
                 CalcCommand.sendMessage(ctx.getSource(), message);
                 return 1;
             }));
-        // Base command shows help
         signalToItemsLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("signaltoitems");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -72,7 +64,6 @@ public class SignalToItems {
                 CalcCommand.sendMessageServer(ctx.getSource(), message);
                 return 1;
             }));
-        // Base command shows help
         signalToItemsLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("signaltoitems");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

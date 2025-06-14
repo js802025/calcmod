@@ -1,6 +1,5 @@
 package net.jsa2025.calcmod.commands.arguments;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 

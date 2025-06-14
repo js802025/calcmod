@@ -22,14 +22,12 @@ public class StackToItem {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> stackToItemLiteral) {
-        // Path 1: /calc stacktoitem help (Literal, most specific)
         stackToItemLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("stacktoitem");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
 
-        // Path 2: /calc stacktoitem <numberofstacks> (Greedy string, more general)
         stackToItemLiteral.then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
@@ -37,7 +35,6 @@ public class StackToItem {
             return 1;
         }));
         
-        // Base command shows help
         stackToItemLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("stacktoitem");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -52,14 +49,12 @@ public class StackToItem {
     }
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> stackToItemLiteral) {
-        // Path 1: /calc stacktoitem help (Literal, most specific)
         stackToItemLiteral.then(CommandManager.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("stacktoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
 
-        // Path 2: /calc stacktoitem <numberofstacks> (Greedy string, more general)
         stackToItemLiteral.then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
@@ -67,7 +62,6 @@ public class StackToItem {
             return 1;
         }));
         
-        // Base command shows help
         stackToItemLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("stacktoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

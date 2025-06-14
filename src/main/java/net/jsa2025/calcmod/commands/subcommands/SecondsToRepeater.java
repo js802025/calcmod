@@ -33,7 +33,6 @@ public class SecondsToRepeater {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
-        // Make the base command executable to show help
         secondsToRepeaterLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("secondstorepeater");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -59,7 +58,6 @@ public class SecondsToRepeater {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
-        // Make the base command executable to show help
         secondsToRepeaterLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("secondstorepeater");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

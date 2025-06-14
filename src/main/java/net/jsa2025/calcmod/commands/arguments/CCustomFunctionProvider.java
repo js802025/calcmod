@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.subcommands.Custom;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class CCustomFunctionProvider implements SuggestionProvider<FabricClientCommandSource> {
@@ -20,7 +19,6 @@ public class CCustomFunctionProvider implements SuggestionProvider<FabricClientC
             builder.suggest(func.split("= ")[0]);
         });
 
-
         return builder.buildFuture();
     }
-    }
+}

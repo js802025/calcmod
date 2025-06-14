@@ -14,7 +14,6 @@ import java.util.Locale;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -34,7 +33,6 @@ public class ItemToStack {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
-        // Base command shows help
         itemToStackLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("itemtostack");
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -60,7 +58,6 @@ public class ItemToStack {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
-        // Base command shows help
         itemToStackLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("itemtostack");
             CalcCommand.sendMessageServer(ctx.getSource(), message);

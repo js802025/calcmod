@@ -1,7 +1,6 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
-
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -25,7 +24,7 @@ public class Help {
     public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
         LiteralArgumentBuilder<FabricClientCommandSource> helpLiteral = ClientCommandManager.literal("help");
         helpLiteral.executes(ctx -> {
-            CalcMessageBuilder message = execute(); // Calls execute without args for general help
+            CalcMessageBuilder message = execute(); 
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
@@ -35,7 +34,7 @@ public class Help {
     public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
         LiteralArgumentBuilder<ServerCommandSource> helpLiteral = CommandManager.literal("help");
         helpLiteral.executes(ctx -> {
-            CalcMessageBuilder message = execute(); // Calls execute without args for general help
+            CalcMessageBuilder message = execute(); 
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
