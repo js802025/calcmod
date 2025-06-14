@@ -42,13 +42,13 @@ public class Custom {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     public static final File commandFile = new File(".", "config/calcmod.json");
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command = command.then(ClientCommandManager.literal("custom")
-                .then(ClientCommandManager.literal("add")
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> customLiteral) {
+        customLiteral
+            .then(ClientCommandManager.literal("add")
                 .then(ClientCommandManager.argument("name", StringArgumentType.string())
-                        .then(ClientCommandManager.argument("function", StringArgumentType.greedyString())
-                                .executes((ctx) -> {
-                                    String function = StringArgumentType.getString(ctx, "function");
+                    .then(ClientCommandManager.argument("function", StringArgumentType.greedyString())
+                        .executes((ctx) -> {
+                            String function = StringArgumentType.getString(ctx, "function");
                                     String name = StringArgumentType.getString(ctx, "name");
                                     CalcMessageBuilder messageBuilder;
                                     if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
@@ -64,51 +64,56 @@ public class Custom {
 
                                     return 0;
                                 }))))
-                                .then(ClientCommandManager.literal("list").executes(ctx -> {
-                                    JsonObject fs = getFunctions();
-                                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
-                                    CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                }))
-                        .then(ClientCommandManager.literal("remove")
-                                .then(ClientCommandManager.argument("name", StringArgumentType.greedyString()).suggests(new CCustomFunctionProvider())
-                                .executes(ctx -> {
-                                    String name = StringArgumentType.getString(ctx, "name");
-                                    deleteCommand(name);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
-                                    CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                })))
-                                .then(ClientCommandManager.literal("run")
-                                        .then(ClientCommandManager.argument("function", StringArgumentType.greedyString())
-                                                .suggests(new CCustomFunctionProvider())
-                                                .executes((ctx) -> {
-                                                    String eqn = StringArgumentType.getString(ctx, "function");
-                                                    double result = CalcCommand.getParsedExpression(ctx.getSource().getEntity(), eqn);
-                                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
-                                                    CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
-                                                    return 0;
-                                                })))
-                        .then(ClientCommandManager.literal("help").executes(ctx -> {
-                            CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
-                            return 0;
-                        }))
+            .then(ClientCommandManager.literal("list").executes(ctx -> {
+                JsonObject fs = getFunctions();
+                String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
+                CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
+                CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
+                return 0;
+            }))
+            .then(ClientCommandManager.literal("remove")
+                .then(ClientCommandManager.argument("name", StringArgumentType.greedyString()).suggests(new CCustomFunctionProvider())
+                    .executes(ctx -> {
+                        String name = StringArgumentType.getString(ctx, "name");
+                        deleteCommand(name);
+                        CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
+                        CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
+                        return 0;
+                    })))
+            .then(ClientCommandManager.literal("run")
+                .then(ClientCommandManager.argument("function", StringArgumentType.greedyString())
+                    .suggests(new CCustomFunctionProvider())
+                    .executes((ctx) -> {
+                        String eqn = StringArgumentType.getString(ctx, "function");
+                        double result = CalcCommand.getParsedExpression(ctx.getSource().getEntity(), eqn);
+                        CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
+                        CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
+                        return 0;
+                    })))
+            .then(ClientCommandManager.literal("help").executes(ctx -> {
+                CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
+                return 0;
+            }));
+        // Base command shows help
+        customLiteral.executes(ctx -> {
+            CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
+            return 0;
+        });
+    }
 
-                                
-                                );
-
-        
-        return command;
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> customLiteral = ClientCommandManager.literal("custom");
+        populateClient(customLiteral);
+        return customLiteral;
     }
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command = command.then(CommandManager.literal("custom")
-                .then(CommandManager.literal("add")
-                        .then(CommandManager.argument("name", StringArgumentType.string())
-                                .then(CommandManager.argument("function", StringArgumentType.greedyString())
-                                        .executes((ctx) -> {
-                                            String function = StringArgumentType.getString(ctx, "function");
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> customLiteral) {
+        customLiteral
+            .then(CommandManager.literal("add")
+                .then(CommandManager.argument("name", StringArgumentType.string())
+                    .then(CommandManager.argument("function", StringArgumentType.greedyString())
+                        .executes((ctx) -> {
+                            String function = StringArgumentType.getString(ctx, "function");
                                             String name = StringArgumentType.getString(ctx, "name");
                                             CalcMessageBuilder messageBuilder;
                                             if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
@@ -120,51 +125,52 @@ public class Custom {
                                                 messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
                                             }
 
-
                                             CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
 
                                             return 0;
                                         }))))
-                .then(CommandManager.literal("list").executes(ctx -> {
-                    JsonObject fs = getFunctions();
-                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
-                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
-                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
-                    return 0;
-                }))
-                .then(CommandManager.literal("remove")
-                        .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new CustomFunctionProvider())
-                                .executes(ctx -> {
-                                    String name = StringArgumentType.getString(ctx, "name");
-                                    deleteCommand(name);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
-                                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                })))
-                .then(CommandManager.literal("run")
-                        .then(CommandManager.argument("function", StringArgumentType.greedyString())
-                                .suggests(new CustomFunctionProvider())
-                                .executes((ctx) -> {
-                                    String eqn = StringArgumentType.getString(ctx, "function");
-                                    double result = CalcCommand.getParsedExpression(ctx.getSource().getEntity(), eqn);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
-                                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
-                                    return 0;
-                                }))
-
-
-
-        ).then(CommandManager.literal("help").executes(ctx -> {
-                            CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
-                            return 0;
-                        }))
-
-        );
-
-
-        return command;
+            .then(CommandManager.literal("list").executes(ctx -> {
+                JsonObject fs = getFunctions();
+                String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
+                CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
+                CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
+                return 0;
+            }))
+            .then(CommandManager.literal("remove")
+                .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new CustomFunctionProvider())
+                    .executes(ctx -> {
+                        String name = StringArgumentType.getString(ctx, "name");
+                        deleteCommand(name);
+                        CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
+                        CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
+                        return 0;
+                    })))
+            .then(CommandManager.literal("run")
+                .then(CommandManager.argument("function", StringArgumentType.greedyString())
+                    .suggests(new CustomFunctionProvider())
+                    .executes((ctx) -> {
+                        String eqn = StringArgumentType.getString(ctx, "function");
+                        double result = CalcCommand.getParsedExpression(ctx.getSource().getEntity(), eqn);
+                        CalcMessageBuilder messageBuilder = new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {eqn}, new String[] {nf.format(result)});
+                        CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
+                        return 0;
+                    })))
+            .then(CommandManager.literal("help").executes(ctx -> {
+                CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
+                return 0;
+            }));
+        // Base command shows help
+        customLiteral.executes(ctx -> {
+            CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
+            return 0;
+        });
     }
 
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> customLiteral = CommandManager.literal("custom");
+        populateServer(customLiteral);
+        return customLiteral;
+    }
 
     public static ArrayList<String> parseEquationVariables(String input) {
         String patternString = "\\[([^\\]]+)\\]";//"\\[[^\\]]+\\]";

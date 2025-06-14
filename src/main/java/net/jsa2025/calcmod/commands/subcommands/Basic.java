@@ -31,24 +31,26 @@ public class Basic {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }));
-        return command;
+    // Changed to return its own literal for client
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClient() {
+        return ClientCommandManager.literal("eval")
+            .then(ClientCommandManager.argument("expression", StringArgumentType.greedyString())
+                .executes((ctx) -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
+                    CalcCommand.sendMessage(ctx.getSource(), message);
+                    return 1;
+                }));
     }
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }));
-        return command;
+    // Changed to return its own literal for server
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServer() {
+        return CommandManager.literal("eval")
+            .then(CommandManager.argument("expression", StringArgumentType.greedyString())
+                .executes((ctx) -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
+                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+                    return 1;
+                }));
     }
 
     public static CalcMessageBuilder execute(Entity player, String expression) {

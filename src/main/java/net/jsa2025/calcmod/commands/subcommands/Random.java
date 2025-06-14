@@ -23,48 +23,69 @@ public class Random {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("random")
-        .then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(ClientCommandManager.literal("minmax").then(ClientCommandManager.argument("min", StringArgumentType.string()).then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> randomLiteral) {
+        randomLiteral
+            .then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            }))
+            .then(ClientCommandManager.literal("minmax").then(ClientCommandManager.argument("min", StringArgumentType.string())
+                .then(ClientCommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+                    CalcCommand.sendMessage(ctx.getSource(), message);
+                    return 1;
+                }))))
+            .then(ClientCommandManager.literal("help").executes(ctx -> {
+                CalcMessageBuilder message = Help.execute("random");
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            }));
+        // Make the base command executable to show help
+        randomLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("random");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("random")
-        .then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(CommandManager.literal("minmax").then(CommandManager.argument("min", StringArgumentType.string()).then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))))
-        .then(CommandManager.literal("help").executes(ctx -> {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> randomLiteral = ClientCommandManager.literal("random");
+        populateClient(randomLiteral);
+        return randomLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> randomLiteral) {
+        randomLiteral
+            .then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "max"));
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            }))
+            .then(CommandManager.literal("minmax").then(CommandManager.argument("min", StringArgumentType.string())
+                .then(CommandManager.argument("max", StringArgumentType.greedyString()).executes(ctx -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(),  StringArgumentType.getString(ctx, "min"), StringArgumentType.getString(ctx, "max"));
+                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+                    return 1;
+                }))))
+            .then(CommandManager.literal("help").executes(ctx -> {
+                CalcMessageBuilder message = Help.execute("random");
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            }));
+        // Make the base command executable to show help
+        randomLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("random");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        });
     }
 
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> randomLiteral = CommandManager.literal("random");
+        populateServer(randomLiteral);
+        return randomLiteral;
+    }
 
     public static CalcMessageBuilder execute(Entity player, String... range) {
         if (range.length == 1) {

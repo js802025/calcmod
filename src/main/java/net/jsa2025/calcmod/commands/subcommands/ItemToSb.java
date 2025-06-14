@@ -21,62 +21,69 @@ public class ItemToSb {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("itemtosb").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 64);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(ClientCommandManager.literal("16s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 16);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(ClientCommandManager.literal("1s").then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 1);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> itemToSbLiteral) {
+        // Defines "itemtosb <numberofitems>" (defaulting to stackSize 64)
+        // and "itemtosb help"
+        // Path 1: /calc itemtosb help (Literal, most specific)
+        itemToSbLiteral.then(ClientCommandManager.literal("help").executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("itemtosb");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+
+        // Path 2: /calc itemtosb <numberofitems> (Greedy string, more general)
+        itemToSbLiteral.then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
+            .executes((ctx) -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            }));
+        
+        // Base command /calc itemtosb shows help
+        itemToSbLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("itemtosb");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("itemtosb").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 64);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(CommandManager.literal("16s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 16);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(CommandManager.literal("1s").then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 1);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> itemToSbLiteral = ClientCommandManager.literal("itemtosb");
+        populateClient(itemToSbLiteral);
+        return itemToSbLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> itemToSbLiteral) {
+        // Path 1: /calc itemtosb help (Literal, most specific)
+        itemToSbLiteral.then(CommandManager.literal("help").executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("itemtosb");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+
+        // Path 2: /calc itemtosb <numberofitems> (Greedy string, more general)
+        itemToSbLiteral.then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
+            .executes((ctx) -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 64);
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            }));
+        
+        // Base command /calc itemtosb shows help
+        itemToSbLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("itemtosb");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        });
     }
 
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> itemToSbLiteral = CommandManager.literal("itemtosb");
+        populateServer(itemToSbLiteral);
+        return itemToSbLiteral;
+    }
+
+    // Execute method remains the same, stackSize is passed by the command's executes block
     public static CalcMessageBuilder execute(Entity player, String numberofitems, int stackSize) {
         double items = CalcCommand.getParsedExpression(player, numberofitems, stackSize);
         double sbs = items / (stackSize * 27);

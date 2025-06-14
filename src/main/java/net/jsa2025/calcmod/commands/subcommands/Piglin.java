@@ -18,12 +18,12 @@ import java.util.Locale;
 public class Piglin {
 
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-                .then(ClientCommandManager.literal("barter")
-                        .then(ClientCommandManager.literal("toitem")
-                        .then(ClientCommandManager.argument("gold", StringArgumentType.string())
-                                .then(ClientCommandManager.argument("item", StringArgumentType.string()).suggests(new CBarterSuggestionProvider())
+    
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> barterLiteral) {
+        barterLiteral
+            .then(ClientCommandManager.literal("toitem")
+                .then(ClientCommandManager.argument("gold", StringArgumentType.string())
+                    .then(ClientCommandManager.argument("item", StringArgumentType.string()).suggests(new CBarterSuggestionProvider())
                         .executes((ctx) -> {
                             String gold = StringArgumentType.getString(ctx, "gold");
                             String item = StringArgumentType.getString(ctx, "item");
@@ -31,53 +31,74 @@ public class Piglin {
                             CalcCommand.sendMessage(ctx.getSource(), message);
                             return 1;
                         }))))
-                        .then(ClientCommandManager.literal("togold")
-                                .then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
-                                        .then(ClientCommandManager.argument("item", StringArgumentType.string()).suggests(new CBarterSuggestionProvider())
-                                                .executes((ctx) -> {
-                                                    String gold = StringArgumentType.getString(ctx, "numberofitems");
-                                                    String item = StringArgumentType.getString(ctx, "item");
-                                                    CalcMessageBuilder message = executeToGold(ctx.getSource().getEntity(), gold, item);
-                                                    CalcCommand.sendMessage(ctx.getSource(), message);
-                                                    return 1;
-                                                }))))
-                        .then(ClientCommandManager.literal("help").executes((ctx) -> {
-                    CalcMessageBuilder message = Help.execute("barter");
-                    CalcCommand.sendMessage(ctx.getSource(), message);
-                    return 1;
-                })));
-        return command;
+            .then(ClientCommandManager.literal("togold")
+                .then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
+                    .then(ClientCommandManager.argument("item", StringArgumentType.string()).suggests(new CBarterSuggestionProvider())
+                        .executes((ctx) -> {
+                            String gold = StringArgumentType.getString(ctx, "numberofitems");
+                            String item = StringArgumentType.getString(ctx, "item");
+                            CalcMessageBuilder message = executeToGold(ctx.getSource().getEntity(), gold, item);
+                            CalcCommand.sendMessage(ctx.getSource(), message);
+                            return 1;
+                        }))))
+            .then(ClientCommandManager.literal("help").executes((ctx) -> {
+                CalcMessageBuilder message = Help.execute("barter");
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            }));
+        // Base command shows help
+        barterLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("barter");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-                .then(CommandManager.literal("barter")
-                        .then(CommandManager.literal("toitem")
-                        .then(CommandManager.argument("gold", StringArgumentType.string())
-                                .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
-                                        .executes((ctx) -> {
-                                            String gold = StringArgumentType.getString(ctx, "gold");
-                                            String item = StringArgumentType.getString(ctx, "item");
-                                            CalcMessageBuilder message = executeToItems(ctx.getSource().getEntity(), gold, item);
-                                            CalcCommand.sendMessageServer(ctx.getSource(), message);
-                                            return 1;
-                                        }))))
-                        .then(CommandManager.literal("togold")
-                                .then(CommandManager.argument("numberofitems", StringArgumentType.string())
-                                        .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
-                                                .executes((ctx) -> {
-                                                    String gold = StringArgumentType.getString(ctx, "numberofitems");
-                                                    String item = StringArgumentType.getString(ctx, "item");
-                                                    CalcMessageBuilder message = executeToGold(ctx.getSource().getEntity(), gold, item);
-                                                    CalcCommand.sendMessageServer(ctx.getSource(), message);
-                                                    return 1;
-                                                }))))
-                        .then(CommandManager.literal("help").executes((ctx) -> {
-                            CalcMessageBuilder message = Help.execute("barter");
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> barterLiteral = ClientCommandManager.literal("barter");
+        populateClient(barterLiteral);
+        return barterLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> barterLiteral) {
+        barterLiteral
+            .then(CommandManager.literal("toitem")
+                .then(CommandManager.argument("gold", StringArgumentType.string())
+                    .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
+                        .executes((ctx) -> {
+                            String gold = StringArgumentType.getString(ctx, "gold");
+                            String item = StringArgumentType.getString(ctx, "item");
+                            CalcMessageBuilder message = executeToItems(ctx.getSource().getEntity(), gold, item);
                             CalcCommand.sendMessageServer(ctx.getSource(), message);
                             return 1;
-                        })));
-        return command;
+                        }))))
+            .then(CommandManager.literal("togold")
+                .then(CommandManager.argument("numberofitems", StringArgumentType.string())
+                    .then(CommandManager.argument("item", StringArgumentType.string()).suggests(new BarterSuggestionProvider())
+                        .executes((ctx) -> {
+                            String gold = StringArgumentType.getString(ctx, "numberofitems");
+                            String item = StringArgumentType.getString(ctx, "item");
+                            CalcMessageBuilder message = executeToGold(ctx.getSource().getEntity(), gold, item);
+                            CalcCommand.sendMessageServer(ctx.getSource(), message);
+                            return 1;
+                        }))))
+            .then(CommandManager.literal("help").executes((ctx) -> {
+                CalcMessageBuilder message = Help.execute("barter");
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            }));
+        // Base command shows help
+        barterLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("barter");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> barterLiteral = CommandManager.literal("barter");
+        populateServer(barterLiteral);
+        return barterLiteral;
     }
 
     public static CalcMessageBuilder executeToItems(Entity player, String gold, String item) {

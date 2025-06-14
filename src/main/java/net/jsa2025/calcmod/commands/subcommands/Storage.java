@@ -22,60 +22,94 @@ public class Storage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })
-        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(ClientCommandManager.literal("help").executes((ctx) -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> storageLiteral) {
+        // Path 1: /calc storage help (Literal, most specific)
+        storageLiteral.then(ClientCommandManager.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("storage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+
+        // Path 2: /calc storage <timesHopperSpeed_int> [itemsperhour_greedyString] (Specific typed argument)
+        storageLiteral.then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
+            .executes((ctx) -> { // Handles /calc storage <timesHopperSpeed>
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            })
+            .then(ClientCommandManager.argument("itemsperhour_for_speed", StringArgumentType.greedyString()) // Unique name for this amount
+            .executes((ctx) -> { // Handles /calc storage <timesHopperSpeed> <itemsperhour>
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour_for_speed"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            })));
+        
+        // Path 3: /calc storage <itemsperhour_greedyString> (Greedy string, most general)
+        // This argument name "itemsperhour" should be distinct if there's any ambiguity with other paths,
+        // but since it's the most general path and defined last among siblings, it should be okay.
+        storageLiteral.then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+            .executes((ctx) -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            }));
+
+        // Base command /calc storage shows help
+        storageLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("storage");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("storage").then(CommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })
-        .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(CommandManager.literal("help").executes((ctx) -> {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> storageLiteral = ClientCommandManager.literal("storage");
+        populateClient(storageLiteral);
+        return storageLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> storageLiteral) {
+        // Path 1: /calc storage help (Literal, most specific)
+        storageLiteral.then(CommandManager.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("storage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+
+        // Path 2: /calc storage <timesHopperSpeed_int> [itemsperhour_greedyString] (Specific typed argument)
+        storageLiteral.then(CommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
+            .executes((ctx) -> { // Handles /calc storage <timesHopperSpeed>
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            })
+            .then(CommandManager.argument("itemsperhour_for_speed", StringArgumentType.greedyString()) // Unique name
+            .executes((ctx) -> { // Handles /calc storage <timesHopperSpeed> <itemsperhour>
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour_for_speed"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            })));
+        
+        // Path 3: /calc storage <itemsperhour_greedyString> (Greedy string, most general)
+        storageLiteral.then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+            .executes((ctx) -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            }));
+        
+        // Base command /calc storage shows help
+        storageLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("storage");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> storageLiteral = CommandManager.literal("storage");
+        populateServer(storageLiteral);
+        return storageLiteral;
     }
 
     public static CalcMessageBuilder execute(Entity player, String itemsperhour, int timesHopperSpeed) {

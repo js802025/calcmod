@@ -9,38 +9,43 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+// import net.minecraft.recipe.CraftingRecipe; // No longer needed
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeSerializer; 
+// import net.minecraft.registry.Registries; // No longer needed
 import net.minecraft.util.Identifier;
+// import net.jsa2025.calcmod.CalcMod; // No longer needed for logger
+
+import java.util.Optional;
 
 public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClientCommandSource> {
     
+    // Constants for serializer IDs are no longer needed with direct comparison
+
     @Override
     public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
-        // context.getSource().getWorld().getRecipeManager().keys().map(recipe -> {
-        //     String item = recipe.getNamespace();
-        //     if (item == null) {
-        //         return item;
-        //     }
-        //     if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
-        //         builder.suggest(item);
-        //     }
+        RecipeManager recipeManager = context.getSource().getWorld().getRecipeManager();
+        String remaining = builder.getRemaining().toLowerCase();
 
-        //     return item;
-        // });
-        Stream<Identifier> recipeStream = context.getSource().getWorld().getRecipeManager().keys();
-        recipeStream.forEach(recipe -> {
-            String item = recipe.getPath();
-            if (item == null) {
-                return;
-            }
-            if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
-                builder.suggest(recipe.getNamespace()+":"+item);
+        recipeManager.keys().forEach(recipeId -> {
+            Optional<RecipeEntry<?>> recipeEntryOptional = recipeManager.get(recipeId);
+            if (recipeEntryOptional.isPresent()) {
+                Recipe<?> recipe = recipeEntryOptional.get().value();
+                RecipeSerializer<?> serializer = recipe.getSerializer();
+
+                if (serializer == RecipeSerializer.SHAPED || serializer == RecipeSerializer.SHAPELESS) {
+                    String idString = recipeId.toString();
+                    if (idString.toLowerCase().contains(remaining)) {
+                        builder.suggest(idString);
+                    }
+                }
+                // Logging for filtered recipes removed as per requirement
             }
         });
-
-
-
         
-    return builder.buildFuture();
+        return builder.buildFuture();
     }
     
 }

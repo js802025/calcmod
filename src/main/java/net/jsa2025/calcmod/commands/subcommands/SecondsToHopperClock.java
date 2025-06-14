@@ -21,9 +21,8 @@ public class SecondsToHopperClock {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("secondstohopperclock").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> secondsToHopperClockLiteral) {
+        secondsToHopperClockLiteral.then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -33,13 +32,23 @@ public class SecondsToHopperClock {
             CalcMessageBuilder message = Help.execute("secondstohopperclock");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+        // Make the base command executable to show help
+        secondsToHopperClockLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("secondstohopperclock").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> secondsToHopperClockLiteral = ClientCommandManager.literal("secondstohopperclock");
+        populateClient(secondsToHopperClockLiteral);
+        return secondsToHopperClockLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> secondsToHopperClockLiteral) {
+        secondsToHopperClockLiteral.then(CommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
@@ -49,8 +58,19 @@ public class SecondsToHopperClock {
             CalcMessageBuilder message = Help.execute("secondstohopperclock");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+        // Make the base command executable to show help
+        secondsToHopperClockLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> secondsToHopperClockLiteral = CommandManager.literal("secondstohopperclock");
+        populateServer(secondsToHopperClockLiteral);
+        return secondsToHopperClockLiteral;
     }
 
     public static CalcMessageBuilder execute(Entity player, String seconds) {

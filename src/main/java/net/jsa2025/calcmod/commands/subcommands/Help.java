@@ -22,26 +22,24 @@ public class Help {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("help")
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute();
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> helpLiteral = ClientCommandManager.literal("help");
+        helpLiteral.executes(ctx -> {
+            CalcMessageBuilder message = execute(); // Calls execute without args for general help
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        }));
-        return command;
+        });
+        return helpLiteral;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("help")
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute();
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> helpLiteral = CommandManager.literal("help");
+        helpLiteral.executes(ctx -> {
+            CalcMessageBuilder message = execute(); // Calls execute without args for general help
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }));
-        return command;
+        });
+        return helpLiteral;
     }
 
     public static CalcMessageBuilder execute(String... hterm) {

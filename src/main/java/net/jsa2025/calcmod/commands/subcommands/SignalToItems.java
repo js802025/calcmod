@@ -32,38 +32,58 @@ public class SignalToItems {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("signaltoitems")
-        .then(ClientCommandManager.argument("container", StringArgumentType.string()).suggests(new CContainerSuggestionProvider())
-        .then(ClientCommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))).then(ClientCommandManager.literal("help").executes(ctx -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> signalToItemsLiteral) {
+        signalToItemsLiteral
+            .then(ClientCommandManager.argument("container", StringArgumentType.string()).suggests(new CContainerSuggestionProvider())
+                .then(ClientCommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+                    CalcCommand.sendMessage(ctx.getSource(), message);
+                    return 1;
+                })))
+            .then(ClientCommandManager.literal("help").executes(ctx -> {
+                CalcMessageBuilder message = Help.execute("signaltoitems");
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            }));
+        // Base command shows help
+        signalToItemsLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("signaltoitems");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })
-        ));
-        return command;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("signaltoitems")
-        .then(CommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
-        .then(CommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))).then(CommandManager.literal("help").executes(ctx -> {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> signalToItemsLiteral = ClientCommandManager.literal("signaltoitems");
+        populateClient(signalToItemsLiteral);
+        return signalToItemsLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> signalToItemsLiteral) {
+        signalToItemsLiteral
+            .then(CommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
+                .then(CommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
+                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+                    return 1;
+                })))
+            .then(CommandManager.literal("help").executes(ctx -> {
+                CalcMessageBuilder message = Help.execute("signaltoitems");
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            }));
+        // Base command shows help
+        signalToItemsLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("signaltoitems");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })
-        ));
-        return command;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> signalToItemsLiteral = CommandManager.literal("signaltoitems");
+        populateServer(signalToItemsLiteral);
+        return signalToItemsLiteral;
     }
 
     public static CalcMessageBuilder execute(Entity player, String container, String signal) {

@@ -23,9 +23,8 @@ public class Nether {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("nether").executes((ctx) -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> netherLiteral) {
+        netherLiteral.executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -39,13 +38,17 @@ public class Nether {
             CalcMessageBuilder message = Help.execute("nether");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("nether").executes((ctx) -> {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> netherLiteral = ClientCommandManager.literal("nether");
+        populateClient(netherLiteral);
+        return netherLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> netherLiteral) {
+        netherLiteral.executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
@@ -59,8 +62,13 @@ public class Nether {
             CalcMessageBuilder message = Help.execute("nether");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> netherLiteral = CommandManager.literal("nether");
+        populateServer(netherLiteral);
+        return netherLiteral;
     }
 
     public static CalcMessageBuilder execute(BlockPos... pos) {

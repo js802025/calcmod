@@ -21,9 +21,8 @@ public class SecondsToRepeater {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("secondstorepeater").then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> secondsToRepeaterLiteral) {
+        secondsToRepeaterLiteral.then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessage(ctx.getSource(), message);
@@ -33,13 +32,23 @@ public class SecondsToRepeater {
             CalcMessageBuilder message = Help.execute("secondstorepeater");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+        // Make the base command executable to show help
+        secondsToRepeaterLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("secondstorepeater");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("secondstorepeater").then(CommandManager.argument("seconds", StringArgumentType.greedyString())
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> secondsToRepeaterLiteral = ClientCommandManager.literal("secondstorepeater");
+        populateClient(secondsToRepeaterLiteral);
+        return secondsToRepeaterLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> secondsToRepeaterLiteral) {
+        secondsToRepeaterLiteral.then(CommandManager.argument("seconds", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
@@ -49,8 +58,19 @@ public class SecondsToRepeater {
             CalcMessageBuilder message = Help.execute("secondstorepeater");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+        // Make the base command executable to show help
+        secondsToRepeaterLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("secondstorepeater");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> secondsToRepeaterLiteral = CommandManager.literal("secondstorepeater");
+        populateServer(secondsToRepeaterLiteral);
+        return secondsToRepeaterLiteral;
     }
 
     public static CalcMessageBuilder execute(Entity player, String seconds) {

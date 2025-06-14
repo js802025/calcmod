@@ -24,9 +24,8 @@ public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("allaystorage").then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> allayStorageLiteral) {
+        allayStorageLiteral.then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -34,13 +33,23 @@ public class AllayStorage {
             CalcMessageBuilder message = Help.execute("allaystorage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+        // Base command shows help
+        allayStorageLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("allaystorage");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        });
+    }
+
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> allayStorageLiteral = ClientCommandManager.literal("allaystorage");
+        populateClient(allayStorageLiteral);
+        return allayStorageLiteral;
     }
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("allaystorage").then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> allayStorageLiteral) {
+        allayStorageLiteral.then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
@@ -48,8 +57,19 @@ public class AllayStorage {
             CalcMessageBuilder message = Help.execute("allaystorage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+        // Base command shows help
+        allayStorageLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("allaystorage");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> allayStorageLiteral = CommandManager.literal("allaystorage");
+        populateServer(allayStorageLiteral);
+        return allayStorageLiteral;
     }
     
 

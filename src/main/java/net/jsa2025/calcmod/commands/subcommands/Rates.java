@@ -21,9 +21,8 @@ public class Rates {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("rates").then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> ratesLiteral) {
+        ratesLiteral.then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
         .then(ClientCommandManager.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
@@ -34,14 +33,23 @@ public class Rates {
             CalcMessageBuilder message = Help.execute("rates");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-
-        return command;
+        }));
+        // Base command shows help
+        ratesLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("rates");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("rates").then(CommandManager.argument("numberofitems", StringArgumentType.string())
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> ratesLiteral = ClientCommandManager.literal("rates");
+        populateClient(ratesLiteral);
+        return ratesLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> ratesLiteral) {
+        ratesLiteral.then(CommandManager.argument("numberofitems", StringArgumentType.string())
         .then(CommandManager.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
@@ -52,9 +60,19 @@ public class Rates {
             CalcMessageBuilder message = Help.execute("rates");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
+        }));
+        // Base command shows help
+        ratesLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("rates");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        });
+    }
 
-        return command;
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> ratesLiteral = CommandManager.literal("rates");
+        populateServer(ratesLiteral);
+        return ratesLiteral;
     }
 
     public static CalcMessageBuilder execute(Entity player, String numberofitems, String time) {

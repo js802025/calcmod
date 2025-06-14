@@ -23,9 +23,8 @@ public class Overworld {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("overworld").executes((ctx) -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> overworldLiteral) {
+        overworldLiteral.executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -39,13 +38,17 @@ public class Overworld {
             CalcMessageBuilder message = Help.execute("overworld");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("overworld").executes((ctx) -> {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> overworldLiteral = ClientCommandManager.literal("overworld");
+        populateClient(overworldLiteral);
+        return overworldLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> overworldLiteral) {
+        overworldLiteral.executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getBlockPos());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
@@ -59,8 +62,13 @@ public class Overworld {
             CalcMessageBuilder message = Help.execute("overworld");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> overworldLiteral = CommandManager.literal("overworld");
+        populateServer(overworldLiteral);
+        return overworldLiteral;
     }
 
     public static CalcMessageBuilder execute(Entity player, BlockPos... pos) {

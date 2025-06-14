@@ -1,122 +1,202 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
-
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder; // Added for itemArgument
 import com.mojang.serialization.Dynamic;
 
-import dev.xpple.clientarguments.arguments.CResourceArgument;
-
-
-import dev.xpple.clientarguments.arguments.CResourceKeyArgument;
-import dev.xpple.clientarguments.arguments.CResourceOrIdArgument;
 import net.jsa2025.calcmod.CalcMod;
-import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.logging.Logger;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.IdentifierArgumentType;
+// import net.minecraft.command.argument.IdentifierArgumentType; // No longer needed by client if all string
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items; 
 import net.minecraft.recipe.*;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.DynamicRegistryManager; 
+import net.minecraft.server.command.CommandManager; 
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.text.Text; 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-
 
 public class Craft {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command, CommandRegistryAccess registry) {
-        command
-        .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
-                        .then(ClientCommandManager.literal("depth").then( ClientCommandManager.argument("level", IntegerArgumentType.integer())
-        .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), CIdentifierArgumentType.getRecipeArgument(ctx, "item").value(), StringArgumentType.getString(ctx, "amount"), IntegerArgumentType.getInteger(ctx, "level"), ctx.getSource().getRegistryManager());
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })))
-        ).then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
-                        .executes((ctx) -> {
-                            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), CIdentifierArgumentType.getRecipeArgument(ctx, "item").value(), StringArgumentType.getString(ctx, "amount"), 1, ctx.getSource().getRegistryManager());
-                            CalcCommand.sendMessage(ctx.getSource(), message);
-                            return 1;
-                        })))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("craft");
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })));
-        return command;
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> craftLiteral = ClientCommandManager.literal("craft");
+
+        RequiredArgumentBuilder<FabricClientCommandSource, String> itemArgument = ClientCommandManager.argument("item", StringArgumentType.string())
+            .suggests(new CRecipeSuggestionProvider())
+            .executes(ctx -> { // Path: /calc craft <item> (default amount "1", default depth 1)
+                String itemName = StringArgumentType.getString(ctx, "item");
+                Identifier itemId = Identifier.of(itemName);
+                Item item = Registries.ITEM.get(itemId);
+                if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
+                    ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
+                    return 0;
+                }
+                ItemStack targetItemStack = new ItemStack(item);
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), targetItemStack, "1", 1, ctx.getSource().getRegistryManager());
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            });
+
+        // Path: /calc craft <item> <amount> (default depth 1)
+        itemArgument.then(ClientCommandManager.argument("amount", StringArgumentType.string()) // Changed from greedyString
+            .executes(ctx -> {
+                String itemName = StringArgumentType.getString(ctx, "item");
+                Identifier itemId = Identifier.of(itemName);
+                Item item = Registries.ITEM.get(itemId);
+                if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
+                    ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
+                    return 0;
+                }
+                ItemStack targetItemStack = new ItemStack(item);
+                String amountStr = StringArgumentType.getString(ctx, "amount");
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), targetItemStack, amountStr, 1, ctx.getSource().getRegistryManager());
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            }));
+
+        // Path: /calc craft <item> depth <level> <amount_with_depth>
+        itemArgument.then(ClientCommandManager.literal("depth")
+            .then(ClientCommandManager.argument("level", IntegerArgumentType.integer())
+                .then(ClientCommandManager.argument("amount_with_depth", StringArgumentType.greedyString()) 
+                    .executes(ctx -> {
+                        String itemName = StringArgumentType.getString(ctx, "item");
+                        Identifier itemId = Identifier.of(itemName);
+                        Item item = Registries.ITEM.get(itemId);
+                        if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
+                            ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
+                            return 0;
+                        }
+                        ItemStack targetItemStack = new ItemStack(item);
+                        int depth = IntegerArgumentType.getInteger(ctx, "level");
+                        String amountStr = StringArgumentType.getString(ctx, "amount_with_depth");
+                        CalcMessageBuilder message = execute(ctx.getSource().getEntity(), targetItemStack, amountStr, depth, ctx.getSource().getRegistryManager());
+                        CalcCommand.sendMessage(ctx.getSource(), message);
+                        return 1;
+                    }))));
+        
+        craftLiteral.then(itemArgument);
+        
+        // Path 4: /calc craft help
+        craftLiteral.then(ClientCommandManager.literal("help")
+            .executes(ctx -> {
+                CalcMessageBuilder message = Help.execute("craft");
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            })
+        );
+
+        return craftLiteral; 
     }
 
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command, CommandRegistryAccess registry) {
-        command
-        .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
-        .then(CommandManager.argument("amount", StringArgumentType.greedyString())
-        .executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item").value(), StringArgumentType.getString(ctx, "amount"), 2, ctx.getSource().getRegistryManager());
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        var craftLiteral = CommandManager.literal("craft"); 
+        
+        // Server-side still uses distinct item argument names as per its existing structure from Subtask 13
+        // This subtask is focused on client-side. Server-side remains unchanged from its last correct state.
+        craftLiteral.then(CommandManager.argument("item", StringArgumentType.string()).suggests(new RecipeSuggestionProvider())
+            .executes(ctx -> { 
+                String itemName = StringArgumentType.getString(ctx, "item");
+                Identifier itemId = Identifier.of(itemName);
+                Item item = Registries.ITEM.get(itemId);
+                 if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
+                    ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
+                    return 0;
+                }
+                ItemStack itemStack = new ItemStack(item);
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemStack, "1", 2, ctx.getSource().getRegistryManager());
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            })
+            .then(CommandManager.argument("amount", StringArgumentType.greedyString())
+            .executes((ctx) -> { 
+                String itemName = StringArgumentType.getString(ctx, "item");
+                Identifier itemId = Identifier.of(itemName);
+                Item item = Registries.ITEM.get(itemId);
+                if (item == Items.AIR && !Objects.equals(itemId.toString(), "minecraft:air")) {
+                    ctx.getSource().sendError(Text.literal("Invalid item: " + itemName));
+                    return 0;
+                }
+                ItemStack itemStack = new ItemStack(item);
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), itemStack, StringArgumentType.getString(ctx, "amount"), 2, ctx.getSource().getRegistryManager());
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            }))
+        ); 
+        
+        craftLiteral.then(CommandManager.literal("help").executes(ctx -> {
             CalcMessageBuilder message = Help.execute("craft");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        }));
+        
+        return craftLiteral; 
     }
 
+    public static CalcMessageBuilder execute(Entity player, ItemStack targetItemStack, String amount, int steps, DynamicRegistryManager registryManager) {
+        CalcMod.LOGGER.info("Executing craft with ItemStack: " + targetItemStack.getName().getString() + ", Amount: " + amount + ", Steps: " + steps);
+        
+        if (targetItemStack.getItem() == Items.AIR) { 
+            return new CalcMessageBuilder().addString("Invalid item: minecraft:air. Cannot craft air.");
+        }
 
-    public static CalcMessageBuilder execute(Entity player, Recipe item, String amount, int steps, DynamicRegistryManager registryManager) {
+        RecipeManager recipeManager = player.getWorld().getRecipeManager();
+        Recipe<?> foundRecipe = null;
 
-        var is = item.getIngredients();
-        var outputSize = item.getResult(registryManager).getCount();
+        for (RecipeEntry<?> recipeEntry : recipeManager.values()) {
+            Recipe<?> currentRecipe = recipeEntry.value();
+            RecipeSerializer<?> serializer = currentRecipe.getSerializer();
+            if ((serializer == RecipeSerializer.SHAPED || serializer == RecipeSerializer.SHAPELESS) && 
+                currentRecipe.getResult(registryManager) != null && 
+                currentRecipe.getResult(registryManager).getItem() == targetItemStack.getItem()) {
+                foundRecipe = currentRecipe;
+                break; 
+            }
+        }
+
+        if (foundRecipe == null) {
+            return new CalcMessageBuilder().addString("No recipe found for " + targetItemStack.getName().getString());
+        }
+
+        DefaultedList<Ingredient> ingredientsList = foundRecipe.getIngredients();
+        if (ingredientsList.isEmpty() && targetItemStack.getMaxCount() == 64) { 
+             return new CalcMessageBuilder().addString(targetItemStack.getName().getString() + " is a base item and cannot be crafted further with this command's logic.");
+        }
+
+        int outputSize = foundRecipe.getResult(registryManager).getCount();
+        if (outputSize == 0) { 
+            return new CalcMessageBuilder().addString("Recipe for " + targetItemStack.getName().getString() + " has an output of 0, cannot calculate.");
+        }
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
-        int a = (int) Math.ceil(inputAmount/outputSize);
-//        Map<String, Integer> ingredients = new HashMap<String, Integer>();
-//        Map<String, ItemStack> ingredientsStacks = new HashMap<String, ItemStack>();
-//        for (Object i : is) {
-//            Ingredient ingredient = (Ingredient) i;
-//
-//
-//            if (ingredient.getMatchingStacks().length > 0) {
-//                if (ingredients.containsKey(ingredient.getMatchingStacks()[0].getName().getString())) {
-//                    CalcMod.LOGGER.info("hello");
-//                    ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), ingredients.get(ingredient.getMatchingStacks()[0].getName().getString()) + a );
-//                } else {
-//                    ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), a);
-//                    ingredientsStacks.put(ingredient.getMatchingStacks()[0].getName().getString(), ingredient.getMatchingStacks()[0]);
-//                    CalcMod.LOGGER.info(String.valueOf(ingredient.getMatchingStacks()[0].getCount()));
-//
-//                }
-//
-//            //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
-//            }
-//        }
-        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player.getWorld().getRecipeManager(), registryManager, is, a, steps);
+        int baseCrafts = (int) Math.ceil(inputAmount / outputSize);
+
+        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(recipeManager, registryManager, ingredientsList, baseCrafts, steps);
+        
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.getResult(registryManager).getName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), targetItemStack.getName().getString()}, new String[] {});
         
         for (Map.Entry<String, Map.Entry<ItemStack, Integer>> entry : ingredients.entrySet()) {
             String key = entry.getKey();
@@ -140,74 +220,71 @@ public class Craft {
                 messageBuilder.addResult("Items: "+items+"\n");
             }
         }
-
-   //     message.set(0, "Ingredients needed for crafting "+nf.format(inputAmount)+" "+item.getOutput(registryManager).getName().getString()+"s: \n"+message.get(0));
-        
         return messageBuilder;
     }
 
     static HashMap<String, Map.Entry<ItemStack, Integer>> getIngredients(RecipeManager manager, DynamicRegistryManager registryManager, DefaultedList<Ingredient> is, int amount_needed, int steps) {
         HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
-    //    CalcMod.LOGGER.info("Step"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
         for (Ingredient ingredient : is) {
-
-       //     CalcMod.LOGGER.info("Step1"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
-
-            //        CalcMod.LOGGER.info(manager.get(ingredient.getMatchingStacks()[0].getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
             if (ingredient.getMatchingStacks().length > 0) {
                 if (ingredients.containsKey(ingredient.getMatchingStacks()[0].getName().getString())) {
                     ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), Map.entry(ingredients.get(ingredient.getMatchingStacks()[0].getName().getString()).getKey(), ingredients.get(ingredient.getMatchingStacks()[0].getName().getString()).getValue()+amount_needed));
                 } else {
-           //         CalcMod.LOGGER.info("Step2"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
                     ingredients.put(ingredient.getMatchingStacks()[0].getName().getString(), Map.entry(ingredient.getMatchingStacks()[0], amount_needed));
                 }
-          //      CalcMod.LOGGER.info("Step4"+ingredients.get(ingredient.getMatchingStacks()[0].getName().getString()).getValue());
-
-                //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
             }
         }
         HashMap<String, Map.Entry<ItemStack, Integer>> ex_ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
 
         for (Map.Entry<ItemStack, Integer> ingredient : ingredients.values()) {
             if (steps == 1) {
-               // CalcMod.LOGGER.info(is.get(0).getMatchingStacks()[0].getName().getString());
-               return  ingredients;
+               ex_ingredients.put(ingredient.getKey().getName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
             } else {
-               // CalcMod.LOGGER.info("new");
-                //     CalcMod.LOGGER.info(manager.get(ingredient.getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
                 Optional<Identifier> ing_id = Optional.ofNullable(ingredient.getKey().getRegistryEntry().getKey().get().getValue());
-                CalcMod.LOGGER.info(ing_id.get().getPath());
-                if (ing_id.get().getPath() .contains("ingot")) {
-
-                    Optional<Identifier> finalIng_id = ing_id;
-                  //  CalcMod.LOGGER.info(finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath() .split("_")[0] + "_block");
-                    ing_id = manager.keys().filter(x ->
-                        Objects.equals(x.getPath(), finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath() .split("_")[0] + "_block")
-                ).findFirst();
+                if (ing_id.isEmpty()) {
+                    ex_ingredients.put(ingredient.getKey().getName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
+                    continue;
                 }
-                if (manager.get(ing_id.get()).isPresent()) {
+
+                CalcMod.LOGGER.info("Sub-crafting for: "+ing_id.get().getPath()+" current depth: "+steps);
+                if (ing_id.get().getPath().contains("ingot")) { 
+                    Optional<Identifier> finalIng_id = ing_id;
+                    ing_id = manager.keys().filter(x ->
+                        Objects.equals(x.getPath(), finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath().split("_")[0] + "_block")
+                    ).findFirst();
+                }
+
+                if (ing_id.isPresent() && manager.get(ing_id.get()).isPresent()) {
                     Recipe<?> recipe = manager.get(ing_id.get()).get().value();
+                    RecipeSerializer<?> subRecipeSerializer = recipe.getSerializer();
+                    if (!(subRecipeSerializer == RecipeSerializer.SHAPED || subRecipeSerializer == RecipeSerializer.SHAPELESS)) {
+                        ex_ingredients.put(ingredient.getKey().getName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
+                        continue;
+                    }
                     DefaultedList<Ingredient> sis = recipe.getIngredients();
-             //       CalcMod.LOGGER.info(String.valueOf(ingredient.getValue()));
-                //    CalcMod.LOGGER.info(String.valueOf(recipe.getResult(registryManager).getCount()));
-              //      CalcMod.LOGGER.info(String.valueOf((double) ingredient.getValue() / (double) recipe.getResult(registryManager).getCount()));
-                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(manager, registryManager, sis, (int) Math.ceil((double) ingredient.getValue() / (double) recipe.getResult(registryManager).getCount()), steps - 1);
-               //     CalcMod.LOGGER.info(recipe.getResult(registryManager).getName().getString());
-               //     ingredients.remove(recipe.getResult(registryManager).getName().getString());
-                    for (String item : sub_ingredients.keySet()) {
-                        if (ex_ingredients.containsKey(item)) {
-                            ex_ingredients.put(item, Map.entry(ingredients.get(item).getKey(), ingredients.get(item).getValue() + sub_ingredients.get(item).getValue()));
+                    if (sis.isEmpty()) { 
+                         ex_ingredients.put(ingredient.getKey().getName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
+                         continue;
+                    }
+                    int recipeOutputCount = recipe.getResult(registryManager).getCount();
+                    if (recipeOutputCount == 0) recipeOutputCount = 1; 
+                    
+                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(manager, registryManager, sis, (int) Math.ceil((double) ingredient.getValue() / recipeOutputCount), steps - 1);
+                    for (String item_name : sub_ingredients.keySet()) { 
+                        if (ex_ingredients.containsKey(item_name)) {
+                            Map.Entry<ItemStack, Integer> existingEntry = ex_ingredients.get(item_name);
+                            Map.Entry<ItemStack, Integer> subEntry = sub_ingredients.get(item_name);
+                            ex_ingredients.put(item_name, Map.entry(existingEntry.getKey(), existingEntry.getValue() + subEntry.getValue()));
                         } else {
-                            ex_ingredients.put(item, Map.entry(sub_ingredients.get(item).getKey(), sub_ingredients.get(item).getValue()));
+                            ex_ingredients.put(item_name, sub_ingredients.get(item_name));
                         }
                     }
-                } else {
+                } else { 
                     ex_ingredients.put(ingredient.getKey().getName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
                 }
-
             }
         }
-
+        if (steps == 1) return ingredients; 
         return ex_ingredients;
     }
 

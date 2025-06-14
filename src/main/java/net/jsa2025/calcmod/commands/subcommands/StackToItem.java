@@ -21,60 +21,64 @@ public class StackToItem {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("stacktoitem").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> stackToItemLiteral) {
+        // Path 1: /calc stacktoitem help (Literal, most specific)
+        stackToItemLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("stacktoitem");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        }));
+
+        // Path 2: /calc stacktoitem <numberofstacks> (Greedy string, more general)
+        stackToItemLiteral.then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        }))
-        .then(ClientCommandManager.literal("16s").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(ClientCommandManager.literal("1s").then(ClientCommandManager.argument("numberofstacks", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
+        }));
+        
+        // Base command shows help
+        stackToItemLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("stacktoitem");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("stacktoitem").then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> stackToItemLiteral = ClientCommandManager.literal("stacktoitem");
+        populateClient(stackToItemLiteral);
+        return stackToItemLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> stackToItemLiteral) {
+        // Path 1: /calc stacktoitem help (Literal, most specific)
+        stackToItemLiteral.then(CommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("stacktoitem");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        }));
+
+        // Path 2: /calc stacktoitem <numberofstacks> (Greedy string, more general)
+        stackToItemLiteral.then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 64);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }))
-        .then(CommandManager.literal("16s").then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 16);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(CommandManager.literal("1s").then(CommandManager.argument("numberofstacks", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofstacks"), 1);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        }));
+        
+        // Base command shows help
+        stackToItemLiteral.executes(ctx -> {
             CalcMessageBuilder message = Help.execute("stacktoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })));
-        return command;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> stackToItemLiteral = CommandManager.literal("stacktoitem");
+        populateServer(stackToItemLiteral);
+        return stackToItemLiteral;
     }
 
     public static CalcMessageBuilder execute(Entity player, String numberofstacks, int stackSize) {

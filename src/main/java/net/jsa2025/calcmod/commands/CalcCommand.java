@@ -48,50 +48,50 @@ public class CalcCommand {
 
     public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
         LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
-        command = Basic.register(command);
-        command = Storage.register(command);
-        command = Nether.register(command);
-        command = Overworld.register(command);
-        command = SbToItem.register(command);
-        command = ItemToSb.register(command);
-        command = SecondsToHopperClock.register(command);
-        command = SecondsToRepeater.register(command);
-        command = ItemToStack.register(command);
-        command = StackToItem.register(command);
-        command = Rates.register(command);
-        command = AllayStorage.register(command);
-        command = Random.register(command);
-        command = Craft.register(command, registry);
-        command = SignalToItems.register(command);
-        command = Piglin.register(command);
-        command = Custom.register(command);
-        command = Variables.register(command);
-        command = Help.register(command);
+        command.then(Basic.buildClient()); // Corrected to buildClient
+        command.then(Storage.buildClientNode());
+        command.then(Nether.buildClientNode());
+        command.then(Overworld.buildClientNode());
+        command.then(SbToItem.buildClientNode());
+        command.then(ItemToSb.buildClientNode());
+        command.then(SecondsToHopperClock.buildClientNode());
+        command.then(SecondsToRepeater.buildClientNode());
+        command.then(ItemToStack.buildClientNode());
+        command.then(StackToItem.buildClientNode());
+        command.then(Rates.buildClientNode());
+        command.then(AllayStorage.buildClientNode());
+        command.then(Random.buildClientNode());
+        command.then(Craft.buildClientNode()); // Craft.buildClientNode() no longer needs registry
+        command.then(SignalToItems.buildClientNode());
+        command.then(Piglin.buildClientNode()); // Piglin.java defines "barter"
+        command.then(Custom.buildClientNode());
+        command.then(Variables.buildClientNode());
+        command.then(Help.buildClientNode());
         dispatcher.register(command);
 
     }
     
     public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
-        Basic.registerServer(command);
-        command = Storage.registerServer(command);
-        command = Nether.registerServer(command);
-        command = Overworld.registerServer(command);
-        command = SbToItem.registerServer(command);
-        command = ItemToSb.registerServer(command);
-        command = SecondsToHopperClock.registerServer(command);
-        command = SecondsToRepeater.registerServer(command);
-        command = ItemToStack.registerServer(command);
-        command = StackToItem.registerServer(command);
-        command = Rates.registerServer(command);
-        command = AllayStorage.registerServer(command);
-        command = Random.registerServer(command);
-        command = Craft.registerServer(command, registry);
-        command = SignalToItems.registerServer(command);
-        command = Piglin.registerServer(command);
-        command = Custom.registerServer(command);
-        command = Variables.registerServer(command);
-        command = Help.registerServer(command);
+        command.then(Basic.buildServer()); // Corrected to buildServer
+        command.then(Storage.buildServerNode());
+        command.then(Nether.buildServerNode());
+        command.then(Overworld.buildServerNode());
+        command.then(SbToItem.buildServerNode());
+        command.then(ItemToSb.buildServerNode());
+        command.then(SecondsToHopperClock.buildServerNode());
+        command.then(SecondsToRepeater.buildServerNode());
+        command.then(ItemToStack.buildServerNode());
+        command.then(StackToItem.buildServerNode());
+        command.then(Rates.buildServerNode());
+        command.then(AllayStorage.buildServerNode());
+        command.then(Random.buildServerNode());
+        command.then(Craft.buildServerNode()); // Craft.buildServerNode() no longer needs registry
+        command.then(SignalToItems.buildServerNode());
+        command.then(Piglin.buildServerNode()); // Piglin.java defines "barter"
+        command.then(Custom.buildServerNode());
+        command.then(Variables.buildServerNode());
+        command.then(Help.buildServerNode());
 
         dispatcher.register(command);
     }

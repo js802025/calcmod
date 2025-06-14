@@ -19,26 +19,32 @@ public class Variables {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
-    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command
-        .then(ClientCommandManager.literal("variables")
-        .executes(ctx -> {
+    private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> variablesLiteral) {
+        variablesLiteral.executes(ctx -> {
             CalcMessageBuilder message = execute();
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        }));
-        return command;
+        });
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
-        command
-        .then(CommandManager.literal("variables")
-        .executes(ctx -> {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
+        LiteralArgumentBuilder<FabricClientCommandSource> variablesLiteral = ClientCommandManager.literal("variables");
+        populateClient(variablesLiteral);
+        return variablesLiteral;
+    }
+
+    private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> variablesLiteral) {
+        variablesLiteral.executes(ctx -> {
             CalcMessageBuilder message = execute();
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }));
-        return command;
+        });
+    }
+
+    public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
+        LiteralArgumentBuilder<ServerCommandSource> variablesLiteral = CommandManager.literal("variables");
+        populateServer(variablesLiteral);
+        return variablesLiteral;
     }
 
     public static CalcMessageBuilder execute() {
