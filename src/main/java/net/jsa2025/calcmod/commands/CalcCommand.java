@@ -48,7 +48,7 @@ public class CalcCommand {
 
     public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
         LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
-        command.then(Basic.buildClient()); // Corrected to buildClient
+        command.then(Basic.buildClient()); 
         command.then(Storage.buildClientNode());
         command.then(Nether.buildClientNode());
         command.then(Overworld.buildClientNode());
@@ -61,9 +61,9 @@ public class CalcCommand {
         command.then(Rates.buildClientNode());
         command.then(AllayStorage.buildClientNode());
         command.then(Random.buildClientNode());
-        command.then(Craft.buildClientNode()); // Craft.buildClientNode() no longer needs registry
+        command.then(Craft.buildClientNode()); 
         command.then(SignalToItems.buildClientNode());
-        command.then(Piglin.buildClientNode()); // Piglin.java defines "barter"
+        command.then(Piglin.buildClientNode()); 
         command.then(Custom.buildClientNode());
         command.then(Variables.buildClientNode());
         command.then(Help.buildClientNode());
@@ -73,7 +73,7 @@ public class CalcCommand {
     
     public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
-        command.then(Basic.buildServer()); // Corrected to buildServer
+        command.then(Basic.buildServer()); 
         command.then(Storage.buildServerNode());
         command.then(Nether.buildServerNode());
         command.then(Overworld.buildServerNode());
@@ -86,9 +86,9 @@ public class CalcCommand {
         command.then(Rates.buildServerNode());
         command.then(AllayStorage.buildServerNode());
         command.then(Random.buildServerNode());
-        command.then(Craft.buildServerNode()); // Craft.buildServerNode() no longer needs registry
+        command.then(Craft.buildServerNode()); 
         command.then(SignalToItems.buildServerNode());
-        command.then(Piglin.buildServerNode()); // Piglin.java defines "barter"
+        command.then(Piglin.buildServerNode()); 
         command.then(Custom.buildServerNode());
         command.then(Variables.buildServerNode());
         command.then(Help.buildServerNode());
