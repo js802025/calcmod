@@ -22,22 +22,26 @@ public class ItemToStack {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> itemToStackLiteral) {
-        itemToStackLiteral.then(ClientCommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 64);
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("itemtostack");
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }));
-        itemToStackLiteral.executes(ctx -> {
+        itemToStackLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("itemtostack");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
+
+        itemToStackLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("itemtostack");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        }));
+
+        itemToStackLiteral.then(ClientCommandManager.literal("convert")
+            .then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
+            .executes(ctx -> {
+                String numberofitemsArg = StringArgumentType.getString(ctx, "numberofitems");
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), numberofitemsArg, 64);
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            })));
     }
 
     public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
@@ -47,22 +51,26 @@ public class ItemToStack {
     }
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> itemToStackLiteral) {
-        itemToStackLiteral.then(CommandManager.argument("numberofitems", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), 64);
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("itemtostack");
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }));
-        itemToStackLiteral.executes(ctx -> {
+        itemToStackLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("itemtostack");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
+        
+        itemToStackLiteral.then(CommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("itemtostack");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        }));
+
+        itemToStackLiteral.then(CommandManager.literal("convert")
+            .then(CommandManager.argument("numberofitems", StringArgumentType.string())
+            .executes(ctx -> {
+                String numberofitemsArg = StringArgumentType.getString(ctx, "numberofitems");
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), numberofitemsArg, 64);
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            })));
     }
 
     public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
@@ -73,16 +81,23 @@ public class ItemToStack {
 
     public static CalcMessageBuilder execute(Entity player, String numberofitems, int stackSize) {
         double items = CalcCommand.getParsedExpression(player, numberofitems, stackSize);
+        if (items < 0) {
+            return new CalcMessageBuilder().addString("Error: Number of items must be non-negative.");
+        }
         double stacks = Math.floor(items/stackSize);
         double leftover = items % stackSize;
-        CalcMessageBuilder message = new CalcMessageBuilder().addInput(numberofitems).addString(" ").addInput(nf.format(stackSize)).addString(" Stackable items = ").addResult(nf.format(stacks)).addString(" Stacks + ").addResult(nf.format(leftover)).addString(" Items");
+        CalcMessageBuilder message = new CalcMessageBuilder().addInput(numberofitems).addString(" Items (stack size "+stackSize+") = ").addResult(df.format(stacks)).addString(" Stacks + ").addResult(df.format(leftover)).addString(" Items");
         
         return message;
     }
 
     public static String helpMessage = """
         §b§LItem to Stack:§r§f
-            Given a number of items §7§o(can be in expression form)§r§f, returns the number of stacks and remainder items.
-            §eUsage: /calc itemtostack <numberofitems>§f
+        Converts a given number of items to stacks and remainder items. Assumes default stack size of 64 unless specified otherwise internally.
+        Base command §e/calc itemtostack§r or §e/calc itemtostack help§r shows this message.
+        
+        §eUsage: /calc itemtostack convert <numberofitems>§f
+          <numberofitems>: Number of items (can be an expression, must be non-negative).
+          Example: /calc itemtostack convert 129
                 """;
 }

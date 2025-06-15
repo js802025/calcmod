@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands.arguments;
 
+
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;

@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands.arguments;
 
+
 import java.util.concurrent.CompletableFuture;
 
 import com.mojang.brigadier.context.CommandContext;

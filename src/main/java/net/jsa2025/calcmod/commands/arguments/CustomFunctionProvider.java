@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands.arguments;
 
+
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;

@@ -22,22 +22,25 @@ public class SecondsToHopperClock {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> secondsToHopperClockLiteral) {
-        secondsToHopperClockLiteral.then(ClientCommandManager.argument("seconds", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("secondstohopperclock");
-            CalcCommand.sendMessage(ctx.getSource(), message);
-            return 1;
-        }));
-        secondsToHopperClockLiteral.executes(ctx -> {
+        secondsToHopperClockLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("secondstohopperclock");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
+        
+        secondsToHopperClockLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        }));
+        
+        secondsToHopperClockLiteral.then(ClientCommandManager.literal("convert")
+            .then(ClientCommandManager.argument("seconds", StringArgumentType.string())
+            .executes(ctx -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            })));
     }
 
     public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
@@ -47,22 +50,25 @@ public class SecondsToHopperClock {
     }
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> secondsToHopperClockLiteral) {
-        secondsToHopperClockLiteral.then(CommandManager.argument("seconds", StringArgumentType.greedyString())
-        .executes(ctx -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }))
-        .then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("secondstohopperclock");
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
-            return 1;
-        }));
-        secondsToHopperClockLiteral.executes(ctx -> {
+        secondsToHopperClockLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("secondstohopperclock");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
+
+        secondsToHopperClockLiteral.then(CommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        }));
+
+        secondsToHopperClockLiteral.then(CommandManager.literal("convert")
+            .then(CommandManager.argument("seconds", StringArgumentType.string())
+            .executes(ctx -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "seconds"));
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            })));
     }
 
     public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
@@ -73,20 +79,32 @@ public class SecondsToHopperClock {
 
     public static CalcMessageBuilder execute(Entity player, String seconds) {
         double secondsDouble = CalcCommand.getParsedExpression(player, seconds);
-        double hopperclock = Math.ceil(secondsDouble *1.25);
+        if (secondsDouble < 0) {
+            return new CalcMessageBuilder().addString("Error: Seconds must be a non-negative value.");
+        }
+        double hopperclock = Math.ceil(secondsDouble * 1.25);
+        String stacksMessage = "";
+        if (hopperclock > 0) { 
+            stacksMessage = " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64);
+        }
+
         if (hopperclock > 320) {
-            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result", " \n§cThis exceeds the maximum number of items in a hopper."}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result", " \n§cThis exceeds the maximum number of items in a hopper."}, new String[] {seconds}, new String[] {nf.format(hopperclock), stacksMessage});
             return message;
         } else {
-            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result"}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result"}, new String[] {seconds}, new String[] {nf.format(hopperclock), stacksMessage});
         return message;
         }
     }
 
     public static String helpMessage = """
         §b§LSeconds to Hopper Clock:§r§f
-            Given a number of seconds §7§o(can be in expression form)§r§f, returns the number of items needed in a hopper clock to achieve that time.
-            §eUsage: /calc secondstohopperclock <seconds>§f
+        Calculates items needed in a hopper clock for a given duration.
+        Base command §e/calc secondstohopperclock§r or §e/calc secondstohopperclock help§r shows this message.
+        
+        §eUsage: /calc secondstohopperclock convert <seconds>§f
+          <seconds>: Duration in seconds (can be an expression, must be non-negative).
+          Example: /calc secondstohopperclock convert 100
                 """;
 
 }

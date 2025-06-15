@@ -23,22 +23,25 @@ public class SbToItem {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> sbToItemLiteral) {
-        sbToItemLiteral.then(ClientCommandManager.argument("numberofsbs", StringArgumentType.greedyString())
-            .executes((ctx) -> {
-                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
-                CalcCommand.sendMessage(ctx.getSource(), message);
-                return 1;
-            }))
-            .then(ClientCommandManager.literal("help").executes(ctx -> { 
-                CalcMessageBuilder message = Help.execute("sbtoitem");
-                CalcCommand.sendMessage(ctx.getSource(), message);
-                return 1;
-            }));
-        sbToItemLiteral.executes(ctx -> {
+        sbToItemLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("sbtoitem");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
+
+        sbToItemLiteral.then(ClientCommandManager.literal("help").executes(ctx -> { 
+            CalcMessageBuilder message = Help.execute("sbtoitem");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        }));
+
+        sbToItemLiteral.then(ClientCommandManager.literal("convert")
+            .then(ClientCommandManager.argument("numberofsbs", StringArgumentType.string())
+            .executes((ctx) -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
+                CalcCommand.sendMessage(ctx.getSource(), message);
+                return 1;
+            })));
     }
 
     public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
@@ -48,22 +51,25 @@ public class SbToItem {
     }
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> sbToItemLiteral) {
-        sbToItemLiteral.then(CommandManager.argument("numberofsbs", StringArgumentType.greedyString())
-            .executes((ctx) -> {
-                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
-                CalcCommand.sendMessageServer(ctx.getSource(), message);
-                return 1;
-            }))
-            .then(CommandManager.literal("help").executes(ctx -> { 
-                CalcMessageBuilder message = Help.execute("sbtoitem");
-                CalcCommand.sendMessageServer(ctx.getSource(), message);
-                return 1;
-            }));
-        sbToItemLiteral.executes(ctx -> {
+        sbToItemLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("sbtoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
+
+        sbToItemLiteral.then(CommandManager.literal("help").executes(ctx -> { 
+            CalcMessageBuilder message = Help.execute("sbtoitem");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        }));
+
+        sbToItemLiteral.then(CommandManager.literal("convert")
+            .then(CommandManager.argument("numberofsbs", StringArgumentType.string())
+            .executes((ctx) -> {
+                CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofsbs"), 64);
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
+                return 1;
+            })));
     }
 
     public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
@@ -81,8 +87,12 @@ public class SbToItem {
 
     public static String helpMessage = """
         §b§LSb to Item:§r§f
-            Given a number of full Shulker Boxes §7§o(can be in expression form)§r§f, returns the number of items.
-            §eUsage: /calc sbtoitem <numberofsbs>§f
+        Converts a given number of Shulker Boxes to the equivalent number of items.
+        Base command §e/calc sbtoitem§r or §e/calc sbtoitem help§r shows this message.
+        
+        §eUsage: /calc sbtoitem convert <numberofsbs>§f
+          <numberofsbs>: Number of Shulker Boxes (can be an expression).
+          Example: /calc sbtoitem convert 2.5
                 """;
     
 }

@@ -172,13 +172,11 @@ public class Custom {
         while (matcher.find()) {
             String group = matcher.group();
             group = group.substring(1, group.length()-1);
-          //  commandJson.append("\"").append(group).append("\",\n");
             if (!variables.contains(group)) {
                 variables.add(group);
             }
         }
         commandJson.append("],\n\"equation\": \"").append(input).append("\"\n}");
-      //  CalcMod.LOGGER.info(commandJson.toString());
         return variables;
     }
 
@@ -190,7 +188,7 @@ public class Custom {
             } catch (Exception ignored) {
                 tempJson = new JsonObject();
             }
-            JsonObject json = tempJson; // annoying lambda requirement
+            JsonObject json = tempJson;
             return json;
         } catch (Exception ignored) { return new JsonObject();}
 

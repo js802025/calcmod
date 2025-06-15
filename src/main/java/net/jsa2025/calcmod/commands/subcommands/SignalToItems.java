@@ -1,7 +1,6 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
-
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -26,23 +25,26 @@ public class SignalToItems {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> signalToItemsLiteral) {
-        signalToItemsLiteral
-            .then(ClientCommandManager.argument("container", StringArgumentType.string()).suggests(new CContainerSuggestionProvider())
-                .then(ClientCommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
-                    CalcCommand.sendMessage(ctx.getSource(), message);
-                    return 1;
-                })))
-            .then(ClientCommandManager.literal("help").executes(ctx -> {
-                CalcMessageBuilder message = Help.execute("signaltoitems");
-                CalcCommand.sendMessage(ctx.getSource(), message);
-                return 1;
-            }));
-        signalToItemsLiteral.executes(ctx -> {
+        signalToItemsLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("signaltoitems");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
+        
+        signalToItemsLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("signaltoitems");
+            CalcCommand.sendMessage(ctx.getSource(), message);
+            return 1;
+        }));
+        
+        signalToItemsLiteral.then(ClientCommandManager.literal("get")
+            .then(ClientCommandManager.argument("container_type", StringArgumentType.string()).suggests(new CContainerSuggestionProvider())
+                .then(ClientCommandManager.argument("signal_strength", StringArgumentType.string())
+                .executes((ctx) -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container_type"), StringArgumentType.getString(ctx, "signal_strength"));
+                    CalcCommand.sendMessage(ctx.getSource(), message);
+                    return 1;
+                }))));
     }
 
     public static LiteralArgumentBuilder<FabricClientCommandSource> buildClientNode() {
@@ -52,23 +54,26 @@ public class SignalToItems {
     }
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> signalToItemsLiteral) {
-        signalToItemsLiteral
-            .then(CommandManager.argument("container", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
-                .then(CommandManager.argument("signal", StringArgumentType.greedyString()).executes((ctx) -> {
-                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container"), StringArgumentType.getString(ctx, "signal"));
-                    CalcCommand.sendMessageServer(ctx.getSource(), message);
-                    return 1;
-                })))
-            .then(CommandManager.literal("help").executes(ctx -> {
-                CalcMessageBuilder message = Help.execute("signaltoitems");
-                CalcCommand.sendMessageServer(ctx.getSource(), message);
-                return 1;
-            }));
-        signalToItemsLiteral.executes(ctx -> {
+        signalToItemsLiteral.executes(ctx -> { 
             CalcMessageBuilder message = Help.execute("signaltoitems");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
+
+        signalToItemsLiteral.then(CommandManager.literal("help").executes(ctx -> {
+            CalcMessageBuilder message = Help.execute("signaltoitems");
+            CalcCommand.sendMessageServer(ctx.getSource(), message);
+            return 1;
+        }));
+
+        signalToItemsLiteral.then(CommandManager.literal("get")
+            .then(CommandManager.argument("container_type", StringArgumentType.string()).suggests(new ContainerSuggestionProvider())
+                .then(CommandManager.argument("signal_strength", StringArgumentType.string())
+                .executes((ctx) -> {
+                    CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "container_type"), StringArgumentType.getString(ctx, "signal_strength"));
+                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+                    return 1;
+                }))));
     }
 
     public static LiteralArgumentBuilder<ServerCommandSource> buildServerNode() {
@@ -79,43 +84,60 @@ public class SignalToItems {
 
     public static CalcMessageBuilder execute(Entity player, String container, String signal) {
         double strength = CalcCommand.getParsedExpression(player, signal);
-        var containers = ContainerSuggestionProvider.containers;
-        double stackAmount = containers.get(container);
-        double secondlevel = (stackAmount*32)/7;
-        double item64 = Math.max(strength, Math.ceil(secondlevel*(strength-1)));
-        String stackable16 = "Not Possible";
-        String stackable1 = "Not Possible";
-        double secondlevel16 = (stackAmount*8)/7;
-        double item16 = Math.max(strength, Math.ceil(secondlevel16*(strength-1)));
-        double item16nextstrength = Math.ceil(secondlevel16*(strength));
-        double secondlevel1 = (stackAmount)/14;
-        double item1 = Math.ceil(secondlevel1*(strength-1));
-        if (item1 < 0)  {
-            item1 = 0;
-        } else if (item1 == 0) {
-            item1 = 1;
-        }
-        double item1nextstrength = Math.ceil(secondlevel1*(strength));
-        if (item16nextstrength > item16) {
-            stackable16 = CalcCommand.getParsedStack(item16, 16);
-        }
-        if (item1nextstrength > item1) {
-            stackable1 = nf.format(item1);
-        }
-        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items required for 64 stackable: ", "result", "\nItems required for 16 stackable: ", "result", "\nItems required for non-stackable: ", "result"}, new String[] {}, new String[] {CalcCommand.getParsedStack(item64, 64), stackable16, stackable1});
         
-        if (strength > 15) {
-            message.addString("\n§cError: Signal Strength out of range (0, 15)");
+        if (strength < 0 || strength > 15) { 
+            return new CalcMessageBuilder().addString("Error: Signal Strength must be between 0 and 15 (inclusive).");
         }
+
+        var containers = ContainerSuggestionProvider.containers;
+        if (!containers.containsKey(container)) {
+            return new CalcMessageBuilder().addString("Error: Container type '"+container+"' not recognized. Please use one of the suggested container types.");
+        }
+        double containerSlots = containers.get(container); 
+        String items64Str, items16Str, items1Str;
+
+        if (strength == 0) {
+            items64Str = "0";
+            items16Str = "0";
+            items1Str = "0";
+        } else {
+            // For stackable to 64
+            double items64 = Math.ceil( ( (strength - 1 + (1.0/256.0)) / 14.0 ) * 64.0 * containerSlots );
+            items64 = Math.max(1, items64); 
+            if (strength == 15) items64 = 64.0 * containerSlots; // Full
+            items64Str = CalcCommand.getParsedStack((long)items64, 64);
+
+            // For stackable to 16
+            double items16 = Math.ceil( ( (strength - 1 + (1.0/256.0)) / 14.0 ) * 16.0 * containerSlots );
+            items16 = Math.max(1, items16);
+            if (strength == 15) items16 = 16.0 * containerSlots;
+            items16Str = CalcCommand.getParsedStack((long)items16, 16);
+            
+            // For non-stackable (stack size 1)
+            double items1 = Math.ceil( ( (strength - 1 + (1.0/256.0)) / 14.0 ) * 1.0 * containerSlots );
+            items1 = Math.max(1, items1);
+            if (strength == 15) items1 = 1.0 * containerSlots;
+            items1Str = nf.format((long)items1);
+        }
+        
+        CalcMessageBuilder message = new CalcMessageBuilder()
+            .addString("For signal ").addInput(signal).addString(" with ").addInput(container).addString(":\n")
+            .addString("  Stackable (64): ").addResult(items64Str).addString("\n")
+            .addString("  Stackable (16): ").addResult(items16Str).addString("\n")
+            .addString("  Non-stackable (1): ").addResult(items1Str);
+        
         return message;
-       // return new String[] {"Items Required for 64 Stackable: ", CalcCommand.getParsedStack(item64, 64), "\nItems Required for 16 Stackable: ", stackable16, "\nItems Required for Non Stackable: ", stackable1};
     }
 
     public static String helpMessage = """
         §b§LSignal To Items:§r§f
-           Given a container and a desired comparator signal strength §7§o(can be in expression form)§r§f, returns the number of items needed to achieve that signal strength.
-            §eUsage: /calc signaltoitems <container> <signal>§f
+        Calculates items needed in a container for a specific comparator signal strength.
+        Base command §e/calc signaltoitems§r or §e/calc signaltoitems help§r shows this message.
+        
+        §eUsage: /calc signaltoitems get <container_type> <signal_strength>§f
+          <container_type>: Type of container (e.g., chest, hopper, furnace).
+          <signal_strength>: Desired signal strength (0-15).
+          Example: /calc signaltoitems get chest 7
                 """;
 
 }
-
