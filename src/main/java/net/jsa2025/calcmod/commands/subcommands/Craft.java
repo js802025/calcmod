@@ -23,8 +23,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items; 
 import net.minecraft.recipe.*;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.DynamicRegistryManager; 
 import net.minecraft.server.command.CommandManager; 
@@ -41,14 +39,14 @@ public class Craft {
         LiteralArgumentBuilder<FabricClientCommandSource> craftLiteral = ClientCommandManager.literal("craft");
 
         craftLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("craft");
+            CalcMessageBuilder message = Help.executeSpecificHelp("craft");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
 
         craftLiteral.then(ClientCommandManager.literal("help")
             .executes(ctx -> {
-                CalcMessageBuilder message = Help.execute("craft");
+                CalcMessageBuilder message = Help.executeSpecificHelp("craft");
                 CalcCommand.sendMessage(ctx.getSource(), message);
                 return 1;
             })
@@ -116,13 +114,13 @@ public class Craft {
         LiteralArgumentBuilder<ServerCommandSource> craftLiteral = CommandManager.literal("craft"); 
         
         craftLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("craft");
+            CalcMessageBuilder message = Help.executeSpecificHelp("craft");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         craftLiteral.then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("craft");
+            CalcMessageBuilder message = Help.executeSpecificHelp("craft");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

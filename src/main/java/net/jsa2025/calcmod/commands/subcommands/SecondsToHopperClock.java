@@ -23,13 +23,13 @@ public class SecondsToHopperClock {
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> secondsToHopperClockLiteral) {
         secondsToHopperClockLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstohopperclock");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
         
         secondsToHopperClockLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstohopperclock");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -51,13 +51,13 @@ public class SecondsToHopperClock {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> secondsToHopperClockLiteral) {
         secondsToHopperClockLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstohopperclock");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         secondsToHopperClockLiteral.then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("secondstohopperclock");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstohopperclock");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

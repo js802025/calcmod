@@ -23,13 +23,13 @@ public class SecondsToRepeater {
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> secondsToRepeaterLiteral) {
         secondsToRepeaterLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("secondstorepeater");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstorepeater");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
         
         secondsToRepeaterLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("secondstorepeater");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstorepeater");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -51,13 +51,13 @@ public class SecondsToRepeater {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> secondsToRepeaterLiteral) {
         secondsToRepeaterLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("secondstorepeater");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstorepeater");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         secondsToRepeaterLiteral.then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("secondstorepeater");
+            CalcMessageBuilder message = Help.executeSpecificHelp("secondstorepeater");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

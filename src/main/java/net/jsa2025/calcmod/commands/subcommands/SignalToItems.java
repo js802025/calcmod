@@ -26,13 +26,13 @@ public class SignalToItems {
 
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> signalToItemsLiteral) {
         signalToItemsLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("signaltoitems");
+            CalcMessageBuilder message = Help.executeSpecificHelp("signaltoitems");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
         
         signalToItemsLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("signaltoitems");
+            CalcMessageBuilder message = Help.executeSpecificHelp("signaltoitems");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -55,13 +55,13 @@ public class SignalToItems {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> signalToItemsLiteral) {
         signalToItemsLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("signaltoitems");
+            CalcMessageBuilder message = Help.executeSpecificHelp("signaltoitems");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         signalToItemsLiteral.then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("signaltoitems");
+            CalcMessageBuilder message = Help.executeSpecificHelp("signaltoitems");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

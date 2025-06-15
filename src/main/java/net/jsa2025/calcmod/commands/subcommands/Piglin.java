@@ -43,12 +43,12 @@ public class Piglin {
                             return 1;
                         }))))
             .then(ClientCommandManager.literal("help").executes((ctx) -> {
-                CalcMessageBuilder message = Help.execute("barter");
+                CalcMessageBuilder message = Help.executeSpecificHelp("barter");
                 CalcCommand.sendMessage(ctx.getSource(), message);
                 return 1;
             }));
         barterLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("barter");
+            CalcMessageBuilder message = Help.executeSpecificHelp("barter");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
@@ -83,12 +83,12 @@ public class Piglin {
                             return 1;
                         }))))
             .then(CommandManager.literal("help").executes((ctx) -> {
-                CalcMessageBuilder message = Help.execute("barter");
+                CalcMessageBuilder message = Help.executeSpecificHelp("barter");
                 CalcCommand.sendMessageServer(ctx.getSource(), message);
                 return 1;
             }));
         barterLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("barter");
+            CalcMessageBuilder message = Help.executeSpecificHelp("barter");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });

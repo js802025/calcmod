@@ -24,13 +24,13 @@ public class Random {
 
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> randomLiteral) {
         randomLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("random");
+            CalcMessageBuilder message = Help.executeSpecificHelp("random");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
 
         randomLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("random");
+            CalcMessageBuilder message = Help.executeSpecificHelp("random");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -64,13 +64,13 @@ public class Random {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> randomLiteral) {
         randomLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("random");
+            CalcMessageBuilder message = Help.executeSpecificHelp("random");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         randomLiteral.then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("random");
+            CalcMessageBuilder message = Help.executeSpecificHelp("random");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

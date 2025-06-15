@@ -23,13 +23,13 @@ public class Rates {
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> ratesLiteral) {
         ratesLiteral.executes(ctx ->{ 
-            CalcMessageBuilder message = Help.execute("rates");
+            CalcMessageBuilder message = Help.executeSpecificHelp("rates");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
         
         ratesLiteral.then(ClientCommandManager.literal("help").executes(ctx ->{
-            CalcMessageBuilder message = Help.execute("rates");
+            CalcMessageBuilder message = Help.executeSpecificHelp("rates");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -52,13 +52,13 @@ public class Rates {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> ratesLiteral) {
         ratesLiteral.executes(ctx ->{ 
-            CalcMessageBuilder message = Help.execute("rates");
+            CalcMessageBuilder message = Help.executeSpecificHelp("rates");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         ratesLiteral.then(CommandManager.literal("help").executes(ctx ->{
-            CalcMessageBuilder message = Help.execute("rates");
+            CalcMessageBuilder message = Help.executeSpecificHelp("rates");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

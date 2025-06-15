@@ -22,14 +22,14 @@ public class AllayStorage {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> allayStorageLiteral) {
-        allayStorageLiteral.executes(ctx -> { // Base command shows help
-            CalcMessageBuilder message = Help.execute("allaystorage");
+        allayStorageLiteral.executes(ctx -> {
+            CalcMessageBuilder message = Help.executeSpecificHelp("allaystorage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
         
         allayStorageLiteral.then(ClientCommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("allaystorage");
+            CalcMessageBuilder message = Help.executeSpecificHelp("allaystorage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -51,13 +51,13 @@ public class AllayStorage {
     
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> allayStorageLiteral) {
         allayStorageLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("allaystorage");
+            CalcMessageBuilder message = Help.executeSpecificHelp("allaystorage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         allayStorageLiteral.then(CommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("allaystorage");
+            CalcMessageBuilder message = Help.executeSpecificHelp("allaystorage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

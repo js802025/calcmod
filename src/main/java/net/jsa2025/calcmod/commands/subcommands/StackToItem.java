@@ -23,13 +23,13 @@ public class StackToItem {
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> stackToItemLiteral) {
         stackToItemLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("stacktoitem");
+            CalcMessageBuilder message = Help.executeSpecificHelp("stacktoitem");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
 
         stackToItemLiteral.then(ClientCommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("stacktoitem");
+            CalcMessageBuilder message = Help.executeSpecificHelp("stacktoitem");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -52,13 +52,13 @@ public class StackToItem {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> stackToItemLiteral) {
         stackToItemLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("stacktoitem");
+            CalcMessageBuilder message = Help.executeSpecificHelp("stacktoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         stackToItemLiteral.then(CommandManager.literal("help").executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("stacktoitem");
+            CalcMessageBuilder message = Help.executeSpecificHelp("stacktoitem");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

@@ -33,7 +33,7 @@ public class Nether {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })).then(ClientCommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("nether");
+            CalcMessageBuilder message = Help.executeSpecificHelp("nether");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -57,7 +57,7 @@ public class Nether {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })).then(CommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("nether");
+            CalcMessageBuilder message = Help.executeSpecificHelp("nether");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

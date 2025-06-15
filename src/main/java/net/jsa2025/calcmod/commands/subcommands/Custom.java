@@ -84,11 +84,11 @@ public class Custom {
                         return 0;
                     })))
             .then(ClientCommandManager.literal("help").executes(ctx -> {
-                CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
+                CalcCommand.sendMessage(ctx.getSource(), Help.executeSpecificHelp("custom"));
                 return 0;
             }));
         customLiteral.executes(ctx -> {
-            CalcCommand.sendMessage(ctx.getSource(), Help.execute("custom"));
+            CalcCommand.sendMessage(ctx.getSource(), Help.executeSpecificHelp("custom"));
             return 0;
         });
     }
@@ -148,11 +148,11 @@ public class Custom {
                         return 0;
                     })))
             .then(CommandManager.literal("help").executes(ctx -> {
-                CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
+                CalcCommand.sendMessageServer(ctx.getSource(), Help.executeSpecificHelp("custom"));
                 return 0;
             }));
         customLiteral.executes(ctx -> {
-            CalcCommand.sendMessageServer(ctx.getSource(), Help.execute("custom"));
+            CalcCommand.sendMessageServer(ctx.getSource(), Help.executeSpecificHelp("custom"));
             return 0;
         });
     }

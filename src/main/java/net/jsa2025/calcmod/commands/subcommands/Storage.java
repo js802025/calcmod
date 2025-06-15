@@ -24,13 +24,13 @@ public class Storage {
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> storageLiteral) {
         storageLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("storage");
+            CalcMessageBuilder message = Help.executeSpecificHelp("storage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
 
         storageLiteral.then(ClientCommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("storage");
+            CalcMessageBuilder message = Help.executeSpecificHelp("storage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -61,13 +61,13 @@ public class Storage {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> storageLiteral) {
         storageLiteral.executes(ctx -> {
-            CalcMessageBuilder message = Help.execute("storage");
+            CalcMessageBuilder message = Help.executeSpecificHelp("storage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         storageLiteral.then(CommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("storage");
+            CalcMessageBuilder message = Help.executeSpecificHelp("storage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

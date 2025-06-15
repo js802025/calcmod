@@ -23,13 +23,13 @@ public class ItemToSb {
     
     private static void populateClient(LiteralArgumentBuilder<FabricClientCommandSource> itemToSbLiteral) {
         itemToSbLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("itemtosb");
+            CalcMessageBuilder message = Help.executeSpecificHelp("itemtosb");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         });
 
         itemToSbLiteral.then(ClientCommandManager.literal("help").executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("itemtosb");
+            CalcMessageBuilder message = Help.executeSpecificHelp("itemtosb");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -52,13 +52,13 @@ public class ItemToSb {
 
     private static void populateServer(LiteralArgumentBuilder<ServerCommandSource> itemToSbLiteral) {
         itemToSbLiteral.executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("itemtosb");
+            CalcMessageBuilder message = Help.executeSpecificHelp("itemtosb");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         });
 
         itemToSbLiteral.then(CommandManager.literal("help").executes(ctx -> { 
-            CalcMessageBuilder message = Help.execute("itemtosb");
+            CalcMessageBuilder message = Help.executeSpecificHelp("itemtosb");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));

@@ -35,7 +35,7 @@ public class Overworld {
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })).then(ClientCommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("overworld");
+            CalcMessageBuilder message = Help.executeSpecificHelp("overworld");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }));
@@ -59,7 +59,7 @@ public class Overworld {
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })).then(CommandManager.literal("help").executes((ctx) -> {
-            CalcMessageBuilder message = Help.execute("overworld");
+            CalcMessageBuilder message = Help.executeSpecificHelp("overworld");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }));
