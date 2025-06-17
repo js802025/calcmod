@@ -55,7 +55,7 @@ public class SecondsToHopperClock {
         double secondsDouble = CalcCommand.getParsedExpression(player, seconds);
         double hopperclock = Math.ceil(secondsDouble *1.25);
         if (hopperclock > 320) {
-            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result", " \n§cThis exceeds the maximum number of items in a hopper."}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
+            CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result", " \n<red>This exceeds the maximum number of items in a hopper."}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
             return message;
         } else {
             CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"Items needed in hopper clock for ", "input"," seconds = ", "result", "result"}, new String[] {seconds}, new String[] {nf.format(hopperclock), " \nStacks: "+nf.format(Math.floor(hopperclock/64))+" Items: "+nf.format(hopperclock%64)});
@@ -64,9 +64,9 @@ public class SecondsToHopperClock {
     }
 
     public static String helpMessage = """
-        §b§LSeconds to Hopper Clock:§r§f
-            Given a number of seconds §7§o(can be in expression form)§r§f, returns the number of items needed in a hopper clock to achieve that time.
-            §eUsage: /calc secondstohopperclock <seconds>§f
+        <aqua><bold>Seconds to Hopper Clock:<reset><white>
+            Given a number of seconds <gray><italic>(can be in expression form)<reset><white>, returns the number of items needed in a hopper clock to achieve that time.
+            <yellow>Usage: /calc secondstohopperclock <seconds><white>
                 """;
 
 }

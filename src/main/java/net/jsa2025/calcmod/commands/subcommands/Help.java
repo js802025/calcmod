@@ -66,14 +66,14 @@ public class Help {
         if (hterm.length == 0) {
             CalcMessageBuilder messageBuilder = new CalcMessageBuilder();
             messageBuilder.setMessageType(CalcMessageBuilder.MessageType.HELP);
-            messageBuilder.addString("§a§lCalcMod §r \n");
-            messageBuilder.addString("§b§LBasic Usage:§r§f\n" +
+            messageBuilder.addString("<green><bold>CalcMod <reset> \n");
+            messageBuilder.addString("<aqua><bold>Basic Usage:<reset><white>\n" +
                     "            Given an expression, returns the result." +
-                    "            §eUsage: /calc <expressions>§f\n");
-            messageBuilder.addString("§bFunctions:§r\n");
+                    "            <yellow>Usage: /calc <expressions><white>\n");
+            messageBuilder.addString("<aqua>Functions:<reset>\n");
             for (Map.Entry<String, String> me :
              help.entrySet()) {
-                messageBuilder.addInput("§l"+me.getKey()+": §r").addRunCommand("§a§nSee Details >>§r", "calc "+me.getKey()+" help");
+                messageBuilder.addInput("<bold>"+me.getKey()+": <reset>").addRunCommand("<green><underlined>See Details >><reset>", "calc "+me.getKey()+" help");
                 messageBuilder.addString("\n");
   
               }

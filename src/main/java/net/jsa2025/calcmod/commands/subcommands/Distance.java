@@ -112,11 +112,11 @@ public class Distance {
     }
 
     public static String helpMessage = """
-        §b§LDistance:§r§f
+        <aqua><bold>Distance:<reset><white>
             Given two block positions, gives distance between them. If only one position is given, uses player's location. The 3D mode provides distance including height.
-            §eUsage: /calc dist <x1> <y1> <z1>§f
-            §eUsage: /calc dist <x1> <y1> <z1> <x2> <y2> <z2>§f
-            §eUsage: /calc dist 3d <x1> <y1> <z1>§f
-            §eUsage: /calc dist 3d <x1> <y1> <z1> <x2> <y2> <z2>§f
+            <yellow>Usage: /calc dist <x1> <y1> <z1><white>
+            <yellow>Usage: /calc dist <x1> <y1> <z1> <x2> <y2> <z2><white>
+            <yellow>Usage: /calc dist 3d <x1> <y1> <z1><white>
+            <yellow>Usage: /calc dist 3d <x1> <y1> <z1> <x2> <y2> <z2><white>
                 """;
 }

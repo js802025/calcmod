@@ -297,11 +297,11 @@ public class Craft {
 //    }
 
     public static String helpMessage = """
-            §b§LCraft:§r§f
-                    Given a desired item and the quantity to be crafted §7§o(can be in expression form)§r§f, returns the amounts of the items needed to craft the amount of the desired item.
+            <aqua><bold>Craft:<reset><white>
+                    Given a desired item and the quantity to be crafted <gray><italic>(can be in expression form)<reset><white>, returns the amounts of the items needed to craft the amount of the desired item.
                     Depth specifies how many levels of recursive crafting to perform on the recipe. Default depth is 1.\s
-                        §eUsage: /calc craft <item> <amount>§f
-                        §eUsage: /calc craft <item> <depth> <amount>§f
+                        <yellow>Usage: /calc craft <item> <amount><white>
+                        <yellow>Usage: /calc craft <item> <depth> <amount><white>
             """;
     
 }

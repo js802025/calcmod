@@ -17,6 +17,7 @@ import net.jsa2025.calcmod.commands.subcommands.Random;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.mariuszgromada.math.mxparser.Expression;
@@ -175,7 +176,7 @@ public class CalcCommand {
 //            messageText.append(Text.literal(message[i]));
 //            m += message[i];
 //           } else {
-//            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
+//            messageText.append(Text.literal("<green>"+message[i]+"<white>").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message[i]))));
 //            m += message[i];
 //           }
 //
@@ -189,7 +190,7 @@ public class CalcCommand {
 //            }
 //        }
 //        messageText.append(Text.literal(" "));
-//        source.getPlayer().sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("§a", "").replaceAll("§f", ""))))));
+//        source.getPlayer().sendMessage(messageText.append(Text.literal("<gray>[Click to Copy]<white>").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, m.replaceAll("<green>", "").replaceAll("<white>", ""))))));
 //    }
     
     public static void sendMessage(CommandSourceStack source, CalcMessageBuilder messageBuilder) {
@@ -206,7 +207,7 @@ public class CalcCommand {
 //            messageText.append(Text.literal(message[i]));
 //            m += message[i];
 //           } else {
-//            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(message[i]))));
+//            messageText.append(Text.literal("<green>"+message[i]+"<white>").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(message[i]))));
 //            m += message[i];
 //           }
 //
@@ -221,7 +222,7 @@ public class CalcCommand {
 //        }
 //        messageText.append(Text.literal(" "));
 //        source.sendChatMessage(SentMessage.of(SignedMessage.ofUnsigned("hello")), true, MessageType.params(MessageType.SAY_COMMAND, source));
-//        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(m.replaceAll("§a", "").replaceAll("§f", "")))))
+//        source.sendMessage(messageText.append(Text.literal("<gray>[Click to Copy]<white>").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(m.replaceAll("<green>", "").replaceAll("<white>", "")))))
 //                );
 //    }
     

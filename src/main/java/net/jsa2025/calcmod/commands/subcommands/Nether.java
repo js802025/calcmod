@@ -63,13 +63,13 @@ public class Nether {
 
     public static CalcMessageBuilder execute(BlockPosition position) {
 
-        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.toVector().getX())+" Z: "+nf.format(position.toVector().getZ())).addString(" §7>>§f Nether = ").addResult("X: "+nf.format(position.toVector().getX()/8)+" Z: "+nf.format(position.toVector().getZ()/8));
+        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.toVector().getX())+" Z: "+nf.format(position.toVector().getZ())).addString(" >><white> Nether = ").addResult("X: "+nf.format(position.toVector().getX()/8)+" Z: "+nf.format(position.toVector().getZ()/8));
         return message;
     }
 
     public static String helpMessage = """
-        §b§LNether:§r§f
+        <bold><aqua>Nether:<reset><white>
             Given a block position in the Overworld, returns the Nether's corresponding coordinates. If no coordinates are given, command assumes current player position.
-            §eUsage: /calc nether <x> <y> <z>§f
+            <yellow>Usage: /calc nether <x> <y> <z><white>
                 """;
 }

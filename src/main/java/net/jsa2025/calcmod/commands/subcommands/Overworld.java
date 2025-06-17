@@ -63,14 +63,14 @@ public class Overworld {
     public static CalcMessageBuilder execute(Entity player, BlockPosition position) {
 
 
-        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.toVector().getBlockX())+" Z: "+nf.format(position.toVector().getBlockZ())).addString(" §7>>§f Overworld = ").addResult("X: "+nf.format(position.toVector().getBlockX()*8)+" Z: "+nf.format(position.toVector().getBlockZ()*8));
+        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.toVector().getBlockX())+" Z: "+nf.format(position.toVector().getBlockZ())).addString(" >><white> Overworld = ").addResult("X: "+nf.format(position.toVector().getBlockX()*8)+" Z: "+nf.format(position.toVector().getBlockZ()*8));
         return message;
     }
 
     public static String helpMessage = """
-            §b§LOverworld:§r§f
+            <aqua><bold>Overworld:<reset><white>
                 Given a block position in the Nether, returns the Overworld's corresponding coordinates. If no coordinates are given, command assumes current player position.
-                §eUsage: /calc overworld <x> <y> <z>§f
+                <yellow>Usage: /calc overworld <x> <y> <z><white>
                     """;
 
 

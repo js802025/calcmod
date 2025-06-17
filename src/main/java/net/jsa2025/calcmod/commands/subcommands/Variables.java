@@ -41,7 +41,7 @@ public class Variables {
 
     public static CalcMessageBuilder execute() {
         String message = """
-            §bVariables§f can be used inside equations in any number field. They act as shortcuts instead of having to remember that "a double chest full of 16 stackable items is 864."
+            <aqua>Variables<white> can be used inside equations in any number field. They act as shortcuts instead of having to remember that "a double chest full of 16 stackable items is 864."
             If no stack size is given, variables default to the stack size of each command.
             
                 dub: 3456 (default)

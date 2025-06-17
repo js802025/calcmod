@@ -44,11 +44,11 @@ public class Custom {
                                     CalcMessageBuilder messageBuilder;
                                     if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
                                         saveNewCommand(name, function);
-                                        messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+                                        messageBuilder = new CalcMessageBuilder("<yellow>Added "+name+"<white>");
                                     } else if (parseEquationVariables(function).isEmpty()) {
-                                        messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
+                                        messageBuilder = new CalcMessageBuilder("<red>Must have at least one parameter.<white>");
                                     }else {
-                                        messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
+                                        messageBuilder = new CalcMessageBuilder("<red>Cannot have numbers in command name.<white>");
                                     }
 
                                     CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
@@ -57,7 +57,7 @@ public class Custom {
                                 }))))
                                 .then(Commands.literal("list").executes(ctx -> {
                                     JsonObject fs = getFunctions();
-                                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
+                                    String m = fs.entrySet().stream().map(entry -> "<aqua><bold>"+entry.getKey() + ":<white><reset> " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
                                     CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
                                     CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
                                     return 0;
@@ -67,7 +67,7 @@ public class Custom {
                                 .executes(ctx -> {
                                     String name = StringArgumentType.getString(ctx, "name");
                                     deleteCommand(name);
-                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
+                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("<red>Removed "+name+"<white>");
                                     CalcCommand.sendMessage(ctx.getSource(), messageBuilder);
                                     return 0;
                                 })))
@@ -104,11 +104,11 @@ public class Custom {
 //                                            CalcMessageBuilder messageBuilder;
 //                                            if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
 //                                                saveNewCommand(name, function);
-//                                                messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+//                                                messageBuilder = new CalcMessageBuilder("<yellow>Added "+name+"<white>");
 //                                            } else if (parseEquationVariables(function).isEmpty()) {
-//                                                messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
+//                                                messageBuilder = new CalcMessageBuilder("<red>Must have at least one parameter.<white>");
 //                                            }else {
-//                                                messageBuilder = new CalcMessageBuilder("§cCannot have numbers in command name.§f");
+//                                                messageBuilder = new CalcMessageBuilder("<red>Cannot have numbers in command name.<white>");
 //                                            }
 //
 //
@@ -118,7 +118,7 @@ public class Custom {
 //                                        }))))
 //                .then(CommandManager.literal("list").executes(ctx -> {
 //                    JsonObject fs = getFunctions();
-//                    String m = fs.entrySet().stream().map(entry -> "§b§L"+entry.getKey() + ":§f§r " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
+//                    String m = fs.entrySet().stream().map(entry -> "<aqua><bold>"+entry.getKey() + ":<white><reset> " + entry.getValue().getAsString()).collect(Collectors.joining("\n"));
 //                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder(m);
 //                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
 //                    return 0;
@@ -128,7 +128,7 @@ public class Custom {
 //                                .executes(ctx -> {
 //                                    String name = StringArgumentType.getString(ctx, "name");
 //                                    deleteCommand(name);
-//                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("§cRemoved "+name+"§f");
+//                                    CalcMessageBuilder messageBuilder = new CalcMessageBuilder("<red>Removed "+name+"<white>");
 //                                    CalcCommand.sendMessageServer(ctx.getSource(), messageBuilder);
 //                                    return 0;
 //                                })))
@@ -251,14 +251,14 @@ public class Custom {
     }
 
     public static String helpMessage = """
-            §b§LCustom:§r§f
-                Custom functions are reusable commands that perform a specific computation. They can be run in any number field formatted with the function name and the parameters in parenthesis §7§o(customfunction(param1, paramN))§r§f.
+            <aqua><bold>Custom:<reset><white>
+                Custom functions are reusable commands that perform a specific computation. They can be run in any number field formatted with the function name and the parameters in parenthesis <gray><italic>(customfunction(param1, paramN))<reset><white>.
                 Custom functions can have any number of parameters, specified in [square] brackets when adding the function.
-                §eUsage: /calc custom add <name> <function>§f
-                §eUsage: /calc custom run <name> <input>§f
-                §eUsage: /calc <name>(<parameters>)§f
-                §eUsage: /calc custom list§f
-                §eUsage: /calc custom remove <name>§f
+                <yellow>Usage: /calc custom add <name> <function><white>
+                <yellow>Usage: /calc custom run <name> <input><white>
+                <yellow>Usage: /calc <name>(<parameters>)<white>
+                <yellow>Usage: /calc custom list<white>
+                <yellow>Usage: /calc custom remove <name><white>
                     """;
 
 }

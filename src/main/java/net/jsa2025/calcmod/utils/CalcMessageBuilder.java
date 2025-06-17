@@ -5,6 +5,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 
@@ -57,18 +58,19 @@ public class CalcMessageBuilder {
     }
 
     public CalcMessageBuilder addString(String text) {
-        messageText = messageText.append(Component.text(text));
+        messageText = messageText.append(MiniMessage.miniMessage().deserialize(text));
         return this;
     }
     public CalcMessageBuilder addInput(String text) {
-        messageText = messageText.append(Component.text(text)
+        messageText = messageText.append(MiniMessage.miniMessage().deserialize(text)
                 .style(Style.style(TextColor.fromHexString("#55FFFF"))));
         return this;
     }
     public CalcMessageBuilder addResult(String text) {
         messageText = messageText.append(Component.text(text)
-                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))
+
                 .style(Style.style(TextColor.fromHexString("#55FF55"))))
+                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))
                 ;
         return this;
     }
@@ -91,19 +93,19 @@ public class CalcMessageBuilder {
     }
 
     public CalcMessageBuilder addRunCommand(String text, String command) {
-        messageText = messageText.append(Component.text(text).clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, command)));
+        messageText = messageText.append(MiniMessage.miniMessage().deserialize(text).clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, command)));
         return this;
     }
 
     public Component generateStyledText() {
         if (Objects.requireNonNull(this.messageType) == MessageType.HELP && helpMessage != null) {
-            return Component.text(helpMessage);
+            return MiniMessage.miniMessage().deserialize(helpMessage);
         }
         if (Objects.requireNonNull(this.messageType) != MessageType.HELP) {
             messageText = messageText.append(Component.text(" "));
             messageText = messageText.append(Component.text("[Click to Copy]")
                             .style(Style.style(TextColor.fromHexString("#00AAAA")))
-                    .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, PlainTextComponentSerializer.plainText().serialize(messageText).replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", ""))));
+                    .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, PlainTextComponentSerializer.plainText().serialize(messageText).replaceAll("§.", "").replaceAll("<aqua>", "").replaceAll("<gray>", "").replaceAll("<white>", ""))));
         }
         return messageText;
     }
