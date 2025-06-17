@@ -25,8 +25,8 @@ public class Help {
         command
         .then(Commands.literal("help")
         .executes(ctx -> {
-            CalcMessageBuilder message = execute();
-            CalcCommand.sendMessageServer(ctx.getSource(), message);
+                CalcMessageBuilder message = execute();
+                CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 0;
         }));
         return command;
@@ -51,13 +51,20 @@ public class Help {
         help.put("barter", Piglin.helpMessage);
         help.put("custom", Custom.helpMessage);
         if (hterm.length == 0) {
-            String helpMenu = "";
+            CalcMessageBuilder messageBuilder = new CalcMessageBuilder();
+            messageBuilder.setMessageType(CalcMessageBuilder.MessageType.HELP);
+            messageBuilder.addString("§a§lCalcMod §r \n");
+            messageBuilder.addString("§b§LBasic Usage:§r§f\n" +
+                    "            Given an expression, returns the result." +
+                    "            §eUsage: /calc <expressions>§f\n");
+            messageBuilder.addString("§bFunctions:§r\n");
             for (Map.Entry<String, String> me :
-             help.entrySet()) {
-                helpMenu += me.getValue() + "\n";
-  
-              }
-            CalcMessageBuilder messageBuilder = new CalcMessageBuilder(helpMenu);
+                    help.entrySet()) {
+                messageBuilder.addInput("§l"+me.getKey()+": §r").addRunCommand("§a§nSee Details >>§r", "/calc "+me.getKey()+" help");
+                messageBuilder.addString("\n");
+
+            }
+
             return messageBuilder;
         } else {
             CalcMessageBuilder messageBuilder = new CalcMessageBuilder(help.get(hterm[0]));

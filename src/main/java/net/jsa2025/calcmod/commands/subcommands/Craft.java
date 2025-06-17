@@ -248,9 +248,9 @@ public class Craft {
     }
 
     public static String helpMessage = """
-        §LCraft:§r
+        §b§LCraft:§r§f
         Given an item and the quanity you want to craft of it, returns the amounts of the ingredients needed to craft the quantity of the item.
-        §cUsage: /calc craft <item> <amount>§f
+        §eUsage: /calc craft <item> <amount>§f
             """;
     
 }
