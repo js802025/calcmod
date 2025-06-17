@@ -99,7 +99,7 @@ public class Craft {
             is = ((ShapelessCraftingRecipeDisplay) item).ingredients().stream().map(i-> i.resolveForFirstStack(map)).toList();
 
         }
-        var outputSize = item.result().resolveForStacks(map).size();
+        var outputSize = item.result().resolveForFirstStack(map).getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
 //        Map<String, Integer> ingredients = new HashMap<String, Integer>();
