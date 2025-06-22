@@ -119,7 +119,7 @@ public class Craft {
 //                //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
 //            }
 //        }
-        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player.getCommandSenderWorld().getServer().getRecipeManager(), map, is, a, steps);
+        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player.getServer().getRecipeManager(), map, is, a, steps);
 
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
                 .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), processItemName(item.result().resolveForFirstStack(map).getDisplayName().getString())}, new String[] {});
