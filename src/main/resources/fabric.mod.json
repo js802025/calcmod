@@ -3,7 +3,7 @@
   "id": "calcmod",
   "version": "${version}",
 
-  "name": "CalcMod",
+  "name": "calcmod",
   "description": "A calculator in your chat with shortcuts designed for Minecraft.",
   "authors": [
     "js802025", "shadeydo"
@@ -28,7 +28,7 @@
   "depends": {
     "fabricloader": ">=0.15.11",
     "fabric-api": "*",
-    "minecraft": ">=1.21.4 <=1.21.8",
+    "minecraft": ">=1.21.5 <=1.21.8",
     "java": ">=21"
   },
   "suggests": {
