@@ -1,34 +1,28 @@
-# gradle
-
+# Gradle
 .gradle/
 build/
-out/
-classes/
+!gradle/wrapper/gradle-wrapper.jar
 
-# eclipse
-
-*.launch
-
-# idea
-
+# IDEs
 .idea/
 *.iml
 *.ipr
 *.iws
+*.vscode/
 
-# vscode
+# OS
+.DS_Store
+Thumbs.db
 
-.settings/
-.vscode/
-bin/
-.classpath
-.project
+# Logs
+*.log
 
-# macos
+# Java
+*.class
 
-*.DS_Store
-
-# fabric
-
+# Fabric/Remap
+remappedSrc/
 run/
-build_old/
+
+# Local properties
+local.properties
