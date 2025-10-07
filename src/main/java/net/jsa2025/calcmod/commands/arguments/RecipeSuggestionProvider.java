@@ -30,11 +30,11 @@ public class RecipeSuggestionProvider implements SuggestionProvider<ServerComman
         Collection<RecipeEntry<?>> recipeStream = context.getSource().getWorld().getRecipeManager().values();
         recipeStream.forEach(recipe -> {
             if (!recipe.value().getDisplays().isEmpty()) {
-                String item = recipe.value().getDisplays().get(0).result().getFirst(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).getRegistryEntry().getIdAsString();
+                String item = recipe.value().getDisplays().get(0).result().getFirst(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getEntityWorld())).getRegistryEntry().getIdAsString();
                 if (item == null) {
                     return;
                 }
-                if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining())) {
+                if (builder.getRemaining().isEmpty() || item.startsWith(builder.getRemaining()) || item.split(":")[1].startsWith(builder.getRemaining())) {
                     builder.suggest( item);
                 }
             }

@@ -96,13 +96,13 @@ public class Craft {
     @Environment(EnvType.CLIENT)
     public static CalcMessageBuilder execute(ClientPlayerEntity player, RecipeDisplayEntry item, String amount, int steps, DynamicRegistryManager registryManager) {
         var is = item.craftingRequirements();
-        var outputSize = item.display().result().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getCount();
+        var outputSize = item.display().result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
 
         HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player, player.getRecipeBook(), registryManager, is, a, steps);
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.display().result().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.display().result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()}, new String[] {});
         
         for (Map.Entry<String, Map.Entry<ItemStack, Integer>> entry : ingredients.entrySet()) {
             String key = entry.getKey();
@@ -133,13 +133,13 @@ public class Craft {
 
     public static CalcMessageBuilder execute(ServerPlayerEntity player, Recipe item, String amount, int steps, DynamicRegistryManager registryManager) {
         var is = item.getIngredientPlacement().getIngredients();
-        var outputSize = ((RecipeDisplay)item.getDisplays().get(0)).result().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getCount();
+        var outputSize = ((RecipeDisplay)item.getDisplays().get(0)).result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
 
-        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player, player.getServer().getRecipeManager(), registryManager, Optional.ofNullable(is), a, steps);
+        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player, player.getEntityWorld().getRecipeManager(), registryManager, Optional.ofNullable(is), a, steps);
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), ((RecipeDisplay) item.getDisplays().get(0)).result().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), ((RecipeDisplay) item.getDisplays().get(0)).result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()}, new String[] {});
 
         for (Map.Entry<String, Map.Entry<ItemStack, Integer>> entry : ingredients.entrySet()) {
             String key = entry.getKey();
@@ -176,12 +176,12 @@ public class Craft {
        //     CalcMod.LOGGER.info("Step1"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
 
             //        CalcMod.LOGGER.info(manager.get(ingredient.getMatchingStacks()[0].getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
-            if (!ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).isEmpty()) {
-                if (ingredients.containsKey(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString())) {
-                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getKey(), ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getValue()+amount_needed));
+            if (!ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).isEmpty()) {
+                if (ingredients.containsKey(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString())) {
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString(), Map.entry(ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()).getKey(), ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()).getValue()+amount_needed));
                 } else {
            //         CalcMod.LOGGER.info("Step2"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
-                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())), amount_needed));
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString(), Map.entry(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())), amount_needed));
                 }
           //      CalcMod.LOGGER.info("Step4"+ingredients.get(ingredient.getMatchingItems().get(0).getIdAsString()).getValue());
 
@@ -190,6 +190,7 @@ public class Craft {
         HashMap<String, Map.Entry<ItemStack, Integer>> ex_ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
 
         for (Map.Entry<ItemStack, Integer> ingredient : ingredients.values()) {
+         //   CalcMod.LOGGER.info("ING "+steps+": "+ingredient.getKey().getName().getString());
             if (steps == 1) {
                // CalcMod.LOGGER.info(is.get(0).getMatchingStacks()[0].getName().getString());
                return  ingredients;
@@ -201,22 +202,20 @@ public class Craft {
 
                 Optional<RecipeResultCollection> recipeResultCollection = book.getOrderedResults().stream().filter(x ->
                         x.getAllRecipes().stream().anyMatch(i -> {
-                                    //    Logger.getLogger("calcmod").info(i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString() + " "+ing_id.get().getPath());
-                                    return i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString().contains(ing_id.get().getPath());
-                                }
-                        )).findFirst();
+                    String id = i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getEntityWorld())).get(0).getRegistryEntry().getIdAsString();
+                    return id.contains(ing_id.get().getPath() + "_") || id.split(":")[1].equals(ing_id.get().getPath());
+                })).findFirst();
                 if (recipeResultCollection.isPresent()) {
-                  //  CalcMod.LOGGER.info("MATCH FOUND for "+ing_id.get().getPath()+": "+recipeResultCollection.get().getAllRecipes().get(0).display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString());
 
-                    RecipeDisplayEntry recipeDisplayEntry = recipeResultCollection.get().getAllRecipes().stream().filter(i -> i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getRegistryEntry().getIdAsString().contains(ing_id.get().getPath())).findFirst().get();
-//                    Recipe<?> recipe = manager.get(ing_id.get()).get().value();
+
+                    RecipeDisplayEntry recipeDisplayEntry = recipeResultCollection.get().getAllRecipes().stream().filter(i -> {
+                        String id = i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getEntityWorld())).get(0).getRegistryEntry().getIdAsString();
+                        return id.contains(ing_id.get().getPath() + "_") || id.split(":")[1].equals(ing_id.get().getPath());
+                    }).findFirst().get();
                     Optional<List<Ingredient>> sis = recipeDisplayEntry.craftingRequirements();
-                 //   CalcMod.LOGGER.info(String.valueOf(ingredient.getValue()));
-                //    CalcMod.LOGGER.info(String.valueOf(recipe.getResult(registryManager).getCount()));
-              //      CalcMod.LOGGER.info(String.valueOf((double) ingredient.getValue() / (double) recipe.getResult(registryManager).getCount()));
-                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, book, registryManager, sis, (int) Math.ceil((double) ingredient.getValue() / (double) recipeDisplayEntry.display().result().getStacks(SlotDisplayContexts.createParameters(player.getWorld())).get(0).getCount()), steps - 1);
-               //     CalcMod.LOGGER.info(recipe.getResult(registryManager).getName().getString());
+                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, book, registryManager, sis, (int) Math.ceil((double) ingredient.getValue() / (double) recipeDisplayEntry.display().result().getStacks(SlotDisplayContexts.createParameters(player.getEntityWorld())).get(0).getCount()), steps - 1);
                     for (String item : sub_ingredients.keySet()) {
+                     //   CalcMod.LOGGER.info("Sub ing: "+item);
                         if (ex_ingredients.containsKey(item)) {
                             ex_ingredients.put(item, Map.entry(ingredients.get(item).getKey(), ingredients.get(item).getValue() + sub_ingredients.get(item).getValue()));
                         } else {
@@ -224,6 +223,8 @@ public class Craft {
                         }
                     }
                 } else {
+                  //  CalcMod.LOGGER.info("NO MATCH FOUND for "+ing_id.get().getPath());
+
                     ex_ingredients.put(ingredient.getKey().getName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
                 }
              //   return ingredients;
@@ -242,12 +243,12 @@ public class Craft {
             //     CalcMod.LOGGER.info("Step1"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
 
             //        CalcMod.LOGGER.info(manager.get(ingredient.getMatchingStacks()[0].getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
-            if (!ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).isEmpty()) {
-                if (ingredients.containsKey(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString())) {
-                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getKey(), ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString()).getValue()+amount_needed));
+            if (!ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).isEmpty()) {
+                if (ingredients.containsKey(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString())) {
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString(), Map.entry(ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()).getKey(), ingredients.get(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()).getValue()+amount_needed));
                 } else {
                     //         CalcMod.LOGGER.info("Step2"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
-                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getName().getString(), Map.entry(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getWorld())), amount_needed));
+                    ingredients.put(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString(), Map.entry(ingredient.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())), amount_needed));
                 }
                 //      CalcMod.LOGGER.info("Step4"+ingredients.get(ingredient.getMatchingItems().get(0).getIdAsString()).getValue());
 
@@ -279,7 +280,7 @@ public class Craft {
                     //       CalcMod.LOGGER.info(String.valueOf(ingredient.getValue()));
                     //    CalcMod.LOGGER.info(String.valueOf(recipe.getResult(registryManager).getCount()));
                     //      CalcMod.LOGGER.info(String.valueOf((double) ingredient.getValue() / (double) recipe.getResult(registryManager).getCount()));
-                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, manager, registryManager, Optional.ofNullable(sis), (int) Math.ceil((double) ingredient.getValue() / (double) recipe.getDisplays().get(0).result().getFirst(SlotDisplayContexts.createParameters(player.getWorld())).getCount()), steps - 1);
+                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, manager, registryManager, Optional.ofNullable(sis), (int) Math.ceil((double) ingredient.getValue() / (double) recipe.getDisplays().get(0).result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getCount()), steps - 1);
                     //     CalcMod.LOGGER.info(recipe.getResult(registryManager).getName().getString());
                     //     ingredients.remove(recipe.getResult(registryManager).getName().getString());
                     for (String item : sub_ingredients.keySet()) {
