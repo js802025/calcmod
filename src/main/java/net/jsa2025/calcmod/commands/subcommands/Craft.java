@@ -90,9 +90,9 @@ public class Craft {
     public static CalcMessageBuilder execute(Entity player, Recipe recipe, String amount, int steps) {
         List<ItemStack> is;
         if (recipe.getClass().getName().contains("Shaped")) {
-            is = ((ShapedRecipe) recipe).getChoiceMap().values().stream().map(i -> i.getItemStack()).toList();
+            is = ((ShapedRecipe) recipe).getChoiceMap().values().stream().filter(Objects::nonNull).map(RecipeChoice::getItemStack).toList();
         } else {
-            is = ((ShapelessRecipe) recipe).getChoiceList().stream().map(i -> i.getItemStack()).toList();
+            is = ((ShapelessRecipe) recipe).getChoiceList().stream().filter(Objects::nonNull).map(RecipeChoice::getItemStack).toList();
         }
         var outputSize = recipe.getResult().getAmount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
@@ -204,10 +204,10 @@ public class Craft {
 ////                    Recipe<?> recipe = manager.get(ing_id.get()).get().value();
                     Optional<List<ItemStack>> sis;
                     Recipe recipe = player.getServer().getRecipesFor(ing_id.get()).get(0);
-                    if (recipe.getClass().isInstance(ShapedRecipe.class)) {
-                        sis = Optional.of(((ShapedRecipe) recipe).getChoiceMap().values().stream().map(i -> i.getItemStack()).toList());
+                    if (recipe.getClass().getName().contains("Shaped")) {
+                        sis = Optional.of(((ShapedRecipe) recipe).getChoiceMap().values().stream().filter(Objects::nonNull).map(RecipeChoice::getItemStack).toList());
                     } else {
-                        sis = Optional.of(((ShapelessRecipe) recipe).getChoiceList().stream().map(i -> i.getItemStack()).toList());
+                        sis = Optional.of(((ShapelessRecipe) recipe).getChoiceList().stream().filter(Objects::nonNull).map(RecipeChoice::getItemStack).toList());
                     }
                  //   CalcMod.LOGGER.info(String.valueOf(ingredient.getValue()));
                 //    CalcMod.LOGGER.info(String.valueOf(recipe.getResult(registryManager).getCount()));
