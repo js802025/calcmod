@@ -29,7 +29,7 @@ public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClien
         // });
         Stream<RecipeResultCollection> recipeStream = context.getSource().getPlayer().getRecipeBook().getOrderedResults().stream();
         recipeStream.forEach(recipe -> {
-            String item = recipe.getAllRecipes().get(0).display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getWorld())).get(0).getRegistryEntry().getIdAsString();
+            String item = recipe.getAllRecipes().get(0).display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getEntityWorld())).get(0).getRegistryEntry().getIdAsString();
             if (item == null) {
                 return;
             }
