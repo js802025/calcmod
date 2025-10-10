@@ -203,15 +203,14 @@ public class Craft {
                 Optional<RecipeResultCollection> recipeResultCollection = book.getOrderedResults().stream().filter(x ->
                         x.getAllRecipes().stream().anyMatch(i -> {
                     String id = i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getEntityWorld())).get(0).getRegistryEntry().getIdAsString();
-                    return id.contains(ing_id.get().getPath() + "_") || id.split(":")[1].equals(ing_id.get().getPath());
+                    return id.equals(ing_id.get().toString());
                 })).findFirst();
                 if (recipeResultCollection.isPresent()) {
 
 
                     RecipeDisplayEntry recipeDisplayEntry = recipeResultCollection.get().getAllRecipes().stream().filter(i -> {
                         String id = i.display().result().getStacks(SlotDisplayContexts.createParameters(player.getEntityWorld())).get(0).getRegistryEntry().getIdAsString();
-                        return id.contains(ing_id.get().getPath() + "_") || id.split(":")[1].equals(ing_id.get().getPath());
-                    }).findFirst().get();
+                        return id.equals(ing_id.get().toString());                    }).findFirst().get();
                     Optional<List<Ingredient>> sis = recipeDisplayEntry.craftingRequirements();
                     HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, book, registryManager, sis, (int) Math.ceil((double) ingredient.getValue() / (double) recipeDisplayEntry.display().result().getStacks(SlotDisplayContexts.createParameters(player.getEntityWorld())).get(0).getCount()), steps - 1);
                     for (String item : sub_ingredients.keySet()) {
