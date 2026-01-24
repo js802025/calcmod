@@ -59,6 +59,7 @@ public class CalcCommand {
         command = SignalToItems.register(command);
         command = Piglin.register(command);
         command = Distance.register(command);
+        command = ReverseCraft.register(command);
         command = Custom.register(command);
         command = Variables.register(command);
         command = Help.register(command);
@@ -85,6 +86,7 @@ public class CalcCommand {
         command = SignalToItems.registerServer(command);
         command = Piglin.registerServer(command);
         command = Distance.registerServer(command);
+        command = ReverseCraft.registerServer(command);
         command = Custom.registerServer(command);
         command = Variables.registerServer(command);
         command = Help.registerServer(command);
