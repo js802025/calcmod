@@ -45,9 +45,11 @@ public class Custom {
                                     String function = StringArgumentType.getString(ctx, "function");
                                     String name = StringArgumentType.getString(ctx, "name");
                                     CalcMessageBuilder messageBuilder;
-                                    if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
+                                    if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty() && !function.substring(function.indexOf('(') + 1).contains(name+"(")) {
                                         saveNewCommand(name, function);
-                                        messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+                                        messageBuilder = new CalcMessageBuilder("<yellow>Added "+name+"<white>");
+                                    } else if (function.substring(function.indexOf('(') + 1).contains(name+"(")){
+                                        messageBuilder = new CalcMessageBuilder("§cCommand cannot call itself.§f");
                                     } else if (parseEquationVariables(function).isEmpty()) {
                                         messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
                                     }else {
@@ -105,9 +107,11 @@ public class Custom {
                                             String function = StringArgumentType.getString(ctx, "function");
                                             String name = StringArgumentType.getString(ctx, "name");
                                             CalcMessageBuilder messageBuilder;
-                                            if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty()) {
+                                            if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty() && !function.substring(function.indexOf('(') + 1).contains(name+"(")) {
                                                 saveNewCommand(name, function);
-                                                messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
+                                                messageBuilder = new CalcMessageBuilder("<yellow>Added "+name+"<white>");
+                                            } else if (function.substring(function.indexOf('(') + 1).contains(name+"(")){
+                                                messageBuilder = new CalcMessageBuilder("§cCommand cannot call itself.§f");
                                             } else if (parseEquationVariables(function).isEmpty()) {
                                                 messageBuilder = new CalcMessageBuilder("§cMust have at least one parameter.§f");
                                             }else {
