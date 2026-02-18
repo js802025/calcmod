@@ -62,6 +62,7 @@ public class Help {
         help.put("signaltoitems", SignalToItems.helpMessage);
         help.put("barter", Piglin.helpMessage);
         help.put("dist", Distance.helpMessage);
+        help.put("craftinv", ReverseCraft.helpMessage);
         help.put("custom", Custom.helpMessage);
         if (hterm.length == 0) {
             CalcMessageBuilder messageBuilder = new CalcMessageBuilder();
