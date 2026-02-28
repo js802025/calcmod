@@ -42,12 +42,12 @@ public class ReverseCraft {
                     CalcMessageBuilder message = execute((Player) ctx.getSource().getExecutor(), ctx.getSource().getExecutor().getServer().getRecipe(ctx.getArgument("item", NamespacedKey.class)));
                     CalcCommand.sendMessage(ctx.getSource(), message);
                     return 1;
-                })))
-                                .then(Commands.literal("help").executes(ctx -> {
-                                    CalcMessageBuilder message = Help.execute("craftinv");
-                                    CalcCommand.sendMessage(ctx.getSource(), message);
-                                    return 1;
-                                }));
+                }))
+                .then(Commands.literal("help").executes(ctx -> {
+                    CalcMessageBuilder message = Help.execute("craftinv");
+                    CalcCommand.sendMessage(ctx.getSource(), message);
+                    return 1;
+                })));
         return command;
     }
 
@@ -124,8 +124,8 @@ public class ReverseCraft {
     }
 
     public static String helpMessage = """
-            §b§LCraft With Inventory:§r§f
+            <aqua><bold>Craft With Inventory:<reset><white>
                    Given an item, returns the maximum number of that item the player can craft using their current inventory\s
-                        §eUsage: /calc craftinv <item>§f
+                        <yellow>Usage: /calc craftinv <item><white>
             """;
 }
