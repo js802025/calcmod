@@ -5,7 +5,7 @@ import java.text.NumberFormat;
 import I;
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import net.jsa2025.calcmod.commands.subcommands.Basic;
@@ -33,9 +33,9 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.Commands;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
+import net.minecraft.server.command.Commands.RegistrationEnvironment;
 
 
 import java.util.Locale;
@@ -44,7 +44,7 @@ public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
     public static void register (CommandDispatcher<FabricClientCommandSource> dispacther, CommandRegistryAccess registry) {
-        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
+        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommands.literal("calc");
         command = Basic.register(command);
         command = Storage.register(command);
         command = Nether.register(command);
@@ -67,7 +67,7 @@ public class CalcCommand {
     }
 
     public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
-        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
+        LiteralArgumentBuilder<ServerCommandSource> command = Commands.literal("calc");
         command = Basic.registerServer(command);
         command = Storage.registerServer(command);
         command = Nether.registerServer(command);

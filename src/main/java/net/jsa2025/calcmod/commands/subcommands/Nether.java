@@ -4,18 +4,18 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import dev.xpple.clientarguments.arguments.CBlockPosArgument;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
-import net.minecraft.command.argument.BlockPosArgumentType;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.CommandSourceStack;
 
 public class Nether {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -23,17 +23,17 @@ public class Nether {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("nether").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
+        .then(ClientCommands.literal("nether").executes((ctx) -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity().blockPosition());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        }).then(ClientCommandManager.argument("pos", CBlockPosArgument.blockPos())
+        }).then(ClientCommands.argument("pos", CBlockPosArgument.blockPos())
         .executes((ctx) -> {
             BlockPos pos = CBlockPosArgument.getBlockPos(ctx, "pos");
             CalcMessageBuilder message = execute(pos);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })).then(ClientCommandManager.literal("help").executes((ctx) -> {
+        })).then(ClientCommands.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("nether");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -41,19 +41,19 @@ public class Nether {
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("nether").executes((ctx) -> {
-            CalcMessageBuilder message = execute(ctx.getSource().getEntity().getBlockPos());
+        .then(Commands.literal("nether").executes((ctx) -> {
+            CalcMessageBuilder message = execute(ctx.getSource().getEntity().blockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
+        }).then(Commands.argument("pos", BlockPosArgument.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
+            BlockPos pos = BlockPosArgument.getBlockPos(ctx, "pos");
             CalcMessageBuilder message = execute(pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
+        })).then(Commands.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("nether");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

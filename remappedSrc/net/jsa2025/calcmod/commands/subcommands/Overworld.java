@@ -3,7 +3,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import dev.xpple.clientarguments.arguments.CBlockPosArgumentType;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 //import net.minecraft.core.BlockPos;
@@ -14,7 +14,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.minecraft.command.argument.BlockPosArgumentType;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.Commands;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class Overworld {
@@ -23,17 +23,17 @@ public class Overworld {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getBlockPos());
+        .then(ClientCommands.literal("overworld").executes((ctx) -> {
+            String[] message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().blockPosition());
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        }).then(ClientCommandManager.argument("pos", CBlockPosArgumentType.blockPos())
+        }).then(ClientCommands.argument("pos", CBlockPosArgumentType.blockPos())
         .executes((ctx) -> {
             BlockPos pos = CBlockPosArgumentType.getCBlockPos(ctx, "pos");
             String[] message = execute(ctx.getSource().getEntity(), pos);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })).then(ClientCommandManager.literal("help").executes((ctx) -> {
+        })).then(ClientCommands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("overworld");
             CalcCommand.sendMessage(ctx.getSource(), message, true);
             return 1;
@@ -43,17 +43,17 @@ public class Overworld {
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
-        .then(CommandManager.literal("overworld").executes((ctx) -> {
-            String[] message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().getBlockPos());
+        .then(Commands.literal("overworld").executes((ctx) -> {
+            String[] message = execute(ctx.getSource().getEntity(), ctx.getSource().getEntity().blockPosition());
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        }).then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
+        }).then(Commands.argument("pos", BlockPosArgumentType.blockPos())
         .executes((ctx) -> {
-            BlockPos pos = BlockPosArgumentType.getBlockPos(ctx, "pos");
+            BlockPos pos = BlockPosArgumentType.blockPosition(ctx, "pos");
             String[] message = execute(ctx.getSource().getEntity(), pos);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
+        })).then(Commands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("overworld");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
             return 1;

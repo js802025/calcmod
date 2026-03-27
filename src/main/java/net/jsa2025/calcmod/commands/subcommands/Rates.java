@@ -4,7 +4,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
@@ -13,9 +13,9 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.CommandSourceStack;
 
 public class Rates {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -23,14 +23,14 @@ public class Rates {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("rates").then(ClientCommandManager.argument("numberofitems", StringArgumentType.string())
-        .then(ClientCommandManager.argument("time", StringArgumentType.greedyString())
+        .then(ClientCommands.literal("rates").then(ClientCommands.argument("numberofitems", StringArgumentType.string())
+        .then(ClientCommands.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
-        .then(ClientCommandManager.literal("help").executes(ctx ->{
+        .then(ClientCommands.literal("help").executes(ctx ->{
             CalcMessageBuilder message = Help.execute("rates");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -39,16 +39,16 @@ public class Rates {
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("rates").then(CommandManager.argument("numberofitems", StringArgumentType.string())
-        .then(CommandManager.argument("time", StringArgumentType.greedyString())
+        .then(Commands.literal("rates").then(Commands.argument("numberofitems", StringArgumentType.string())
+        .then(Commands.argument("time", StringArgumentType.greedyString())
         .executes(ctx -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "numberofitems"), StringArgumentType.getString(ctx, "time"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
-        .then(CommandManager.literal("help").executes(ctx ->{
+        .then(Commands.literal("help").executes(ctx ->{
             CalcMessageBuilder message = Help.execute("rates");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

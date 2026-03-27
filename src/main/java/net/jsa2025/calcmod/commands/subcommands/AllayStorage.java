@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
@@ -16,9 +16,9 @@ import java.util.Locale;
 
 
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.CommandSourceStack;
 
 public class AllayStorage {
     static DecimalFormat df = new DecimalFormat("#.##");
@@ -26,11 +26,11 @@ public class AllayStorage {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("allaystorage").then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(ClientCommands.literal("allaystorage").then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
-        })).then(ClientCommandManager.literal("help").executes((ctx) -> {
+        })).then(ClientCommands.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("allaystorage");
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -38,13 +38,13 @@ public class AllayStorage {
         return command;
     }
     
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-        .then(CommandManager.literal("allaystorage").then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(Commands.literal("allaystorage").then(Commands.argument("itemsperhour", StringArgumentType.greedyString()).executes((ctx) -> {
             CalcMessageBuilder message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
-        })).then(CommandManager.literal("help").executes((ctx) -> {
+        })).then(Commands.literal("help").executes((ctx) -> {
             CalcMessageBuilder message = Help.execute("allaystorage");
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

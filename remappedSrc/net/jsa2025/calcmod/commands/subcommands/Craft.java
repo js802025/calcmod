@@ -7,7 +7,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.xpple.clientarguments.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
@@ -25,7 +25,7 @@ import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.Commands;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -36,14 +36,14 @@ public class Craft {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command, CommandRegistryAccess registry) {
         command
-        .then(ClientCommandManager.literal("craft").then(ClientCommandManager.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
-        .then(ClientCommandManager.argument("amount", StringArgumentType.greedyString())
+        .then(ClientCommands.literal("craft").then(ClientCommands.argument("item", CIdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider())
+        .then(ClientCommands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), CIdentifierArgumentType.getCRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
-        .then(ClientCommandManager.literal("help").executes(ctx -> {
+        .then(ClientCommands.literal("help").executes(ctx -> {
             String[] message = Help.execute("craft");
             CalcCommand.sendMessage(ctx.getSource(), message, true);
             return 1;
@@ -53,14 +53,14 @@ public class Craft {
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command, CommandRegistryAccess registry) {
         command
-        .then(CommandManager.literal("craft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
-        .then(CommandManager.argument("amount", StringArgumentType.greedyString())
+        .then(Commands.literal("craft").then(Commands.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider())
+        .then(Commands.argument("amount", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
-        .then(CommandManager.literal("help").executes(ctx -> {
+        .then(Commands.literal("help").executes(ctx -> {
             String[] message = Help.execute("craft");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
             return 1;

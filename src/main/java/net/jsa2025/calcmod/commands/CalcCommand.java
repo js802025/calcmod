@@ -6,7 +6,7 @@ import com.mojang.brigadier.CommandDispatcher;
 
 
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import net.jsa2025.calcmod.CalcMod;
@@ -14,21 +14,21 @@ import net.jsa2025.calcmod.commands.subcommands.*;
 
 import net.jsa2025.calcmod.commands.subcommands.Random;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.message.MessageType;
-import net.minecraft.network.message.SentMessage;
-import net.minecraft.network.message.SignedMessage;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.OutgoingChatMessage;
+import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 import org.mariuszgromada.math.mxparser.Expression;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands.CommandSelection;
 import org.mariuszgromada.math.mxparser.Function;
 import org.mariuszgromada.math.mxparser.PrimitiveElement;
 
@@ -40,8 +40,8 @@ public class CalcCommand {
     static DecimalFormat df = new DecimalFormat("#.##");
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registry) {
-        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommandManager.literal("calc");
+    public static void register (CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registry) {
+        LiteralArgumentBuilder<FabricClientCommandSource> command = ClientCommands.literal("calc");
         command = Basic.register(command);
         command = Storage.register(command);
         command = Nether.register(command);
@@ -67,8 +67,8 @@ public class CalcCommand {
 
     }
     
-    public static void registerServer(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registry, RegistrationEnvironment env) {
-        LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("calc");
+    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registry, CommandSelection env) {
+        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("calc");
         Basic.registerServer(command);
         command = Storage.registerServer(command);
         command = Nether.registerServer(command);
@@ -113,10 +113,10 @@ public class CalcCommand {
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
         if (Objects.nonNull(player)) {
-            vars.put("x", (double) player.getBlockPos().getX());
-            vars.put("y", (double) player.getBlockPos().getY());
-            vars.put("z", (double) player.getBlockPos().getZ());
-            vars.put("health", (double) ((PlayerEntity) player).getHealth());
+            vars.put("x", (double) player.blockPosition().getX());
+            vars.put("y", (double) player.blockPosition().getY());
+            vars.put("z", (double) player.blockPosition().getZ());
+            vars.put("health", (double) ((Player) player).getHealth());
         }
        //
         vars.put("dub", vars.get("dub"+ stackSize));
@@ -206,15 +206,15 @@ public class CalcCommand {
 
     }
     
-    public static void sendMessageServer(ServerCommandSource source, String[] message, Boolean... isHelpMessage) {
-        var messageText = Text.literal("");
+    public static void sendMessageServer(CommandSourceStack source, String[] message, Boolean... isHelpMessage) {
+        var messageText = Component.literal("");
         String m = "";
         for (var i = 0; i < message.length; i++) {
            if (i % 2 == 0) {
-            messageText.append(Text.literal(message[i]));
+            messageText.append(Component.literal(message[i]));
             m += message[i];
            } else {
-            messageText.append(Text.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(message[i]))));
+            messageText.append(Component.literal("§a"+message[i]+"§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(message[i]))));
             m += message[i];
            }
 
@@ -223,20 +223,20 @@ public class CalcCommand {
 
         if (isHelpMessage.length > 0) {
             if (isHelpMessage[0]) {
-                source.getPlayer().sendMessage(messageText);
+                source.getPlayer().sendSystemMessage(messageText);
                 return;
             } 
         }
-        messageText.append(Text.literal(" "));
-        source.sendChatMessage(SentMessage.of(SignedMessage.ofUnsigned("hello")), true, MessageType.params(MessageType.SAY_COMMAND, source));
-        source.sendMessage(messageText.append(Text.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(m.replaceAll("§a", "").replaceAll("§f", "")))))
+        messageText.append(Component.literal(" "));
+        source.sendChatMessage(OutgoingChatMessage.create(PlayerChatMessage.system("hello")), true, ChatType.bind(ChatType.SAY_COMMAND, source));
+        source.sendSystemMessage(messageText.append(Component.literal("§7[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(m.replaceAll("§a", "").replaceAll("§f", "")))))
                 );
     }
     
-    public static void sendMessageServer(ServerCommandSource source, CalcMessageBuilder messageBuilder) {
-        source.sendFeedback(new Supplier<Text>() {
+    public static void sendMessageServer(CommandSourceStack source, CalcMessageBuilder messageBuilder) {
+        source.sendSuccess(new Supplier<Component>() {
             @Override
-            public Text get() {
+            public Component get() {
                 return messageBuilder.generateStyledText();
             }
         }, Objects.isNull(source.getPlayer()));

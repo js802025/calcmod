@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
@@ -13,7 +13,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.Commands;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class Storage {
@@ -22,25 +22,25 @@ public class Storage {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("storage").then(ClientCommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
+        .then(ClientCommands.literal("storage").then(ClientCommands.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })
-        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         })))
-        .then(ClientCommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(ClientCommands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
         }))
-        .then(ClientCommandManager.literal("help").executes((ctx) -> {
+        .then(ClientCommands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("storage");
             CalcCommand.sendMessage(ctx.getSource(), message, true);
             return 1;
@@ -50,25 +50,25 @@ public class Storage {
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
-        .then(CommandManager.literal("storage").then(CommandManager.argument("timesHopperSpeed", IntegerArgumentType.integer())
+        .then(Commands.literal("storage").then(Commands.argument("timesHopperSpeed", IntegerArgumentType.integer())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), String.valueOf(IntegerArgumentType.getInteger(ctx, "timesHopperSpeed")), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })
-        .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(Commands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), IntegerArgumentType.getInteger(ctx, "timesHopperSpeed"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         })))
-        .then(CommandManager.argument("itemsperhour", StringArgumentType.greedyString())
+        .then(Commands.argument("itemsperhour", StringArgumentType.greedyString())
         .executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "itemsperhour"), 1);
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;
         }))
-        .then(CommandManager.literal("help").executes((ctx) -> {
+        .then(Commands.literal("help").executes((ctx) -> {
             String[] message = Help.execute("storage");
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);
             return 1;

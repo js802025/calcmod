@@ -1,7 +1,7 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
@@ -11,7 +11,7 @@ import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.Commands;
 import net.minecraft.server.command.ServerCommandSource;
 
 
@@ -23,7 +23,7 @@ public class Basic {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US")); 
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(ClientCommands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessage(ctx.getSource(), message);
             return 1;
@@ -33,7 +33,7 @@ public class Basic {
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
-        .then(CommandManager.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
+        .then(Commands.argument("expression", StringArgumentType.greedyString()).executes((ctx) -> {
             String[] message = execute(ctx.getSource().getEntity(), StringArgumentType.getString(ctx, "expression"));
             CalcCommand.sendMessageServer(ctx.getSource(), message);
             return 1;

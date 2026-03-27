@@ -4,7 +4,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
 
@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.Commands;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class Help {
@@ -23,7 +23,7 @@ public class Help {
     
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-        .then(ClientCommandManager.literal("help")
+        .then(ClientCommands.literal("help")
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getEntity(), );
             CalcCommand.sendMessage(ctx.getSource(), message, true);
@@ -34,7 +34,7 @@ public class Help {
 
     public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
         command
-        .then(CommandManager.literal("help")
+        .then(Commands.literal("help")
         .executes(ctx -> {
             String[] message = execute(ctx.getSource().getEntity(), );
             CalcCommand.sendMessageServer(ctx.getSource(), message, true);

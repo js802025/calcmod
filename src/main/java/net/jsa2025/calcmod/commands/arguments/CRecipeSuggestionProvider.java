@@ -9,8 +9,12 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
-import net.minecraft.recipe.display.SlotDisplayContexts;
+import net.jsa2025.calcmod.CalcMod;
+import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
+import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 
 public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClientCommandSource> {
     
@@ -27,9 +31,9 @@ public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClien
 
         //     return item;
         // });
-        Stream<RecipeResultCollection> recipeStream = context.getSource().getPlayer().getRecipeBook().getOrderedResults().stream();
+        Stream<RecipeCollection> recipeStream = context.getSource().getPlayer().getRecipeBook().getCollections().stream();
         recipeStream.forEach(recipe -> {
-            String item = recipe.getAllRecipes().get(0).display().result().getStacks(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getEntityWorld())).get(0).getRegistryEntry().getIdAsString();
+            String item = getFullPath(BuiltInRegistries.ITEM.getKey(recipe.getRecipes().get(0).display().result().resolveForStacks(SlotDisplayContext.fromLevel(context.getSource().getPlayer().level())).get(0).getItem()));
             if (item == null) {
                 return;
             }
@@ -42,6 +46,10 @@ public class CRecipeSuggestionProvider implements SuggestionProvider<FabricClien
 
         
     return builder.buildFuture();
+    }
+
+    public static String getFullPath(Identifier id) {
+        return id.getNamespace() + ":" + id.getPath();
     }
     
 }

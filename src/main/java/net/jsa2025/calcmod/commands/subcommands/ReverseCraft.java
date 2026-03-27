@@ -5,7 +5,7 @@ package net.jsa2025.calcmod.commands.subcommands;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
@@ -21,19 +21,21 @@ import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.type.BundleContentsComponent;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeDisplayEntry;
-import net.minecraft.recipe.display.RecipeDisplay;
-import net.minecraft.recipe.display.SlotDisplayContexts;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.component.BundleContents;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.CommandSourceStack;
 
 
 
@@ -45,12 +47,12 @@ public class ReverseCraft {
 
     public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-                .then(ClientCommandManager.literal("craftinv").then(ClientCommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new CRecipeSuggestionProvider()).executes((ctx) -> {
+                .then(ClientCommands.literal("craftinv").then(ClientCommands.argument("item", IdentifierArgument.id()).suggests(new CRecipeSuggestionProvider()).executes((ctx) -> {
                     CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getRecipeArgument(ctx, "item"));
                     CalcCommand.sendMessage(ctx.getSource(), message);
                     return 1;
                 }))
-                .then(ClientCommandManager.literal("help").executes(ctx -> {
+                .then(ClientCommands.literal("help").executes(ctx -> {
                     CalcMessageBuilder message = Help.execute("craftinv");
                     CalcCommand.sendMessage(ctx.getSource(), message);
                     return 1;
@@ -59,14 +61,14 @@ public class ReverseCraft {
         return command;
     }
 
-    public static LiteralArgumentBuilder<ServerCommandSource> registerServer(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command) {
         command
-                .then(CommandManager.literal("reverseCraft").then(CommandManager.argument("item", IdentifierArgumentType.identifier()).suggests(new RecipeSuggestionProvider()).executes((ctx) -> {
+                .then(Commands.literal("craftinv").then(Commands.argument("item", IdentifierArgument.id()).suggests(new RecipeSuggestionProvider()).executes((ctx) -> {
                     CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), CIdentifierArgumentType.getRecipeArgumentServer(ctx, "item"));
                     CalcCommand.sendMessageServer(ctx.getSource(), message);
                     return 1;
                 }))
-                .then(CommandManager.literal("help").executes(ctx -> {
+                .then(Commands.literal("help").executes(ctx -> {
                     CalcMessageBuilder message = Help.execute("craftinv");
                     CalcCommand.sendMessageServer(ctx.getSource(), message);
                     return 1;
@@ -76,41 +78,41 @@ public class ReverseCraft {
     }
 
     @Environment(EnvType.CLIENT)
-    public static CalcMessageBuilder execute(PlayerEntity player, RecipeDisplayEntry item) {
+    public static CalcMessageBuilder execute(Player player, RecipeDisplayEntry item) {
         HashMap<Ingredient, Integer> itemsHaved = new HashMap<>();
         HashMap<Ingredient, Integer> ingCount = new HashMap<>();
 
-        int outputSize = item.display().result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getCount();
+        int outputSize = item.display().result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getCount();
         item.craftingRequirements().get().stream().forEach(ing -> {
             ingCount.put(ing, ingCount.getOrDefault(ing, 0) + 1);
         });
         ingCount.keySet().forEach(ing -> {
             itemsHaved.put(ing, 0);
             player.getInventory().spliterator().forEachRemaining(stack -> {
-            if (stack.getName().getString().contains("Shulker Box")) {
-                ((ContainerComponent) stack.getComponents().stream().filter(c -> c.value().getClass().equals(ContainerComponent.class)).findFirst().get().value()).iterateNonEmpty().forEach(shulkerStack -> {
-                        if (ing.acceptsItem(shulkerStack.getRegistryEntry())) {
+            if (stack.getItemName().getString().contains("Shulker Box")) {
+                ((ItemContainerContents) stack.getComponents().stream().filter(c -> c.value().getClass().equals(ItemContainerContents.class)).findFirst().get().value()).nonEmptyItems().forEach(shulkerStack -> {
+                        if (ing.acceptsItem(shulkerStack.item())) {
                             if (itemsHaved.containsKey(ing)) {
-                                itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.getCount());
+                                itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.count());
                             } else {
-                                itemsHaved.put(ing, shulkerStack.getCount());
+                                itemsHaved.put(ing, shulkerStack.count());
                             }
                         }
                 });
-            } else if (stack.getName().getString().contains("Bundle")) {
-                ((BundleContentsComponent) stack.getComponents().stream().filter(c -> c.value().getClass().equals(BundleContentsComponent.class)).findFirst().get().value()).stream().forEach(shulkerStack -> {
-                    if (ing.acceptsItem(shulkerStack.getRegistryEntry())) {
+            } else if (stack.getItemName().getString().contains("Bundle")) {
+                ((BundleContents) stack.getComponents().stream().filter(c -> c.value().getClass().equals(BundleContents.class)).findFirst().get().value()).items().forEach(shulkerStack -> {
+                    if (ing.acceptsItem(shulkerStack.item())) {
                         if (itemsHaved.containsKey(ing)) {
-                            itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.getCount());
+                            itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.count());
                         } else {
-                            itemsHaved.put(ing, shulkerStack.getCount());
+                            itemsHaved.put(ing, shulkerStack.count());
                         }
                     }
                 });
             }
 
-                CalcMod.LOGGER.info(ing.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString());
-                if (ing.acceptsItem(stack.getRegistryEntry())) {
+                if (ing.acceptsItem(stack.typeHolder())) {
+                    CalcMod.LOGGER.info("MATCH: "+Holder.direct(stack.getItem()).toString());
                     if (itemsHaved.containsKey(ing)) {
                         itemsHaved.put(ing, itemsHaved.get(ing) + stack.getCount());
                     } else {
@@ -127,42 +129,57 @@ public class ReverseCraft {
             }
         };
       //  itemsHaved.keySet().stream().forEach(i -> CalcMod.LOGGER.info(i.toDisplay().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()));
-        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " craftable with inventory items: ", "result"}, new String[] {item.display().result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()},new String[] {String.valueOf(canCraft)});
-        return message;
+        CalcMessageBuilder messageBuilder = new CalcMessageBuilder().addFromArray(new String[] {"input", " craftable with inventory items: "}, new String[] {item.display().result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getItemName().getString()},new String[] {});
+        double stackSize = item.display().result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getMaxStackSize();
+        double sb = Math.floor(canCraft/(stackSize*27));
+        String sbString = nf.format(sb);
+        double remainder = canCraft % (stackSize*27);
+        double stacks = Math.floor(remainder/stackSize);
+        String stacksString = nf.format(stacks);
+        remainder = remainder % stackSize;
+        String items = nf.format(remainder);
+        if (sb > 0) {
+            messageBuilder.addResult("SBs: "+sbString + ", Stacks: "+stacksString+", Items: "+items);
+        } else if (stacks > 0) {
+            messageBuilder.addResult("Stacks: "+stacksString+", Items: "+items);
+        } else {
+            messageBuilder.addResult("Items: "+items);
+        }
+        return messageBuilder;
     }
-    public static CalcMessageBuilder execute(PlayerEntity player, Recipe item) {
+    public static CalcMessageBuilder execute(Player player, Recipe item) {
         HashMap<Ingredient, Integer> itemsHaved = new HashMap<>();
         HashMap<Ingredient, Integer> ingCount = new HashMap<>();
 
-        int outputSize = ((RecipeDisplay)item.getDisplays().get(0)).result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getCount();
-        item.getIngredientPlacement().getIngredients().forEach(ing -> {
+        int outputSize = ((RecipeDisplay)item.display().get(0)).result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getCount();
+        item.placementInfo().ingredients().forEach(ing -> {
             ingCount.put(ing, ingCount.getOrDefault(ing, 0) + 1);
         });
         ingCount.keySet().forEach(ing -> {
             itemsHaved.put(ing, 0);
             player.getInventory().spliterator().forEachRemaining(stack -> {
-                if (stack.getName().getString().contains("Shulker Box")) {
-                    ((ContainerComponent) stack.getComponents().stream().filter(c -> c.value().getClass().equals(ContainerComponent.class)).findFirst().get().value()).iterateNonEmpty().forEach(shulkerStack -> {
-                        if (ing.acceptsItem(shulkerStack.getRegistryEntry())) {
+                if (stack.getItemName().getString().contains("Shulker Box")) {
+                    ((ItemContainerContents) stack.getComponents().stream().filter(c -> c.value().getClass().equals(ItemContainerContents.class)).findFirst().get().value()).nonEmptyItems().forEach(shulkerStack -> {
+                        if (ing.acceptsItem(shulkerStack.item())) {
                             if (itemsHaved.containsKey(ing)) {
-                                itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.getCount());
+                                itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.count());
                             } else {
-                                itemsHaved.put(ing, shulkerStack.getCount());
+                                itemsHaved.put(ing, shulkerStack.count());
                             }
                         }
                     });
-                } else if (stack.getName().getString().contains("Bundle")) {
-                    ((BundleContentsComponent) stack.getComponents().stream().filter(c -> c.value().getClass().equals(BundleContentsComponent.class)).findFirst().get().value()).stream().forEach(shulkerStack -> {
-                        if (ing.acceptsItem(shulkerStack.getRegistryEntry())) {
+                } else if (stack.getItemName().getString().contains("Bundle")) {
+                    ((BundleContents) stack.getComponents().stream().filter(c -> c.value().getClass().equals(BundleContents.class)).findFirst().get().value()).items().forEach(shulkerStack -> {
+                        if (ing.acceptsItem(shulkerStack.item())) {
                             if (itemsHaved.containsKey(ing)) {
-                                itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.getCount());
+                                itemsHaved.put(ing, itemsHaved.get(ing) + shulkerStack.count());
                             } else {
-                                itemsHaved.put(ing, shulkerStack.getCount());
+                                itemsHaved.put(ing, shulkerStack.count());
                             }
                         }
                     });
                 }
-                if (ing.acceptsItem(stack.getRegistryEntry())) {
+                if (ing.acceptsItem(Holder.direct(stack.getItem()))) {
                     if (itemsHaved.containsKey(ing)) {
                         itemsHaved.put(ing, itemsHaved.get(ing) + stack.getCount());
                     } else {
@@ -178,8 +195,23 @@ public class ReverseCraft {
                 canCraft = (amount / ingCount.get(ing)) * outputSize;
             }
         };
-        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " craftable with inventory items: ", "result"}, new String[] {((RecipeDisplay)item.getDisplays().get(0)).result().getFirst(SlotDisplayContexts.createParameters(player.getEntityWorld())).getName().getString()},new String[] {String.valueOf(canCraft)});
-        return message;
+        CalcMessageBuilder messageBuilder = new CalcMessageBuilder().addFromArray(new String[] {"input", " craftable with inventory items: "}, new String[] {((RecipeDisplay) item.display().get(0)).result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getItemName().getString()},new String[] {});
+        double stackSize = ((RecipeDisplay) item.display().get(0)).result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getMaxStackSize();
+        double sb = Math.floor(canCraft/(stackSize*27));
+        String sbString = nf.format(sb);
+        double remainder = canCraft % (stackSize*27);
+        double stacks = Math.floor(remainder/stackSize);
+        String stacksString = nf.format(stacks);
+        remainder = remainder % stackSize;
+        String items = nf.format(remainder);
+        if (sb > 0) {
+            messageBuilder.addResult("SBs: "+sbString + ", Stacks: "+stacksString+", Items: "+items);
+        } else if (stacks > 0) {
+            messageBuilder.addResult("Stacks: "+stacksString+", Items: "+items);
+        } else {
+            messageBuilder.addResult("Items: "+items);
+        }
+        return messageBuilder;
     }
 
     public static String helpMessage = """

@@ -8,14 +8,15 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.display.SlotDisplayContexts;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.commands.CommandSourceStack;
 
-public class RecipeSuggestionProvider implements SuggestionProvider<ServerCommandSource> {
+public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
     
     @Override
-    public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
+    public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
         // context.getSource().getWorld().getRecipeManager().keys().map(recipe -> {
         //     String item = recipe.getNamespace();
         //     if (item == null) {
@@ -27,10 +28,10 @@ public class RecipeSuggestionProvider implements SuggestionProvider<ServerComman
 
         //     return item;
         // });
-        Collection<RecipeEntry<?>> recipeStream = context.getSource().getWorld().getRecipeManager().values();
+        Collection<RecipeHolder<?>> recipeStream = context.getSource().getLevel().recipeAccess().getRecipes();
         recipeStream.forEach(recipe -> {
-            if (!recipe.value().getDisplays().isEmpty()) {
-                String item = recipe.value().getDisplays().get(0).result().getFirst(SlotDisplayContexts.createParameters(context.getSource().getPlayer().getEntityWorld())).getRegistryEntry().getIdAsString();
+            if (!recipe.value().display().isEmpty()) {
+                String item = BuiltInRegistries.ITEM.getKey(recipe.value().display().get(0).result().resolveForFirstStack(SlotDisplayContext.fromLevel(context.getSource().getPlayer().level())).getItem()).getPath();
                 if (item == null) {
                     return;
                 }

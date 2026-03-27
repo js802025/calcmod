@@ -1,9 +1,10 @@
 package net.jsa2025.calcmod.utils;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 import java.util.Objects;
 
@@ -26,7 +27,7 @@ public class CalcMessageBuilder {
     MessageType messageType;
     String helpMessage;
 
-    MutableText messageText = Text.literal("");
+    MutableComponent messageText = Component.literal("");
 
     public CalcMessageBuilder() {
         this.messageType = MessageType.NONE;
@@ -62,7 +63,7 @@ public class CalcMessageBuilder {
         return this;
     }
     public CalcMessageBuilder addResult(String text) {
-        messageText.append(Text.literal("§a" + text + "§f")
+        messageText.append(Component.literal("§a" + text + "§f")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(text))));
         return this;
     }
@@ -85,17 +86,17 @@ public class CalcMessageBuilder {
     }
 
     public CalcMessageBuilder addRunCommand(String text, String command) {
-        messageText.append(Text.literal(text).setStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand(command))));
+        messageText.append(Component.literal(text).setStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand(command))));
         return this;
     }
 
-    public Text generateStyledText() {
+    public MutableComponent generateStyledText() {
         if (Objects.requireNonNull(this.messageType) == MessageType.HELP && helpMessage != null) {
-            return Text.literal(helpMessage);
+            return Component.literal(helpMessage);
         }
         if (Objects.requireNonNull(this.messageType) != MessageType.HELP) {
             messageText.append(" ");
-            messageText.append(Text.literal("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
+            messageText.append(Component.literal("§3[Click to Copy]§f").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.CopyToClipboard(messageText.getString().replaceAll("§.", "").replaceAll("§b", "").replaceAll("§7", "").replaceAll("§f", "")))));
         }
         return messageText;
     }
