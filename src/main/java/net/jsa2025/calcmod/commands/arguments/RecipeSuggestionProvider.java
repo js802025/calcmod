@@ -1,5 +1,6 @@
 package net.jsa2025.calcmod.commands.arguments;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -9,6 +10,8 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -20,14 +23,12 @@ public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourc
     @Override
     public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
         List<RecipeHolder<CraftingRecipe>> recipes = context.getSource().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
+        List<ResourceLocation> ids = new ArrayList<>();
         for (RecipeHolder<CraftingRecipe> recipe : recipes) {
             if (recipe.value() instanceof ShapedRecipe || recipe.value() instanceof ShapelessRecipe) {
-                String id = recipe.id().toString();
-                if (builder.getRemaining().isEmpty() || id.startsWith(builder.getRemaining())) {
-                    builder.suggest(id);
-                }
+                ids.add(recipe.id());
             }
         }
-        return builder.buildFuture();
+        return SharedSuggestionProvider.suggestResource(ids, builder);
     }
 }
