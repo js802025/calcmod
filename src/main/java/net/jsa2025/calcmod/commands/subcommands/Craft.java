@@ -6,8 +6,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 
-import net.jsa2025.calcmod.CalcMod;
-import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
 
 import net.jsa2025.calcmod.commands.CalcCommand;
 
@@ -16,14 +14,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import net.minecraft.commands.arguments.ResourceKeyArgument;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.commands.arguments.SlotArgument;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
@@ -119,7 +113,7 @@ public class Craft {
 //                //ingredients.merge(ingredient.getMatchingStacks()[0], a, Integer::sum);
 //            }
 //        }
-        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player.getServer().getRecipeManager(), map, is, a, steps);
+        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player.level().getServer().getRecipeManager(), map, is, a, steps);
 
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
                 .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), processItemName(item.result().resolveForFirstStack(map).getDisplayName().getString())}, new String[] {});
@@ -154,7 +148,6 @@ public class Craft {
 
     static HashMap<String, Map.Entry<ItemStack, Integer>> getIngredients(RecipeManager manager, ContextMap map, List<ItemStack> is, int amount_needed, int steps) {
         HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
-            CalcMod.LOGGER.info("Step");
         for (ItemStack ingredient : is) {
 
             //     CalcMod.LOGGER.info("Step1"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
@@ -173,7 +166,6 @@ public class Craft {
             }
         }
         HashMap<String, Map.Entry<ItemStack, Integer>> ex_ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
-        CalcMod.LOGGER.info("Step1");
 
         for (Map.Entry<ItemStack, Integer> ingredient : ingredients.values()) {
             if (steps == 1) {
@@ -188,7 +180,6 @@ public class Craft {
 
                 Optional<ResourceKey<?>> finalIng_id = ing_id;
                 //  CalcMod.LOGGER.info(finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath() .split("_")[0] + "_block");
-                CalcMod.LOGGER.info("Step1.5");
 
                 try {
                     Optional<RecipeDisplay> recipe = manager.getRecipes().stream().filter(i ->
@@ -210,7 +201,6 @@ public class Craft {
                             sis = ((ShapelessCraftingRecipeDisplay) recipe.get()).ingredients().stream().map(i -> i.resolveForFirstStack(map)).toList();
 
                         }
-                        CalcMod.LOGGER.info("Step3");
 
                         //   CalcMod.LOGGER.info(String.valueOf(ingredient.get()));
                         //    CalcMod.LOGGER.info(String.valueOf(recipe.getResult(registryManager).getCount()));
@@ -219,7 +209,6 @@ public class Craft {
                         //     CalcMod.LOGGER.info(recipe.getResult(registryManager).getName().getString());
                         //     ingredients.remove(recipe.getResult(registryManager).getName().getString());
                         for (String item : sub_ingredients.keySet()) {
-                            CalcMod.LOGGER.info(item);
                             if (ex_ingredients.containsKey(item)) {
                                 ex_ingredients.put(item, Map.entry(ex_ingredients.get(item).getKey(), ex_ingredients.get(item).getValue() + sub_ingredients.get(item).getValue()));
                             } else {
@@ -232,7 +221,6 @@ public class Craft {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    CalcMod.LOGGER.info(ing_id.get().location().getPath());
                 }
             }
         }
