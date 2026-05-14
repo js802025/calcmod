@@ -2,7 +2,7 @@
 import java.text.SimpleDateFormat
 
 plugins {
-    id 'com.gradleup.shadow' version '8.3.6'
+    id 'com.gradleup.shadow' version '9.4.1'
     id 'java'
 }
 
@@ -35,8 +35,8 @@ if (shortVersion == null || shortVersion == "") {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
@@ -85,11 +85,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:${project.minecraft_version}-R0.1-SNAPSHOT"
+    compileOnly "io.papermc.paper:paper-api:${project.minecraft_version}.build.63-stable"
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
     implementation 'io.papermc:paperlib:1.0.8'
     testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
-    testImplementation "io.papermc.paper:paper-api:${project.minecraft_version}-R0.1-SNAPSHOT"
+ //   testImplementation "io.papermc.paper:paper-api:${project.minecraft_version}-R0.1-SNAPSHOT"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.13.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.0'
     implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
