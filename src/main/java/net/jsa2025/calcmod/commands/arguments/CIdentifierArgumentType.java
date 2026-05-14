@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.jsa2025.calcmod.CalcMod;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -52,13 +53,7 @@ public class CIdentifierArgumentType implements ArgumentType<Identifier> {
 
     }
 
-    public static Recipe getRecipeArgumentServer(final CommandContext<CommandSourceStack> context, final String argumentName) throws CommandSyntaxException {
-        Identifier identifier = context.getArgument(argumentName, Identifier.class);
-//        return recipeManager.getPropertySet(identifier).
-        CalcMod.LOGGER.info(identifier.toString());
-        return context.getSource().getServer().getRecipeManager().getRecipes().stream().filter(val -> val.id().identifier().equals(identifier)).findFirst().get().value();
 
-    }
 
     @Override
     public Collection<String> getExamples() {

@@ -55,11 +55,11 @@ public class CalcCommand {
         command = Rates.register(command);
         command = AllayStorage.register(command);
         command = Random.register(command);
-        command = Craft.register(command, registry);
+        command = CraftClient.register(command, registry);
         command = SignalToItems.register(command);
         command = Piglin.register(command);
         command = Distance.register(command);
-        command = ReverseCraft.register(command);
+        command = ReverseCraftClient.register(command);
         command = Custom.register(command);
         command = Variables.register(command);
         command = Help.register(command);

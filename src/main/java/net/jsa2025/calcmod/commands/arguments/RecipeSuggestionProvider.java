@@ -9,6 +9,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,7 +32,7 @@ public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourc
         Collection<RecipeHolder<?>> recipeStream = context.getSource().getLevel().recipeAccess().getRecipes();
         recipeStream.forEach(recipe -> {
             if (!recipe.value().display().isEmpty()) {
-                String item = BuiltInRegistries.ITEM.getKey(recipe.value().display().get(0).result().resolveForFirstStack(SlotDisplayContext.fromLevel(context.getSource().getPlayer().level())).getItem()).getPath();
+                String item = getFullPath(BuiltInRegistries.ITEM.getKey(recipe.value().display().get(0).result().resolveForFirstStack(SlotDisplayContext.fromLevel(context.getSource().getPlayer().level())).getItem()));
                 if (item == null) {
                     return;
                 }
@@ -46,5 +47,10 @@ public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourc
         
     return builder.buildFuture();
     }
-    
+
+    public static String getFullPath(Identifier id) {
+        return id.getNamespace() + ":" + id.getPath();
+    }
+
+
 }

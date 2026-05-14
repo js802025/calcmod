@@ -1,84 +1,68 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
-
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
-
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.jsa2025.calcmod.commands.CalcCommand;
-
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.logging.Logger;
-
-import net.jsa2025.calcmod.commands.arguments.IdentifierArgumentType;
-import net.jsa2025.calcmod.commands.arguments.RecipeSuggestionProvider;
+import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
+import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
-
+import net.minecraft.client.ClientRecipeBook;
+import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.resources.Identifier;
 
+import java.text.NumberFormat;
+import java.util.*;
 
-public class Craft {
-    static DecimalFormat df = new DecimalFormat("#.##");
+@Environment(EnvType.CLIENT)
+public class CraftClient {
     static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
 
-    
-    public static LiteralArgumentBuilder<CommandSourceStack> registerServer(LiteralArgumentBuilder<CommandSourceStack> command, CommandBuildContext registry) {
-        command.then(Commands.literal("craft").then(Commands.argument("item", IdentifierArgument.id()).suggests(new RecipeSuggestionProvider())
-                                .then(Commands.literal("depth").then( Commands.argument("level", IntegerArgumentType.integer())
-                                        .then(Commands.argument("amount", StringArgumentType.greedyString())
+    public static LiteralArgumentBuilder<FabricClientCommandSource> register(LiteralArgumentBuilder<FabricClientCommandSource> command, CommandBuildContext registry) {
+        command
+                .then(ClientCommands.literal("craft").then(ClientCommands.argument("item", IdentifierArgument.id()).suggests(new CRecipeSuggestionProvider())
+                                .then(ClientCommands.literal("depth").then( ClientCommands.argument("level", IntegerArgumentType.integer())
+                                        .then(ClientCommands.argument("amount", StringArgumentType.greedyString())
                                                 .executes((ctx) -> {
-                                                    CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), IntegerArgumentType.getInteger(ctx, "level"), ctx.getSource().registryAccess());
-                                                    CalcCommand.sendMessageServer(ctx.getSource(), message);
+                                                    CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getRecipeBook(), CIdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), IntegerArgumentType.getInteger(ctx, "level"), ctx.getSource().registryAccess());
+                                                    CalcCommand.sendMessage(ctx.getSource(), message);
                                                     return 1;
                                                 })))
-                                ).then(Commands.argument("amount", StringArgumentType.greedyString())
+                                ).then(ClientCommands.argument("amount", StringArgumentType.greedyString())
                                         .executes((ctx) -> {
-                                            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), IdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), 1, ctx.getSource().registryAccess());
-                                            CalcCommand.sendMessageServer(ctx.getSource(), message);
+                                            CalcMessageBuilder message = execute(ctx.getSource().getPlayer(), ctx.getSource().getPlayer().getRecipeBook(), CIdentifierArgumentType.getRecipeArgument(ctx, "item"), StringArgumentType.getString(ctx, "amount"), 1, ctx.getSource().registryAccess());
+                                            CalcCommand.sendMessage(ctx.getSource(), message);
                                             return 1;
                                         })))
-                        .then(Commands.literal("help").executes(ctx -> {
+                        .then(ClientCommands.literal("help").executes(ctx -> {
                             CalcMessageBuilder message = Help.execute("craft");
-                            CalcCommand.sendMessageServer(ctx.getSource(), message);
+                            CalcCommand.sendMessage(ctx.getSource(), message);
                             return 1;
                         })));
         return command;
     }
-
-
-
-    public static CalcMessageBuilder execute(ServerPlayer player, Recipe item, String amount, int steps, RegistryAccess registryManager) {
-        var is = item.placementInfo().ingredients();
-        var outputSize = ((RecipeDisplay)item.display().get(0)).result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getCount();
+    public static CalcMessageBuilder execute(Player player, ClientRecipeBook book, RecipeDisplayEntry item, String amount, int steps, RegistryAccess registryManager) {
+        var is = item.craftingRequirements();
+        var outputSize = item.display().result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getCount();
         double inputAmount = Math.floor(CalcCommand.getParsedExpression(player, amount));
         int a = (int) Math.ceil(inputAmount/outputSize);
 
-        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player, player.level().recipeAccess(), registryManager, Optional.ofNullable(is), a, steps);
+        HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = getIngredients(player, book, registryManager, is, a, steps);
         CalcMessageBuilder messageBuilder = new CalcMessageBuilder()
-                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), ((RecipeDisplay) item.display().get(0)).result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getItemName().getString()}, new String[] {});
+                .addFromArray(new String[] {"Ingredients to craft ", "input", " ", "input", ": \n"}, new String[] {nf.format(inputAmount), item.display().result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getItemName().getString()}, new String[] {});
 
         for (Map.Entry<String, Map.Entry<ItemStack, Integer>> entry : ingredients.entrySet()) {
             String key = entry.getKey();
@@ -105,10 +89,7 @@ public class Craft {
 
         return messageBuilder;
     }
-
-
-
-    static HashMap<String, Map.Entry<ItemStack, Integer>> getIngredients(ServerPlayer player, RecipeManager manager, RegistryAccess registryManager, Optional<List<Ingredient>> is, int amount_needed, int steps) {
+    static HashMap<String, Map.Entry<ItemStack, Integer>> getIngredients(Player player, ClientRecipeBook book, RegistryAccess registryManager, Optional<List<Ingredient>> is, int amount_needed, int steps) {
         HashMap<String, Map.Entry<ItemStack, Integer>> ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
         //    CalcMod.LOGGER.info("Step"+steps+is.get(0).getMatchingStacks()[0].getName().getString());
         for (Ingredient ingredient : is.get()) {
@@ -131,33 +112,31 @@ public class Craft {
         HashMap<String, Map.Entry<ItemStack, Integer>> ex_ingredients = new HashMap<String, Map.Entry<ItemStack, Integer>>();
 
         for (Map.Entry<ItemStack, Integer> ingredient : ingredients.values()) {
+            //   CalcMod.LOGGER.info("ING "+steps+": "+ingredient.getKey().getName().getString());
             if (steps == 1) {
                 // CalcMod.LOGGER.info(is.get(0).getMatchingStacks()[0].getName().getString());
                 return  ingredients;
             } else {
                 // CalcMod.LOGGER.info("new");
                 //     CalcMod.LOGGER.info(manager.get(ingredient.getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
-                Optional<Identifier> ing_id = Optional.of(BuiltInRegistries.ITEM.getKey(ingredient.getKey().getItem()));
-             //   CalcMod.LOGGER.info(ing_id.get().toString());
-                if (ing_id.get().toString() .contains("ingot")) {
+                Identifier ing_id = BuiltInRegistries.ITEM.getKey(ingredient.getKey().getItem());
 
-                    Optional<Identifier> finalIng_id = ing_id;
-                    //  CalcMod.LOGGER.info(finalIng_id.get().toString() + "_from_" + finalIng_id.get().toString() .split("_")[0] + "_block");
-                    ing_id = Optional.ofNullable(manager.getRecipes().stream().filter(x ->
-                            Objects.equals(x.id().identifier().toString(), finalIng_id.get().toString() + "_from_" + finalIng_id.get().toString().split("_")[0] + "_block")
-                    ).findFirst().get().id().identifier());
-                }
-                Optional<Identifier> finalIng_id1 = ing_id;
-                if (manager.getRecipes().stream().filter(val -> Objects.equals(finalIng_id1.get(), val.id().identifier())).count() > 0) {
-                    Recipe<?> recipe = manager.getRecipes().stream().filter(val -> Objects.equals(finalIng_id1.get(), val.id().identifier())).findFirst().get().value();
-                    List<Ingredient> sis = recipe.placementInfo().ingredients();
-                    //       CalcMod.LOGGER.info(String.valueOf(ingredient.getValue()));
-                    //    CalcMod.LOGGER.info(String.valueOf(recipe.getResult(registryManager).getCount()));
-                    //      CalcMod.LOGGER.info(String.valueOf((double) ingredient.getValue() / (double) recipe.getResult(registryManager).getCount()));
-                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, manager, registryManager, Optional.ofNullable(sis), (int) Math.ceil((double) ingredient.getValue() / (double) recipe.display().get(0).result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getCount()), steps - 1);
-                    //     CalcMod.LOGGER.info(recipe.getResult(registryManager).getName().getString());
-                    //     ingredients.remove(recipe.getResult(registryManager).getName().getString());
+
+                Optional<RecipeCollection> recipeResultCollection = book.getCollections().stream().filter(x ->
+                        x.getRecipes().stream().anyMatch(i -> {
+                            String id = BuiltInRegistries.ITEM.getKey(i.display().result().resolveForStacks(SlotDisplayContext.fromLevel(player.level())).get(0).getItem()).toString();
+                            return id.equals(ing_id.toString());
+                        })).findFirst();
+                if (recipeResultCollection.isPresent()) {
+
+
+                    RecipeDisplayEntry recipeDisplayEntry = recipeResultCollection.get().getRecipes().stream().filter(i -> {
+                        String id = BuiltInRegistries.ITEM.getKey(i.display().result().resolveForStacks(SlotDisplayContext.fromLevel(player.level())).get(0).getItem()).toString();
+                        return id.equals(ing_id.toString());                    }).findFirst().get();
+                    Optional<List<Ingredient>> sis = recipeDisplayEntry.craftingRequirements();
+                    HashMap<String, Map.Entry<ItemStack, Integer>> sub_ingredients = getIngredients(player, book, registryManager, sis, (int) Math.ceil((double) ingredient.getValue() / (double) recipeDisplayEntry.display().result().resolveForStacks(SlotDisplayContext.fromLevel(player.level())).get(0).getCount()), steps - 1);
                     for (String item : sub_ingredients.keySet()) {
+                        //   CalcMod.LOGGER.info("Sub ing: "+item);
                         if (ex_ingredients.containsKey(item)) {
                             ex_ingredients.put(item, Map.entry(ingredients.get(item).getKey(), ingredients.get(item).getValue() + sub_ingredients.get(item).getValue()));
                         } else {
@@ -165,20 +144,14 @@ public class Craft {
                         }
                     }
                 } else {
+                    //  CalcMod.LOGGER.info("NO MATCH FOUND for "+ing_id.get().toString());
+
                     ex_ingredients.put(ingredient.getKey().getItemName().getString(), Map.entry(ingredient.getKey(), ingredient.getValue()));
                 }
+                //   return ingredients;
             }
         }
 
         return ex_ingredients;
     }
-
-    public static String helpMessage = """
-            §b§LCraft:§r§f
-                    Given a desired item and the quantity to be crafted §7§o(can be in expression form)§r§f, returns the amounts of the items needed to craft the amount of the desired item.
-                    Depth specifies how many levels of recursive crafting to perform on the recipe. Default depth is 1.\s
-                        §eUsage: /calc craft <item> <amount>§f
-                        §eUsage: /calc craft <item> <depth> <amount>§f
-            """;
-    
 }
