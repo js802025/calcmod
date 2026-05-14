@@ -16,6 +16,7 @@ import java.text.NumberFormat;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.commands.Commands;import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.context.ContextMap;
@@ -32,7 +33,7 @@ import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
 import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 
 public class Craft {
@@ -174,17 +175,17 @@ public class Craft {
             } else {
                 // CalcMod.LOGGER.info("new");
                 //     CalcMod.LOGGER.info(manager.get(ingredient.getRegistryEntry().getKey().get().getValue()).get().value().getIngredients().get(0).getMatchingStacks()[0].getName().getString());
-                Optional<ResourceKey<?>> ing_id = Optional.ofNullable(ForgeRegistries.ITEMS.getResourceKey(ingredient.getKey().getItem()).get());
+                Optional<ResourceKey<Item>> ing_id = BuiltInRegistries.ITEM.getResourceKey(ingredient.getKey().getItem());
                 //  CalcMod.LOGGER.info(ing_id.get().getPath());
                 //    if (ing_id.get().getPath() .contains("ingot")) {
 
-                Optional<ResourceKey<?>> finalIng_id = ing_id;
+                Optional<ResourceKey<Item>> finalIng_id = ing_id;
                 //  CalcMod.LOGGER.info(finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath() .split("_")[0] + "_block");
 
                 try {
                     Optional<RecipeDisplay> recipe = manager.getRecipes().stream().filter(i ->
                             !i.value().display().isEmpty()).map(x ->
-                            x.value().display().size() > 1 ? x.value().display().stream().filter(i -> Objects.equals(x.id().registry().getPath(), finalIng_id.get().registry().getPath() + "_from_" + finalIng_id.get().registry().getPath().split("_")[0] + "_block")).findFirst().orElse(x.value().display().get(0)) : !x.value().display().isEmpty() ? x.value().display().get(0) : null).filter(i -> Objects.equals(finalIng_id.get(), ForgeRegistries.ITEMS.getResourceKey(i.result().resolveForFirstStack(map).getItem()).get()) && (i.type().equals(ShapedCraftingRecipeDisplay.TYPE) || i.type().equals(ShapelessCraftingRecipeDisplay.TYPE))).findFirst();
+                            x.value().display().size() > 1 ? x.value().display().stream().filter(i -> Objects.equals(x.id().registry().getPath(), finalIng_id.get().registry().getPath() + "_from_" + finalIng_id.get().registry().getPath().split("_")[0] + "_block")).findFirst().orElse(x.value().display().get(0)) : !x.value().display().isEmpty() ? x.value().display().get(0) : null).filter(i -> Objects.equals(finalIng_id.get(), BuiltInRegistries.ITEM.getResourceKey(i.result().resolveForFirstStack(map).getItem()).get()) && (i.type().equals(ShapedCraftingRecipeDisplay.TYPE) || i.type().equals(ShapelessCraftingRecipeDisplay.TYPE))).findFirst();
 
 //                    ing_id = Optional.of(manager.getRecipes().stream().map(x ->
 //                            Objects.equals(x.id().registry().getPath(), finalIng_id.get().getPath() + "_from_" + finalIng_id.get().getPath().split("_")[0] + "_block")

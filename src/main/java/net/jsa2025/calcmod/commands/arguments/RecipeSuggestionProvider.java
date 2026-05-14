@@ -28,7 +28,7 @@ public class RecipeSuggestionProvider implements SuggestionProvider<CommandSourc
 
         //     return item;
         // });
-        Stream<RecipeHolder<?>> recipeStream = context.getSource().getRecipeManager().getRecipes().stream();
+        Stream<RecipeHolder<?>> recipeStream = context.getSource().getServer().getRecipeManager().getRecipes().stream();
         recipeStream.forEach(recipe -> {
             if (!recipe.value().display().isEmpty() && (recipe.value().display().get(0).type().equals(ShapedCraftingRecipeDisplay.TYPE) || recipe.value().display().get(0).type().equals(ShapelessCraftingRecipeDisplay.TYPE)))
             {
