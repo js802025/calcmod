@@ -47,7 +47,7 @@ public class Custom {
                                     CalcMessageBuilder messageBuilder;
                                     if (!Pattern.matches(".*\\d.*", name) && !parseEquationVariables(function).isEmpty() && !function.substring(function.indexOf('(') + 1).contains(name+"(")) {
                                         saveNewCommand(name, function);
-                                        messageBuilder = new CalcMessageBuilder("<yellow>Added "+name+"<white>");
+                                        messageBuilder = new CalcMessageBuilder("§eAdded "+name+"§f");
                                     } else if (function.substring(function.indexOf('(') + 1).contains(name+"(")){
                                         messageBuilder = new CalcMessageBuilder("§cCommand cannot call itself.§f");
                                     } else if (parseEquationVariables(function).isEmpty()) {
