@@ -88,7 +88,7 @@ public class ReverseCraft {
                         }
                     });
                 }
-                if (ing.acceptsItem(Holder.direct(stack.getItem()))) {
+                if (ing.acceptsItem(stack.typeHolder())) {
                     if (itemsHaved.containsKey(ing)) {
                         itemsHaved.put(ing, itemsHaved.get(ing) + stack.getCount());
                     } else {
