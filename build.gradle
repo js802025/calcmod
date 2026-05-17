@@ -47,7 +47,7 @@ neoForge {
 
         server {
             server()
-            programArgument '--nogui'
+            programArgument ''
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
