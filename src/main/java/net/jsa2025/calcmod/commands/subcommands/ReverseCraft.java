@@ -119,8 +119,23 @@ public class ReverseCraft {
                 canCraft = (amount / ingCount.get(ing)) * outputSize;
             }
         };
-        CalcMessageBuilder message = new CalcMessageBuilder().addFromArray(new String[] {"input", " craftable with inventory items: ", "result"}, new String[] {PlainTextComponentSerializer.plainText().serialize(item.getResult().effectiveName())},new String[] {String.valueOf(canCraft)});
-        return message;
+        CalcMessageBuilder messageBuilder = new CalcMessageBuilder().addFromArray(new String[] {"input", " craftable with inventory items: "}, new String[] {PlainTextComponentSerializer.plainText().serialize(item.getResult().effectiveName())},new String[] {});
+        double stackSize = item.getResult().getMaxStackSize();
+        double sb = Math.floor(canCraft/(stackSize*27));
+        String sbString = nf.format(sb);
+        double remainder = canCraft % (stackSize*27);
+        double stacks = Math.floor(remainder/stackSize);
+        String stacksString = nf.format(stacks);
+        remainder = remainder % stackSize;
+        String items = nf.format(remainder);
+        if (sb > 0) {
+            messageBuilder.addResult("SBs: "+sbString + ", Stacks: "+stacksString+", Items: "+items);
+        } else if (stacks > 0) {
+            messageBuilder.addResult("Stacks: "+stacksString+", Items: "+items);
+        } else {
+            messageBuilder.addResult("Items: "+items);
+        }
+        return messageBuilder;
     }
 
     public static String helpMessage = """

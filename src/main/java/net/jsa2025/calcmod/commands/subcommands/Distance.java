@@ -100,8 +100,8 @@ public class Distance {
 //    }
 
     public static CalcMessageBuilder execute(BlockPosition pos1, BlockPosition pos2) {
-        double dist = Math.sqrt(Math.pow(pos1.toVector().getBlockX()-pos2.toVector().getBlockX(), 2) + Math.pow(pos1.toVector().getBlockX()-pos2.toVector().getZ(), 2));
-        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.toVector().getBlockX()+" Z: "+pos1.toVector().getZ()).addString(" to ").addInput("X: "+pos2.toVector().getBlockX()+" Z: "+pos2.toVector().getBlockZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
+        double dist = Math.sqrt(Math.pow(pos1.toVector().getBlockX()-pos2.toVector().getBlockX(), 2) + Math.pow(pos1.toVector().getBlockX()-pos2.toVector().getBlockZ(), 2));
+        CalcMessageBuilder message = new CalcMessageBuilder().addString("Distance from ").addInput("X: "+pos1.toVector().getBlockX()+" Z: "+pos1.toVector().getBlockZ()).addString(" to ").addInput("X: "+pos2.toVector().getBlockX()+" Z: "+pos2.toVector().getBlockZ()).addString(": ").addResult(String.valueOf(nf.format(dist)));
         return message;
     }
 

@@ -63,7 +63,7 @@ public class Nether {
 
     public static CalcMessageBuilder execute(BlockPosition position) {
 
-        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.toVector().getX())+" Z: "+nf.format(position.toVector().getZ())).addString(" >><white> Nether = ").addResult("X: "+nf.format(position.toVector().getX()/8)+" Z: "+nf.format(position.toVector().getZ()/8));
+        CalcMessageBuilder message = new CalcMessageBuilder().addInput("X: "+nf.format(position.blockX())+" Z: "+nf.format(position.blockZ())).addString(" >><white> Nether = ").addResult("X: "+nf.format(position.blockX()/8)+" Z: "+nf.format(position.blockZ()/8));
         return message;
     }
 
