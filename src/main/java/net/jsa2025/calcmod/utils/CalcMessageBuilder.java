@@ -70,7 +70,7 @@ public class CalcMessageBuilder {
         messageText = messageText.append(Component.text(text)
 
                 .style(Style.style(TextColor.fromHexString("#55FF55"))))
-                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text))
+                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClickEvent.Payload.string(text)))
                 ;
         return this;
     }
@@ -93,7 +93,7 @@ public class CalcMessageBuilder {
     }
 
     public CalcMessageBuilder addRunCommand(String text, String command) {
-        messageText = messageText.append(MiniMessage.miniMessage().deserialize(text).clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, command)));
+        messageText = messageText.append(MiniMessage.miniMessage().deserialize(text).clickEvent(ClickEvent.runCommand(command)));
         return this;
     }
 
@@ -105,7 +105,7 @@ public class CalcMessageBuilder {
             messageText = messageText.append(Component.text(" "));
             messageText = messageText.append(Component.text("[Click to Copy]")
                             .style(Style.style(TextColor.fromHexString("#00AAAA")))
-                    .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, PlainTextComponentSerializer.plainText().serialize(messageText).replaceAll("§.", "").replaceAll("<aqua>", "").replaceAll("<gray>", "").replaceAll("<white>", ""))));
+                    .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClickEvent.Payload.string(PlainTextComponentSerializer.plainText().serialize(messageText).replaceAll("§.", "").replaceAll("<aqua>", "").replaceAll("<gray>", "").replaceAll("<white>", "")))));
         }
         return messageText;
     }

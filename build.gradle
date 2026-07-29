@@ -86,7 +86,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:${project.minecraft_version}.build.63-stable"
+    compileOnly "io.papermc.paper:paper-api:${project.minecraft_version}.build.87-stable"
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
     implementation 'io.papermc:paperlib:1.0.8'
     testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
