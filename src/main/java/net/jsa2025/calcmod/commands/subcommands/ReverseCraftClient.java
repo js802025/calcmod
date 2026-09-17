@@ -1,14 +1,17 @@
 package net.jsa2025.calcmod.commands.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import dev.xpple.clientarguments.arguments.CIdentifierArgument;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.jsa2025.calcmod.CalcMod;
+import net.jsa2025.calcmod.CalcModLogger;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.CIdentifierArgumentType;
 import net.jsa2025.calcmod.commands.arguments.CRecipeSuggestionProvider;
+
+
 import net.jsa2025.calcmod.utils.CalcMessageBuilder;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.core.Holder;
@@ -47,7 +50,7 @@ public class ReverseCraftClient {
         HashMap<Ingredient, Integer> ingCount = new HashMap<>();
         int outputSize = item.display().result().resolveForFirstStack(SlotDisplayContext.fromLevel(player.level())).getCount();
         item.craftingRequirements().get().stream().forEach(ing -> {
-            CalcMod.LOGGER.info(ing.toString());
+            CalcModLogger.LOGGER.info(ing.toString());
             ingCount.put(ing, ingCount.getOrDefault(ing, 0) + 1);
         });
         ingCount.keySet().forEach(ing -> {
@@ -76,7 +79,7 @@ public class ReverseCraftClient {
                 }
 
                 if (ing.acceptsItem(stack.typeHolder())) {
-                    CalcMod.LOGGER.info("MATCH: "+ Holder.direct(stack.getItem()).toString());
+                    CalcModLogger.LOGGER.info("MATCH: "+ Holder.direct(stack.getItem()).toString());
                     if (itemsHaved.containsKey(ing)) {
                         itemsHaved.put(ing, itemsHaved.get(ing) + stack.getCount());
                     } else {

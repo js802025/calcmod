@@ -11,7 +11,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.jsa2025.calcmod.CalcMod;
+import net.jsa2025.calcmod.CalcModLogger;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import net.jsa2025.calcmod.commands.arguments.CCustomFunctionProvider;
 import net.jsa2025.calcmod.commands.arguments.CustomFunctionProvider;
@@ -218,7 +218,7 @@ public class Custom {
             } else {
                 parsedFuncs.add(f+"() = " + func);
             }
-            CalcMod.LOGGER.info("Parsed Func "+parsedFuncs);
+            CalcModLogger.LOGGER.info("Parsed Func "+parsedFuncs);
         }
         return parsedFuncs;
     }

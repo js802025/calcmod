@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import net.jsa2025.calcmod.CalcMod;
+import net.jsa2025.calcmod.CalcModLogger;
 import net.jsa2025.calcmod.commands.subcommands.*;
 
 import net.jsa2025.calcmod.commands.subcommands.Random;
@@ -162,10 +163,10 @@ public class CalcCommand {
 
 
         for (int f = 0; f < parsedCustomFunctions.size(); f++) {
-            CalcMod.LOGGER.info(parsedCustomFunctions.get(f));
+            CalcModLogger.LOGGER.info(parsedCustomFunctions.get(f));
             primitiveElements.add(new Function(parsedCustomFunctions.get(f)));
         }
-        CalcMod.LOGGER.info("Parsed "+withVars);
+        CalcModLogger.LOGGER.info("Parsed "+withVars);
             return new Expression(withVars, primitiveElements.toArray(new PrimitiveElement[0] )).calculate();
         }
     static boolean contains(String[] array, String value) {

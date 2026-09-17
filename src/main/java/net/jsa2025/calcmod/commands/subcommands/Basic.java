@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.jsa2025.calcmod.CalcMod;
+import net.jsa2025.calcmod.CalcModLogger;
 import net.jsa2025.calcmod.commands.CalcCommand;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -49,7 +49,7 @@ public class Basic {
     }
 
     public static CalcMessageBuilder execute(Entity player, String expression) {
-        CalcMod.LOGGER.info("Entity Name: "+expression);
+        CalcModLogger.LOGGER.info("Entity Name: "+expression);
         double result = CalcCommand.getParsedExpression(player, expression);
         return new CalcMessageBuilder(CalcMessageBuilder.MessageType.BASIC, new String[] {expression}, new String[] {nf.format(result)});
     }

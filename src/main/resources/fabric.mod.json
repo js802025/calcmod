@@ -21,7 +21,7 @@
       "net.jsa2025.calcmod.CalcMod"
     ],
     "server": [
-      "net.jsa2025.calcmod.CalcMod"
+      "net.jsa2025.calcmod.CalcModServer"
     ]
   },
   "license":"MIT",
