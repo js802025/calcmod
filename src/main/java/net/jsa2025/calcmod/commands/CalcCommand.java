@@ -112,6 +112,14 @@ public class CalcCommand {
         vars.put("stack1", 1.0);
         vars.put("min", 60.0);
         vars.put("hour", 3600.0);
+        vars.put("k", 1000.0);
+        vars.put("m", 1000000.0);
+        vars.put("hour", 3600.0);
+        vars.put("beac", 164.0);
+        vars.put("beac1", 9.0);
+        vars.put("beac2", 34.0);
+        vars.put("beac3", 83.0);
+        vars.put("beac4", 164.0);
         if (Objects.nonNull(player)) {
             vars.put("x", (double) player.blockPosition().getX());
             vars.put("y", (double) player.blockPosition().getY());

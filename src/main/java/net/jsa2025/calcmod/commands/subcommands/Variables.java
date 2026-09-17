@@ -60,6 +60,13 @@ public class Variables {
                 stack1: 1
                 min: 60
                 hour: 3600
+                k: 1000
+                m: 1000000
+                beac: 164 (default)
+                beac4: 164
+                beac3: 83
+                beac2: 34
+                beac1: 9
                 x: player x coord
                 y: player y coord
                 z: player z coord
